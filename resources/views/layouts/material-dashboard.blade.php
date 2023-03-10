@@ -136,7 +136,10 @@
 <script>
     $( document ).ready(function() {
 
-        getData();
+        setInterval(function(){
+            getData();
+        }, 1000);
+        
 
         $('.quantity').each(function () {
             var $this = $(this);
@@ -159,6 +162,7 @@
                     enabled: true,
                     easing: 'easeinout',
                     speed: 800,
+                    from: 'bottom',
                     animateGradually: {
                         enabled: true,
                         delay: 150
@@ -169,8 +173,12 @@
                     }
                 }
             },
+            colors: '#696CFF',
+            noData: {
+                text: 'Loading...'
+            },
             series: [{
-                name: 'sales',
+                name: 'Quantity',
                 data: []
             }],
         }
@@ -183,30 +191,50 @@
                 $.getJSON("/dashboard/getCkdMaterial" , function(response) {
                 console.log(response);
                 var res = [];
-                var times = [];
+                var part = [];
+                var limit = [];
 
                 response.forEach(element => {
-                    res.push(element.quantity);   
+                    res.push(element.qty);   
                 });
 
                 response.forEach(element => {
-                    times.push(element.time.substr(0,2));     
+                    part.push(element.part_name);     
+                });
+
+                response.forEach(element => {
+                    limit.push(element.qty_limit);     
                 });
                 
                 chart.updateSeries([{
                     name: 'Total Material',
-                    data: res
-                }])
+                    data: res,
+                }]);
+                
                 chart.updateOptions({
-                    xaxis: {
-                        categories : times,
-                        group: {
-                            style: {
-                                fontSize: '13px',
-                                fontWeight: 700
+                        xaxis: {
+                            categories : part,
+                            group: {
+                                style: {
+                                    fontSize: '13px',
+                                    fontWeight: 700
+                                }
                             }
-                        }
-                    }
+                        },
+                        legend: {
+                            show: true,
+                            showForSingleSeries: true,
+                            customLegendItems: ['Actual', 'Limit'],
+                            markers: {
+                                fillColors: ['#696CFF','#00E396']
+                            }
+                        },
+                        goals: [{
+                            seriesIndex: 0,
+                            value: limit[0],
+                            name: 'Limit',
+                            color: '#00000'
+                        }]
                     })
                 });
             };

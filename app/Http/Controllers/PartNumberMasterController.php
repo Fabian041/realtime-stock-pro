@@ -41,7 +41,8 @@ class PartNumberMasterController extends Controller
 
         $validatedData = $request->validate([
             'part_name' => 'required',
-            'part_number' => 'required|unique:tm_part_numbers|min:12|max:12',
+            'part_number' => 'required|unique:tm_parts|min:12|max:12',
+            'status' => 'required',
             'qty_limit' => 'required'
         ]);
 

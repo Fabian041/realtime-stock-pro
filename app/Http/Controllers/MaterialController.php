@@ -92,4 +92,15 @@ class MaterialController extends Controller
         //
     }
 
+    public function getCkdMaterial(){
+
+        $data = DB::table('tm_parts')->join('tt_stocks','tm_parts.id', '=', 'tt_stocks.id_part')
+                ->select('part_name','qty_limit','source', 'qty')
+                ->where('source', 'like', '%CKD%')
+                ->groupBy('id_part')
+                ->get();
+
+        return response()->json($data);
+
+    }
 }

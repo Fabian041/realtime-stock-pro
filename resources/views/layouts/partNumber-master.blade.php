@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col">
         <div class="row">
-            <h2><strong>Import Part Number</strong></h2>
+            <h2><strong>Import Part</strong></h2>
         </div>   
     </div>
 </div>
@@ -91,6 +91,48 @@
                                 {{ $message }}
                             </div>
                         @enderror
+                    </div>
+                    <div class="col-12 mb-4">
+                        <div class="card">
+                            <h5 class="card-header">Select Status</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md mb-md-0 mb-2">
+                                        <div class="form-check custom-option custom-option-icon">
+                                            <label class="form-check-label custom-option-content" for="customRadioSvg1">
+                                                <span class="custom-option-body">
+                                                    <span class="custom-option-title"> Status 0 </span>
+                                                    <small>Melalui satu proses produksi <br> (ex: only DC)</small>
+                                                </span>
+                                                <input name="status" class="form-check-input" type="radio" value="0" id="customRadioSvg1" checked />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md mb-md-0 mb-2">
+                                        <div class="form-check custom-option custom-option-icon">
+                                            <label class="form-check-label custom-option-content" for="customRadioSvg2">
+                                                <span class="custom-option-body">
+                                                    <span class="custom-option-title"> Status 1 </span>
+                                                    <small>Melalui dua proses produksi <br> (ex: DC & MA)</small>
+                                                </span>
+                                                <input name="status" class="form-check-input" type="radio" value="1" id="customRadioSvg2" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="form-check custom-option custom-option-icon">
+                                            <label class="form-check-label custom-option-content" for="customRadioSvg3">
+                                                <span class="custom-option-body">
+                                                    <span class="custom-option-title"> Status 2 </span>
+                                                    <small>Melalui semua proses produksi <br>(ex: DC, MA & ASSY)</small>
+                                                </span>
+                                                <input name="status" class="form-check-input" type="radio" value="2" id="customRadioSvg3" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-12 text-end mt-3">
