@@ -56,6 +56,7 @@
   <link rel="stylesheet" href={{ asset("vendor/libs/animate-css/animate.css") }} />
   
   <script src={{ asset("js/config.js") }}></script> 
+  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
   <!-- beautify ignore:end -->
   
   <!-- Global site tag (gtag.js) - Google Analytics -->

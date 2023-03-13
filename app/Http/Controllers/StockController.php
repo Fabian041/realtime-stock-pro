@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Pusher\Pusher;
 use App\Models\TtDc;
 use App\Models\TtMa;
 use App\Models\TmBom;
@@ -11,6 +12,7 @@ use App\Models\TtAssy;
 use App\Models\TtStock;
 use App\Models\TtOutput;
 use Illuminate\Http\Request;
+use App\Events\StockDataUpdated;
 
 class StockController extends Controller
 {
@@ -110,6 +112,23 @@ class StockController extends Controller
             ]);
         }
 
+        // connection to pusher
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            '31df202f78fc0dace852',
+            'f1d1fd7c838cdd9f25d6',
+            '1567188',
+            $options
+        );
+
+        $message = 'Hello, world!';
+
+        // sending data
+        $pusher->trigger('stock-data', 'StockDataUpdated', $message);
 
         return response()->json([
             'message' => 'success'

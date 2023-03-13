@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Pusher\Pusher;
 use App\Models\TtStock;
 use Illuminate\Http\Request;
+use App\Events\StockDataUpdated;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Support\Facades\Broadcast;
 
 class MaterialController extends Controller
 {
@@ -92,15 +96,31 @@ class MaterialController extends Controller
         //
     }
 
-    public function getCkdMaterial(){
+    public function getMaterial(){
 
-        $data = DB::table('tm_parts')->join('tt_stocks','tm_parts.id', '=', 'tt_stocks.id_part')
+        $dataCkd = DB::table('tm_parts')->join('tt_stocks','tm_parts.id', '=', 'tt_stocks.id_part')
                 ->select('part_name','qty_limit','source', 'qty')
                 ->where('source', 'like', '%CKD%')
                 ->groupBy('id_part')
                 ->get();
 
-        return response()->json($data);
+        $dataImport = DB::table('tm_parts')->join('tt_stocks','tm_parts.id', '=', 'tt_stocks.id_part')
+                ->select('part_name','qty_limit','source', 'qty')
+                ->where('source', 'like', '%IMPORT%')
+                ->groupBy('id_part')
+                ->get();
+
+        $dataLocal= DB::table('tm_parts')->join('tt_stocks','tm_parts.id', '=', 'tt_stocks.id_part')
+                ->select('part_name','qty_limit','source', 'qty')
+                ->where('source', 'like', '%LOCAL%')
+                ->groupBy('id_part')
+                ->get();
+                
+        return response()->json([
+            'dataCkd' => $dataCkd,
+            'dataImport' => $dataImport,
+            'dataLocal' => $dataLocal,
+        ]);
 
     }
 }

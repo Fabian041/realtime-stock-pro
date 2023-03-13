@@ -113,17 +113,17 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="navs-pills-top-home" role="tabpanel">
                     <div class="card-body">
-                        <div id="chart"></div>
+                        <div id="ckdChart"></div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
                     <div class="card-body">
-                        <div id="totalRevenueChart"></div>     
+                        <div id="importChart"></div>     
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-messages" role="tabpanel">
                     <div class="card-body">
-                        <div id="profileReportChart"></div> 
+                        <div id="localChart"></div> 
                     </div>
                 </div>
             </div>
@@ -131,113 +131,240 @@
     </div>
 </div>
 
+@vite('resources/js/app.js')
 <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script> 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     $( document ).ready(function() {
 
-        setInterval(function(){
-            getData();
-        }, 1000);
-        
-
-        $('.quantity').each(function () {
-            var $this = $(this);
-            console.log($this.text());
-            jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
-                duration: 1500,
-                easing: 'swing',
-                step: function () {
-                $this.text(Math.ceil(this.Counter));
-                }
+        var pusher = new Pusher('31df202f78fc0dace852', {
+                cluster: 'ap1',
+                forceTLS: true
             });
-        });
 
-
-        var options = {
-            chart: {
-                height: 300,
-                type: 'bar',
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                    from: 'bottom',
-                    animateGradually: {
-                        enabled: true,
-                        delay: 150
-                    },
-                    dynamicAnimation: {
-                        enabled: true,
-                        speed: 350
+        pusher.subscribe('stock-data').bind('StockDataUpdated', function(data) {
+            
+            getCkd();
+            getImport();
+            getLocal();
+    
+            
+            $('.quantity').each(function () {
+                var $this = $(this);
+                console.log($this.text());
+                jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
+                    duration: 1500,
+                    easing: 'swing',
+                    step: function () {
+                    $this.text(Math.ceil(this.Counter));
                     }
-                }
-            },
-            colors: '#696CFF',
-            noData: {
-                text: 'Loading...'
-            },
-            series: [{
-                name: 'Quantity',
-                data: []
-            }],
-        }
-
-        var chart = new ApexCharts(document.querySelector("#chart"), options);
-
-        chart.render(); 
-
-        function getData(){
-                $.getJSON("/dashboard/getCkdMaterial" , function(response) {
-                console.log(response);
-                var res = [];
-                var part = [];
-                var limit = [];
-
-                response.forEach(element => {
-                    res.push(element.qty);   
                 });
-
-                response.forEach(element => {
-                    part.push(element.part_name);     
-                });
-
-                response.forEach(element => {
-                    limit.push(element.qty_limit);     
-                });
-                
-                chart.updateSeries([{
-                    name: 'Total Material',
-                    data: res,
-                }]);
-                
-                chart.updateOptions({
-                        xaxis: {
-                            categories : part,
-                            group: {
-                                style: {
-                                    fontSize: '13px',
-                                    fontWeight: 700
+            });
+    
+    
+            var options = {
+                chart: {
+                    height: 300,
+                    type: 'bar',
+                    animations: {
+                        enabled: true,
+                        easing: 'easeinout',
+                        speed: 800,
+                        from: 'bottom',
+                        animateGradually: {
+                            enabled: true,
+                            delay: 150
+                        },
+                        dynamicAnimation: {
+                            enabled: true,
+                            speed: 350
+                        }
+                    }
+                },
+                colors: '#696CFF',
+                noData: {
+                    text: 'Loading...'
+                },
+                legend: {
+                    show: true,
+                    showForSingleSeries: true,
+                    customLegendItems: ['Actual', 'Limit'],
+                    markers: {
+                        fillColors: ['#696CFF', '#00E396']
+                    }
+                },
+                series: [{
+                    name: 'Quantity',
+                    data: []
+                }],
+            }
+    
+            var options2 = {
+                chart: {
+                    height: 300,
+                    type: 'bar',
+                    animations: {
+                        enabled: true,
+                        easing: 'easeinout',
+                        speed: 800,
+                        from: 'bottom',
+                        animateGradually: {
+                            enabled: true,
+                            delay: 150
+                        },
+                        dynamicAnimation: {
+                            enabled: true,
+                            speed: 350
+                        }
+                    }
+                },
+                colors: '#696CFF',
+                noData: {
+                    text: 'Loading...'
+                },
+                legend: {
+                    show: true,
+                    showForSingleSeries: true,
+                    customLegendItems: ['Actual', 'Limit'],
+                    markers: {
+                        fillColors: ['#696CFF', '#00E396']
+                    }
+                },
+                series: [{
+                    name: 'Quantity',
+                    data: []
+                }],
+            }
+    
+            var options3 = {
+                chart: {
+                    height: 300,
+                    type: 'bar',
+                    animations: {
+                        enabled: true,
+                        easing: 'easeinout',
+                        speed: 800,
+                        from: 'bottom',
+                        animateGradually: {
+                            enabled: true,
+                            delay: 150
+                        },
+                        dynamicAnimation: {
+                            enabled: true,
+                            speed: 350
+                        }
+                    }
+                },
+                colors: '#696CFF',
+                noData: {
+                    text: 'Loading...'
+                },
+                legend: {
+                    show: true,
+                    showForSingleSeries: true,
+                    customLegendItems: ['Actual', 'Limit'],
+                    markers: {
+                        fillColors: ['#696CFF', '#00E396']
+                    }
+                },
+                series: [{
+                    name: 'Quantity',
+                    data: []
+                }],
+            }
+    
+            var chartCkd = new ApexCharts(document.querySelector("#ckdChart"), options);
+            var chartImport = new ApexCharts(document.querySelector("#importChart"), options2);
+            var chartLocal = new ApexCharts(document.querySelector("#localChart"), options3);
+    
+            chartCkd.render(); 
+            chartImport.render(); 
+            chartLocal.render(); 
+    
+            function getCkd() {
+                $.ajax({
+                    url: '/dashboard/getMaterial',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        chartCkd.updateSeries([{
+                            name: 'Total Material',
+                            data: data.dataCkd.map(function(item){
+                                return {
+                                    x: item.part_name,
+                                    y: item.qty,
+                                    goals: [
+                                        {
+                                            name: 'Limit',
+                                            value: item.qty_limit,
+                                            strokeHeight: 5,
+                                            strokeColor: '#00E396'
+                                        }
+                                    ]
                                 }
-                            }
-                        },
-                        legend: {
-                            show: true,
-                            showForSingleSeries: true,
-                            customLegendItems: ['Actual', 'Limit'],
-                            markers: {
-                                fillColors: ['#696CFF','#00E396']
-                            }
-                        },
-                        goals: [{
-                            seriesIndex: 0,
-                            value: limit[0],
-                            name: 'Limit',
-                            color: '#00000'
-                        }]
-                    })
+                            })
+                        }]);
+    
+                    }
                 });
             };
+    
+            function getImport() {
+                $.ajax({
+                    url: '/dashboard/getMaterial',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        chartImport.updateSeries([{
+                            name: 'Total Material',
+                            data: data.dataImport.map(function(item){
+                                return {
+                                    x: item.part_name,
+                                    y: item.qty,
+                                    goals: [
+                                        {
+                                            name: 'Limit',
+                                            value: item.qty_limit,
+                                            strokeHeight: 5,
+                                            strokeColor: '#00E396'
+                                        }
+                                    ]
+                                }
+                            })
+                        }]);
+                    }
+                });
+            };
+    
+            function getLocal() {
+                $.ajax({
+                    url: '/dashboard/getMaterial',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        chartLocal.updateSeries([{
+                            name: 'Total Material',
+                            data: data.dataLocal.map(function(item){
+                                return {
+                                    x: item.part_name,
+                                    y: item.qty,
+                                    goals: [
+                                        {
+                                            name: 'Limit',
+                                            value: item.qty_limit,
+                                            strokeHeight: 5,
+                                            strokeColor: '#00E396'
+                                        }
+                                    ]
+                                }
+                            })
+                        }]);
+    
+                    }
+                });
+            };
+        });
+        
 
     });
 </script>
