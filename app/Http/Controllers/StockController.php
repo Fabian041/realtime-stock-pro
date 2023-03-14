@@ -35,6 +35,7 @@ class StockController extends Controller
             $currStock = TtStock::select('qty')
                             ->where('id_part',$bom->id_partBom)
                             ->first();
+                            
             //modify quantiy of material in tt stock table
             $updateStock = TtStock::where('id_part',$bom->id_partBom)
                             ->update([
@@ -47,8 +48,6 @@ class StockController extends Controller
                 'date' => date('Y-m-d'),
             ]);
         }
-
-
 
         // get current quantity
         $currentDcStock = TtDc::select('qty')->where('part_number',$code)->first();
@@ -112,6 +111,11 @@ class StockController extends Controller
             ]);
         }
 
+        // get currnet stock quantity
+        $ckd = TtStock::where('source', 'like', '%CKD%')->sum('qty');
+        $import = TtStock::where('source', 'like', '%IMPORT%')->sum('qty');
+        $local = TtStock::where('source', 'like', '%LOCAL%')->sum('qty');
+
         // connection to pusher
         $options = array(
             'cluster' => 'ap1',
@@ -125,10 +129,8 @@ class StockController extends Controller
             $options
         );
 
-        $message = 'Hello, world!';
-
-        // sending data
-        $pusher->trigger('stock-data', 'StockDataUpdated', $message);
+        // sending stock data all items
+        $pusher->trigger('stock-data', 'StockDataUpdated', [$ckd,$import,$local]);
 
         return response()->json([
             'message' => 'success'

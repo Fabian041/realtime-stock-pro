@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Pusher\Pusher;
 use App\Models\TtStock;
 use Illuminate\Http\Request;
 use App\Imports\ImportTtStock;
@@ -95,6 +96,23 @@ class MaterialMasterController extends Controller
     {
 
         Excel::import(new ImportTtStock, $request->file('file')->store('files'));
+
+        // connection to pusher
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            '31df202f78fc0dace852',
+            'f1d1fd7c838cdd9f25d6',
+            '1567188',
+            $options
+        );
+
+        // sending data
+        $pusher->trigger('stock-data', 'StockDataUpdated', []);
+
         return redirect()->back();
     }
 

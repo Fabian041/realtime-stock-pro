@@ -14,15 +14,19 @@ class StockDataUpdated implements shouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $updatedData;
+    public $ckd;
+    public $import;
+    public $local;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($updatedData)
+    public function __construct($ckd,$import,$local)
     {
-        $this->updatedData = $updatedData;
+        $this->ckd = $ckd;
+        $this->import = $import;
+        $this->local = $local;
     }
 
     /**
