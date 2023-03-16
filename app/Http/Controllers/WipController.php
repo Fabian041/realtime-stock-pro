@@ -9,21 +9,40 @@ use Illuminate\Http\Request;
 class WipController extends Controller
 {
     /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    public function wipDc()
+    {
+        return view('layouts.wip.wip-dc');
+    }
+    /**
+     * Display MA dashboard
+     *
+     * 
+     */
+    public function wipMa()
+    {
+        return view('layouts.wip.wip-ma');
+    }
+    /**
+     * Display ASSY dashboard
+     *
+     * 
+     */
+    public function wipAssy()
+    {
+        return view('layouts.wip.wip-assy');
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $wipDc = TtDc::sum('qty');
-        $wipMa = TtMa::sum('qty');
-        $wipAs = 90;
-
-        return view('layouts.wip-dashboard',[
-            'wipDc' => $wipDc,
-            'wipMa' => $wipMa,
-            'wipAs' => $wipAs
-        ]);
+        // 
     }
 
     /**

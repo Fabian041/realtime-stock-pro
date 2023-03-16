@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use Pusher\Pusher;
+use App\Models\TtDc;
+use App\Models\TtMa;
+use App\Models\TmArea;
+use App\Models\TmPart;
+use App\Models\TtAssy;
 use App\Models\TtStock;
+use App\Models\TtCheckout;
 use Illuminate\Http\Request;
 use App\Events\StockDataUpdated;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Broadcasting\Channel;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Broadcast;
 
 class MaterialController extends Controller
@@ -122,5 +129,104 @@ class MaterialController extends Controller
             'dataLocal' => $dataLocal,
         ]);
 
+    }
+
+    public function checkout()
+    {
+        return view('layouts.checkout-material',[
+            'area' => TmArea::all(),
+            'parts' => TmPart::all(),
+        ]);
+    }
+
+    public function checkoutStore(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id_area' => 'required', //get id
+            'id_part' => 'required', //get id
+            'qty' => 'required'
+        ]);
+
+        TtCheckout::create($validatedData);
+
+        // get part name current stock
+        $currStock = TtStock::select('qty')
+                    ->where('id_part', $validatedData['id_part'])
+                    ->first();
+
+        // modify stock in table tt stock based on part used
+        TtStock::where('id_part', $validatedData['id_part'])
+                ->update([
+                    'qty' => $currStock->qty - $validatedData['qty']
+                ]);
+                
+        
+        // get current stock each area
+        $currentDcStock = TtDc::select('qty')->where('id_part',$validatedData['id_part'])->first();
+        $currentMaStock = TtMa::select('qty')->where('id_part',$validatedData['id_part'])->first();
+        $currentAsStock = TtAssy::select('qty')->where('id_part',$validatedData['id_part'])->first();
+
+        // modify material stock in each area
+        if($validatedData['id_area'] == 3)
+        {
+            if($currentDcStock !== null){
+
+                TtDc::where('id_part', $validatedData['id_part'])
+                    ->update([
+                        'qty' => $currentDcStock->qty + $validatedData['qty']
+                    ]);
+            }
+
+            TtDc::create([
+                'id_part' => $validatedData['id_part'],
+                'qty' => $validatedData['qty']
+            ]);
+
+        }elseif($validatedData['id_area'] == 1){
+
+            if($currentMaStock !== null){
+
+                TtMa::where('id_part', $validatedData['id_part'])
+                    ->update([
+                        'qty' => $currentMaStock->qty + $validatedData['qty']
+                    ]);
+            }
+
+            TtMa::create([
+                'id_part' => $validatedData['id_part'],
+                'qty' => $validatedData['qty']
+            ]);
+
+        }elseif($validatedData['id_area'] == 5){
+
+            if($currentAsStock !== null){
+
+                TtAssy::where('id_part', $validatedData['id_part'])
+                    ->update([
+                        'qty' => $currentAsStock->qty + $validatedData['qty']
+                    ]);
+            }
+
+            TtAssy::create([
+                'id_part' => $validatedData['id_part'],
+                'qty' => $validatedData['qty']
+            ]);
+
+        }
+
+        
+        return redirect()->route('checkout.index')->with('success', 'Success checkout item id-' . $validatedData['id_part']);
+    }
+
+    public function getDataCheckout()
+    {
+        $input = DB::table('tt_checkouts')
+                    ->join('tm_parts', 'tt_checkouts.id_part', '=', 'tm_parts.id')
+                    ->join('tm_areas', 'tt_checkouts.id_area', '=', 'tm_areas.id')
+                    ->select('tm_parts.part_name', 'tm_areas.name' , 'tt_checkouts.qty')
+                    ->get();
+
+        return DataTables::of($input)
+                ->toJson();
     }
 }

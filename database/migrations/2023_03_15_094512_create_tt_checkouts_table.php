@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tt_dcs', function (Blueprint $table) {
+        Schema::create('tt_checkouts', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('id_area')->unsigned();
             $table->bigInteger('id_part')->unsigned();
+            $table->foreign('id_area')->references('id')->on('tm_areas');
             $table->foreign('id_part')->references('id')->on('tm_parts');
             $table->bigInteger('qty');
             $table->timestamps();
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tm_dcs');
+        Schema::dropIfExists('checkouts');
     }
 };

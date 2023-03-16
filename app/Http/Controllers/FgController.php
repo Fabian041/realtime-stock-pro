@@ -6,6 +6,35 @@ use Illuminate\Http\Request;
 
 class FgController extends Controller
 {
+    
+    /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    public function fgDc()
+    {
+        return view('layouts.fg.fg-dc');
+    }
+    /**
+     * Display MA dashboard
+     *
+     * 
+     */
+    public function fgMa()
+    {
+        return view('layouts.fg.fg-ma');
+    }
+    /**
+     * Display ASSY dashboard
+     *
+     * 
+     */
+    public function fgAssy()
+    {
+        return view('layouts.fg.fg-assy');
+    }
+
     /**
      * Display a listing of the resource.
      *

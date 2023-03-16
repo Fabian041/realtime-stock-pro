@@ -50,21 +50,22 @@ class StockController extends Controller
         }
 
         // get current quantity
-        $currentDcStock = TtDc::select('qty')->where('part_number',$code)->first();
-        $currentMaStock = TtMa::select('qty')->where('part_number',$code)->first();
-        $currentAsStock = TtAssy::select('qty')->where('part_number',$code)->first();
+        $currentDcStock = TtDc::select('qty')->where('id_part',$idPart)->first();
+        $currentMaStock = TtMa::select('qty')->where('id_part',$idPart)->first();
+        $currentAsStock = TtAssy::select('qty')->where('id_part',$idPart)->first();
 
         //insert part number in line table (tt dc/tt ma) based on line
         if($line == 'DC'){
+            
             // DC Line
             if($currentDcStock === null){
-                TtDc::where('part_number', $code)->create([
-                    'part_number' => $code,
+                TtDc::where('id_part', $idPart)->create([
+                    'id_part' => $idPart,
                     'qty' => 1
                 ]);
             }else{
-                TtDc::where('part_number', $code)->update([
-                    'part_number' => $code,
+                TtDc::where('part_number', $idPart)->update([
+                    'id_part' => $idPart,
                     'qty' => $currentDcStock->qty + 1
                 ]);
             }
@@ -73,40 +74,40 @@ class StockController extends Controller
 
             if($currentMaStock === null){
                 // MA Line
-                TtMa::where('part_number', $code)->create([
-                    'part_number' => $code,
+                TtMa::where('id_part', $idPart)->create([
+                    'id_part' => $idPart,
                     'qty' => 1
                 ]);
             }
 
-            TtMa::where('part_number', $code)->update([
-                'part_number' => $code,
+            TtMa::where('id_part', $idPart)->update([
+                'id_part' => $idPart,
                 'qty' => $currentMaStock->qty + 1
             ]);
 
             // modify DC stock
-            TtDc::where('part_number', $code)->update([
-                'part_number' => $code,
+            TtDc::where('id_part', $idPart)->update([
+                'id_part' => $idPart,
                 'qty' => $currentDcStock->qty - 1
             ]);
 
         }elseif($line == 'AS'){
             if($currentAsStock === null){
                 // AS Line
-                TtAssy::where('part_number', $code)->create([
-                    'part_number' => $code,
+                TtAssy::where('id_part', $idPart)->create([
+                    'id_part' => $idPart,
                     'qty' => 1
                 ]);
             }
 
-            TtAssy::where('part_number', $code)->update([
-                'part_number' => $code,
+            TtAssy::where('id_part', $code)->update([
+                'id_part' => $code,
                 'qty' => $currentAsStock->qty + 1
             ]);
 
             // modify MA stock
-            TtMa::where('part_number', $code)->update([
-                'part_number' => $code,
+            TtMa::where('id_part', $code)->update([
+                'id_part' => $code,
                 'qty' => $currentMaStock->qty - 1
             ]);
         }

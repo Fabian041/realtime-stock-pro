@@ -12,4 +12,9 @@ class TmPart extends Model
     protected $table = 'tm_parts';
 
     protected $guarded = ['id'];
+
+    public function checkout()
+    {
+        return $this->hasMany(TtCheckout::class);
+    }
 }

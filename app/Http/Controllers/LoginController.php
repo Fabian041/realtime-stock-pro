@@ -9,7 +9,7 @@ class LoginController extends Controller
 {
     public function index()
     {
-        return view('layouts.login');
+        return view('layouts.auth.login');
     }
 
     public function authenticate(Request $request)
@@ -24,7 +24,7 @@ class LoginController extends Controller
         {
             $request->session()->regenerate();
 
-            return redirect()->intended('/dashboard/fg-dashboard');
+            return redirect()->intended('/dashboard/material-dashboard');
         }
 
         return redirect()->back()->with('error', 'Email or password do not match our records!');

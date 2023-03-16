@@ -10,7 +10,7 @@ class RegisterController extends Controller
 {
     public function index()
     {
-        return view('layouts.register');
+        return view('layouts.auth.register');
     }
 
     public function store(Request $request)

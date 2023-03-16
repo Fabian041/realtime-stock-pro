@@ -2,7 +2,16 @@
 
 @section('content')
 <div class="row">
-    <h2><strong>WIP Stock Dashboard</strong></h2>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb breadcrumb-style1">
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0);">F/G Stock</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0);" class="active">MA Area</a>
+            </li>
+        </ol>
+    </nav>
 </div>        
 <div class="row">
     <div class="col-lg-4 mb-4">
@@ -10,12 +19,12 @@
             <div class="card accordion-item active p-3">
                 <div class="accordion-header d-flex align-items-center row">
                     <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-warning px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-1" aria-controls="accordionIcon-1"">DC</button>
+                        <button type="button" class="btn btn-lg btn-label-warning px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-1" aria-controls="accordionIcon-1"">TCC</button>
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total F/G</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">{{ $wipDc }}</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">87</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -40,12 +49,12 @@
             <div class="card accordion-item active p-3">
                 <div class="accordion-header d-flex align-items-center row">
                     <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-danger px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-2" aria-controls="accordionIcon-2"">MA</button>
+                        <button type="button" class="btn btn-lg btn-label-danger px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-2" aria-controls="accordionIcon-2"">OPN</button>
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total F/G</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">{{ $wipMa }}</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">76</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -70,12 +79,12 @@
             <div class="card accordion-item active p-3">
                 <div class="accordion-header d-flex align-items-center row">
                     <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-info px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-3" aria-controls="accordionIcon-3"">AS</button>
+                        <button type="button" class="btn btn-lg btn-label-info px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-3" aria-controls="accordionIcon-3"">CSH</button>
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total F/G</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">{{ $wipAs }}</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">98</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">

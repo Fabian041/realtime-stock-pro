@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col">
         <div class="row">
-            <h2><strong>Import Material</strong></h2>
+            <h4><strong>Import Material</strong></h4>
         </div>   
     </div>
 </div>

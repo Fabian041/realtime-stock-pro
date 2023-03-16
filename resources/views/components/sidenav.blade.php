@@ -93,29 +93,65 @@
     <div class="menu-inner-shadow"></div>
     
     <ul class="menu-inner py-1 mt-3">
-        <li class="menu-item {{ (request()->is('dashboard/*')) ? 'active' : '' }} {{ (request()->is('dashboard/*')) ? 'open' : '' }}">
+        <li class="menu-item {{ (request()->is('dashboard/fg/*')) ? 'active' : '' }} {{ (request()->is('dashboard/fg/*')) ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle" >
-                <i class="menu-icon tf-icons bx bxs-dashboard"></i>
-                <div>Dashboards</div>
+                <i class="menu-icon tf-icons bx bx-package"></i>
+                <div>F/G Stock</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ (request()->is('dashboard/fg-dashboard')) ? 'active' : '' }}">
-                    <a href="{{ route('fg.dashboard') }}" class="menu-link " >
-                        <div>F/G Stock</div>
+                <li class="menu-item {{ (request()->is('dashboard/fg/dc')) ? 'active' : '' }}">
+                    <a href="{{ route('fg.dc') }}" class="menu-link " >
+                        <div>DC Area</div>
                     </a>
                 </li>
-                <li class="menu-item {{ (request()->is('dashboard/wip-dashboard')) ? 'active' : '' }}">
-                    <a href="{{ route('wip.dashboard') }}" class="menu-link" >
-                        <div>WIP Stock</div>
+                <li class="menu-item {{ (request()->is('dashboard/fg/ma')) ? 'active' : '' }}">
+                    <a href="{{ route('fg.ma') }}" class="menu-link" >
+                        <div>MA Area</div>
                     </a>
                     
                 </li>
-                <li class="menu-item {{ (request()->is('dashboard/material-dashboard')) ? 'active' : '' }}">
-                    <a href="{{ route('material.dashboard') }}" class="menu-link " >
-                        <div>Material Stock</div>
+                <li class="menu-item {{ (request()->is('dashboard/fg/assy')) ? 'active' : '' }}">
+                    <a href="{{ route('fg.assy') }}" class="menu-link " >
+                        <div>ASSY Area</div>
                     </a>
                 </li>
             </ul>
+        </li>
+        <li class="menu-item {{ (request()->is('dashboard/wip/*')) ? 'active' : '' }} {{ (request()->is('dashboard/wip/*')) ? 'open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle" >
+                <i class="menu-icon tf-icons bx bx-box"></i>
+                <div>WIP Stock</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ (request()->is('dashboard/wip/dc')) ? 'active' : '' }}">
+                    <a href="{{ route('wip.dc') }}" class="menu-link " >
+                        <div>DC Area</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ (request()->is('dashboard/wip/ma')) ? 'active' : '' }}">
+                    <a href="{{ route('wip.ma') }}" class="menu-link" >
+                        <div>MA Area</div>
+                    </a>
+                    
+                </li>
+                <li class="menu-item {{ (request()->is('dashboard/wip/assy')) ? 'active' : '' }}">
+                    <a href="{{ route('wip.assy') }}" class="menu-link " >
+                        <div>ASSY Area</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item {{ (request()->is('dashboard/material-dashboard')) ? 'active' : '' }}">
+          <a href="{{ route('material.dashboard') }}" class="menu-link " >
+              <i class="menu-icon tf-icons bx bxs-component"></i>
+              <div>Material Stock</div>
+          </a>
+        </li>
+        <li class="menu-item {{ (request()->is('dashboard/checkout')) ? 'active' : '' }}">
+          <a href="{{ route('checkout.index') }}" class="menu-link " >
+              <i class="menu-icon tf-icons bx bx-log-out"></i>
+              <div>Checkout Material</div>
+          </a>
         </li>
         <li class="menu-item {{ (request()->is('master/*')) ? 'active' : '' }} {{ (request()->is('master/*')) ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle" >
@@ -131,8 +167,7 @@
                 <li class="menu-item {{ (request()->is('master/part-number-master')) ? 'active' : '' }}">
                     <a href="{{ route('part-number.master') }}" class="menu-link" >
                         <div>Import Part</div>
-                    </a>
-                    
+                    </a>  
                 </li>
             </ul>
         </li> 

@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="row">
-    <h2><strong>Material Stock Dashboard</strong></h2>
+    <h4><strong>Material Stock Dashboard</strong></h4>
 </div>        
 <div class="row">
     <div class="col-lg-4 mb-4">

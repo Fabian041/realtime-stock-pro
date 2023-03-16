@@ -16,7 +16,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return view('layouts.profile');
+        return view('layouts.auth.profile');
     }
 
     /**

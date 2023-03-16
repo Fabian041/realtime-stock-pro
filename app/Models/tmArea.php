@@ -12,4 +12,9 @@ class TmArea extends Model
     protected $table = 'tm_areas';
 
     protected $guarded = ['id'];
+
+    public function checkout()
+    {
+        return $this->hasMany(TtCheckout::class);
+    }
 }

@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('tt_assy', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('part_number')->unique();
+            $table->bigInteger('id_part')->unsigned();
+            $table->foreign('id_part')->references('id')->on('tm_parts');
             $table->bigInteger('qty');
             $table->timestamps();
         });

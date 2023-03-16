@@ -23,7 +23,7 @@ use App\Http\Controllers\ProfileController;
 */
 
 Route::get('/', function () {
-    return view('layouts.login');
+    return view('layouts.auth.login');
 })->middleware('guest');
 
 Route::middleware(['guest'])->group(function () {
@@ -41,11 +41,24 @@ Route::middleware(['auth'])->group(function () {
     
     Route::prefix('/dashboard')->group(function () {
     
-        Route::get('/fg-dashboard', [FgController::class, 'index'])->name('fg.dashboard');
+        // finsih good dashboard
+        Route::get('/fg/dc', [FgController::class, 'fgDc'])->name('fg.dc');
+        Route::get('/fg/ma', [FgController::class, 'fgMa'])->name('fg.ma');
+        Route::get('/fg/assy', [FgController::class, 'fgAssy'])->name('fg.assy');
+
+        // wip dashboard
+        Route::get('/wip/dc', [WipController::class, 'wipDc'])->name('wip.dc');
+        Route::get('/wip/ma', [WipController::class, 'wipMa'])->name('wip.ma');
+        Route::get('/wip/assy', [WipController::class, 'wipAssy'])->name('wip.assy');
+
         Route::get('/material-dashboard', [MaterialController::class, 'index'])->name('material.dashboard');
         Route::get('/getMaterial', [MaterialController::class, 'getMaterial'])->name('material.get');
-        Route::get('/wip-dashboard', [WipController::class, 'index'])->name('wip.dashboard');
         
+        // checkout proccess
+        Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');
+        Route::get('/checkout/getData', [MaterialController::class, 'getDataCheckout'])->name('checkout.getData');
+        Route::post('/checkout/store', [MaterialController::class, 'checkoutStore'])->name('checkout.store');
+
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
         Route::post('/profile-update', [ProfileController::class, 'update'])->name('profile.update');
     });
