@@ -161,9 +161,7 @@
 
         getCkd();
         getImport();
-        getLocal();
-        
-
+        getLocal();        
         
         $('.quantity').each(function () {
             var $this = $(this);
@@ -379,7 +377,6 @@
                 }
             });
         };
-
     });
 </script>
 @endsection

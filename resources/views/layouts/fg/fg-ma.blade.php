@@ -118,28 +118,39 @@
                 <li class="nav-item">
                     <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-messages" aria-controls="navs-pills-top-messages" aria-selected="false">CSH</button>
                 </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-material" aria-controls="navs-pills-top-material" aria-selected="false">MATERIAL</button>
+                </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="navs-pills-top-home" role="tabpanel">
                     <div class="card-body">
-                        <div id="incomeChart"></div>
+                        <div id="tccChart"></div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
                     <div class="card-body">
-                        <div id="totalRevenueChart"></div>     
+                        <div id="opnChart"></div>     
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-messages" role="tabpanel">
                     <div class="card-body">
-                        <div id="profileReportChart"></div> 
+                        <div id="cshChart"></div> 
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="navs-pills-top-material" role="tabpanel">
+                    <div class="card-body">
+                        <div id="materialChart"></div> 
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+@vite('resources/js/app.js')
+<script src="https://cdn.jsdelivr.net/npm/countup.js@1.9.3/dist/countUp.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script> 
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     $( document ).ready(function() {
 
@@ -154,6 +165,279 @@
                 }
             });
         });
+
+        getTcc();
+        getOpn();
+        getCsh();    
+        getMaterial();    
+
+        var options = {
+            chart: {
+                height: 300,
+                type: 'bar',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                    from: 'bottom',
+                    animateGradually: {
+                        enabled: true,
+                        delay: 150
+                    },
+                    dynamicAnimation: {
+                        enabled: true,
+                        speed: 350
+                    }
+                }
+            },
+            colors: '#696CFF',
+            noData: {
+                text: 'Loading...'
+            },
+            legend: {
+                show: true,
+                showForSingleSeries: true,
+                customLegendItems: ['Actual', 'Limit'],
+                markers: {
+                    fillColors: ['#696CFF', '#00E396']
+                }
+            },
+            series: [{
+                name: 'Quantity',
+                data: []
+            }],
+        }
+
+        var options2 = {
+            chart: {
+                height: 300,
+                type: 'bar',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                    from: 'bottom',
+                    animateGradually: {
+                        enabled: true,
+                        delay: 150
+                    },
+                    dynamicAnimation: {
+                        enabled: true,
+                        speed: 350
+                    }
+                }
+            },
+            colors: '#696CFF',
+            noData: {
+                text: 'Loading...'
+            },
+            legend: {
+                show: true,
+                showForSingleSeries: true,
+                customLegendItems: ['Actual', 'Limit'],
+                markers: {
+                    fillColors: ['#696CFF', '#00E396']
+                }
+            },
+            series: [{
+                name: 'Quantity',
+                data: []
+            }],
+        }
+
+        var options3 = {
+            chart: {
+                height: 300,
+                type: 'bar',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                    from: 'bottom',
+                    animateGradually: {
+                        enabled: true,
+                        delay: 150
+                    },
+                    dynamicAnimation: {
+                        enabled: true,
+                        speed: 350
+                    }
+                }
+            },
+            colors: '#696CFF',
+            noData: {
+                text: 'Loading...'
+            },
+            legend: {
+                show: true,
+                showForSingleSeries: true,
+                customLegendItems: ['Actual', 'Limit'],
+                markers: {
+                    fillColors: ['#696CFF', '#00E396']
+                }
+            },
+            series: [{
+                name: 'Quantity',
+                data: []
+            }],
+        }
+
+        var options4 = {
+            chart: {
+                height: 300,
+                type: 'bar',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                    from: 'bottom',
+                    animateGradually: {
+                        enabled: true,
+                        delay: 150
+                    },
+                    dynamicAnimation: {
+                        enabled: true,
+                        speed: 350
+                    }
+                }
+            },
+            colors: '#696CFF',
+            noData: {
+                text: 'Loading...'
+            },
+            legend: {
+                show: true,
+                showForSingleSeries: true,
+                customLegendItems: ['Actual', 'Limit'],
+                markers: {
+                    fillColors: ['#696CFF', '#00E396']
+                }
+            },
+            series: [{
+                name: 'Quantity',
+                data: []
+            }],
+        }
+
+        var chartTcc = new ApexCharts(document.querySelector("#tccChart"), options);
+        var chartOpn = new ApexCharts(document.querySelector("#opnChart"), options2);
+        var chartCsh = new ApexCharts(document.querySelector("#cshChart"), options3);
+        var chartMaterial = new ApexCharts(document.querySelector("#materialChart"), options4);
+
+        chartTcc.render(); 
+        chartOpn.render(); 
+        chartCsh.render(); 
+        chartMaterial.render(); 
+
+        function getTcc() {
+            $.ajax({
+                url: '/dashboard/getfgPart/Ma',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    chartTcc.updateSeries([{
+                        name: 'Total Part',
+                        data: data.dataTcc.map(function(item){
+                            return {
+                                x: item.part_name,
+                                y: item.qty,
+                                goals: [
+                                    {
+                                        name: 'Limit',
+                                        value: item.qty_limit,
+                                        strokeHeight: 5,
+                                        strokeColor: '#00E396'
+                                    }
+                                ]
+                            }
+                        })
+                    }]);
+
+                }
+            });
+        };
+
+        function getOpn() {
+            $.ajax({
+                url: '/dashboard/getFgPart/Ma',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    chartOpn.updateSeries([{
+                        name: 'Total Part',
+                        data: data.dataOpn.map(function(item){
+                            return {
+                                x: item.part_name,
+                                y: item.qty,
+                                goals: [
+                                    {
+                                        name: 'Limit',
+                                        value: item.qty_limit,
+                                        strokeHeight: 5,
+                                        strokeColor: '#00E396'
+                                    }
+                                ]
+                            }
+                        })
+                    }]);
+                }
+            });
+        };
+
+        function getCsh() {
+            $.ajax({
+                url: '/dashboard/getFgPart/Ma',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    chartCsh.updateSeries([{
+                        name: 'Total Part',
+                        data: data.dataCsh.map(function(item){
+                            return {
+                                x: item.part_name,
+                                y: item.qty,
+                                goals: [
+                                    {
+                                        name: 'Limit',
+                                        value: item.qty_limit,
+                                        strokeHeight: 5,
+                                        strokeColor: '#00E396'
+                                    }
+                                ]
+                            }
+                        })
+                    }]);
+
+                }
+            });
+        };
+
+        function getMaterial() {
+            $.ajax({
+                url: '/dashboard/getMaterial',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    chartMaterial.updateSeries([{
+                        name: 'Total Material',
+                        data: data.dataMaterial.map(function(item){
+                            return {
+                                x: item.part_name,
+                                y: item.qty,
+                                goals: [
+                                    {
+                                        name: 'Limit',
+                                        value: item.qty_limit,
+                                        strokeHeight: 5,
+                                        strokeColor: '#00E396'
+                                    }
+                                ]
+                            }
+                        })
+                    }]);
+                }
+            });
+        };
 
     });
 </script>

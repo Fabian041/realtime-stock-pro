@@ -53,6 +53,11 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/material-dashboard', [MaterialController::class, 'index'])->name('material.dashboard');
         Route::get('/getMaterial', [MaterialController::class, 'getMaterial'])->name('material.get');
+
+        // get finsih good part
+        Route::get('/getFgPart/Ma', [FgController::class, 'getPartMa'])->name('partMa.get');
+        Route::get('/getFgPart/Dc', [FgController::class, 'getPartDc'])->name('partDc.get');
+        Route::get('/getFgPart/Assy', [FgController::class, 'getPartAssy'])->name('partAssy.get');
         
         // checkout proccess
         Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');

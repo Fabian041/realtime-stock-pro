@@ -16,6 +16,11 @@ class FgController extends Controller
     {
         return view('layouts.fg.fg-dc');
     }
+
+    public function getPartMa()
+    {
+        
+    }
     /**
      * Display MA dashboard
      *
