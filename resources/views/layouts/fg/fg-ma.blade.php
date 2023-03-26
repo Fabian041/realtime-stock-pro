@@ -23,7 +23,7 @@
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total F/G</span>
+                        <span class="mb-1">Total Stock</span>
                         <h3 class="card-title text-nowrap mt-2"><strong class="quantity">87</strong> Pcs</h3>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total F/G</span>
+                        <span class="mb-1">Total Stock</span>
                         <h3 class="card-title text-nowrap mt-2"><strong class="quantity">76</strong> Pcs</h3>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total F/G</span>
+                        <span class="mb-1">Total Stock</span>
                         <h3 class="card-title text-nowrap mt-2"><strong class="quantity">98</strong> Pcs</h3>
                     </div>
                 </div>
@@ -138,11 +138,6 @@
                         <div id="cshChart"></div> 
                     </div>
                 </div>
-                <div class="tab-pane fade" id="navs-pills-top-material" role="tabpanel">
-                    <div class="card-body">
-                        <div id="materialChart"></div> 
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -169,7 +164,6 @@
         getTcc();
         getOpn();
         getCsh();    
-        getMaterial();    
 
         var options = {
             chart: {
@@ -282,56 +276,17 @@
             }],
         }
 
-        var options4 = {
-            chart: {
-                height: 300,
-                type: 'bar',
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                    from: 'bottom',
-                    animateGradually: {
-                        enabled: true,
-                        delay: 150
-                    },
-                    dynamicAnimation: {
-                        enabled: true,
-                        speed: 350
-                    }
-                }
-            },
-            colors: '#696CFF',
-            noData: {
-                text: 'Loading...'
-            },
-            legend: {
-                show: true,
-                showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
-                markers: {
-                    fillColors: ['#696CFF', '#00E396']
-                }
-            },
-            series: [{
-                name: 'Quantity',
-                data: []
-            }],
-        }
-
         var chartTcc = new ApexCharts(document.querySelector("#tccChart"), options);
         var chartOpn = new ApexCharts(document.querySelector("#opnChart"), options2);
         var chartCsh = new ApexCharts(document.querySelector("#cshChart"), options3);
-        var chartMaterial = new ApexCharts(document.querySelector("#materialChart"), options4);
 
         chartTcc.render(); 
         chartOpn.render(); 
         chartCsh.render(); 
-        chartMaterial.render(); 
 
         function getTcc() {
             $.ajax({
-                url: '/dashboard/getfgPart/Ma',
+                url: '/dashboard/getFgPart/ma',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -359,7 +314,7 @@
 
         function getOpn() {
             $.ajax({
-                url: '/dashboard/getFgPart/Ma',
+                url: '/dashboard/getFgPart/ma',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -386,7 +341,7 @@
 
         function getCsh() {
             $.ajax({
-                url: '/dashboard/getFgPart/Ma',
+                url: '/dashboard/getFgPart/ma',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -408,33 +363,6 @@
                         })
                     }]);
 
-                }
-            });
-        };
-
-        function getMaterial() {
-            $.ajax({
-                url: '/dashboard/getMaterial',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    chartMaterial.updateSeries([{
-                        name: 'Total Material',
-                        data: data.dataMaterial.map(function(item){
-                            return {
-                                x: item.part_name,
-                                y: item.qty,
-                                goals: [
-                                    {
-                                        name: 'Limit',
-                                        value: item.qty_limit,
-                                        strokeHeight: 5,
-                                        strokeColor: '#00E396'
-                                    }
-                                ]
-                            }
-                        })
-                    }]);
                 }
             });
         };

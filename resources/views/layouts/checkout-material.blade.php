@@ -77,8 +77,8 @@
                         <label class="form-label" for="id_part">Material Name</label>
                         <select class="form-select" id="id_part" aria-label="Default select example" name="id_part">
                             <option value="null" selected>Pilih Material</option>
-                            @foreach ($parts as $item)
-                                <option value="{{ $item->id }}">{{ $item->part_name }}</option>
+                            @foreach ($materials as $item)
+                                <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }} )</option>
                             @endforeach
                         </select>
 

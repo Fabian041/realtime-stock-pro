@@ -9,6 +9,7 @@ use App\Models\TmArea;
 use App\Models\TmPart;
 use App\Models\TtAssy;
 use App\Models\TtStock;
+use App\Models\TmMaterial;
 use App\Models\TtCheckout;
 use Illuminate\Http\Request;
 use App\Events\StockDataUpdated;
@@ -20,21 +21,49 @@ use Illuminate\Support\Facades\Broadcast;
 class MaterialController extends Controller
 {
     /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    public function materialPpic()
+    {
+        return view('layouts.material.material-ppic');
+    }
+    /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    public function materialDc()
+    {
+        return view('layouts.material.material-dc');
+    }
+    /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    public function materialMa()
+    {
+        return view('layouts.material.material-ma');
+    }
+    /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    public function materialAssy()
+    {
+        return view('layouts.material.material-assy');
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $ckd = TtStock::where('source', 'like', '%CKD%')->sum('qty');
-        $import = TtStock::where('source', 'like', '%IMPORT%')->sum('qty');
-        $local = TtStock::where('source', 'like', '%LOCAL%')->sum('qty');
-
-        return view('layouts.material-dashboard',[
-            'ckd' => $ckd,
-            'import' => $import,
-            'local' => $local,
-        ]);
+        //    
     }
 
     /**
@@ -135,7 +164,7 @@ class MaterialController extends Controller
     {
         return view('layouts.checkout-material',[
             'area' => TmArea::all(),
-            'parts' => TmPart::all(),
+            'materials' => TmMaterial::all(),
         ]);
     }
 
@@ -143,7 +172,7 @@ class MaterialController extends Controller
     {
         $validatedData = $request->validate([
             'id_area' => 'required', //get id
-            'id_part' => 'required', //get id
+            'id_material' => 'required', //get id
             'qty' => 'required'
         ]);
 

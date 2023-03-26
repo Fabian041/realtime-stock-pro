@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('tt_checkouts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('id_area')->unsigned();
-            $table->bigInteger('id_part')->unsigned();
+            $table->bigInteger('id_material')->unsigned();
             $table->foreign('id_area')->references('id')->on('tm_areas');
-            $table->foreign('id_part')->references('id')->on('tm_parts');
+            $table->foreign('id_material')->references('id')->on('tm_materials');
             $table->bigInteger('qty');
             $table->timestamps();
         });

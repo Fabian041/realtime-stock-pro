@@ -141,11 +141,34 @@
                 </li>
             </ul>
         </li>
-        <li class="menu-item {{ (request()->is('dashboard/material-dashboard')) ? 'active' : '' }}">
-          <a href="{{ route('material.dashboard') }}" class="menu-link " >
-              <i class="menu-icon tf-icons bx bxs-component"></i>
-              <div>Material Stock</div>
-          </a>
+        <li class="menu-item {{ (request()->is('dashboard/material/*')) ? 'active' : '' }} {{ (request()->is('dashboard/material/*')) ? 'open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle" >
+                <i class="menu-icon tf-icons bx bxs-component"></i>
+                <div>Material Stock</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ (request()->is('dashboard/material/ppic')) ? 'active' : '' }}">
+                    <a href="{{ route('material.ppic') }}" class="menu-link " >
+                        <div>PPIC Area</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ (request()->is('dashboard/material/dc')) ? 'active' : '' }}">
+                    <a href="{{ route('material.dc') }}" class="menu-link " >
+                        <div>DC Area</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ (request()->is('dashboard/material/ma')) ? 'active' : '' }}">
+                    <a href="{{ route('material.ma') }}" class="menu-link" >
+                        <div>MA Area</div>
+                    </a>
+                    
+                </li>
+                <li class="menu-item {{ (request()->is('dashboard/material/assy')) ? 'active' : '' }}">
+                    <a href="{{ route('material.assy') }}" class="menu-link " >
+                        <div>ASSY Area</div>
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="menu-item {{ (request()->is('dashboard/checkout')) ? 'active' : '' }}">
           <a href="{{ route('checkout.index') }}" class="menu-link " >

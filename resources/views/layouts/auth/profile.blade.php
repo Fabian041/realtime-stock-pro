@@ -96,7 +96,6 @@
                                 <label class="form-label" for="confirmPassword">Current Password</label>
                                 <div class="input-group input-group-merge">
                                     <input class="form-control @error('current-password') is-invalid @enderror" type="password" name="current-password" id="current-password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" required/>
-                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
 
                                     @error('current-password')
                                         <div class="invalid-feedback">
@@ -111,7 +110,6 @@
                                         <label class="form-label" for="newPassword">New Password</label>
                                         <div class="input-group input-group-merge">
                                             <input class="form-control @error('new-password') is-invalid @enderror" type="password" id="new-password" name="new-password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" required/>
-                                            <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
 
                                             @error('new-password')
                                                 <div class="invalid-feedback">
@@ -126,7 +124,6 @@
                                         <label class="form-label" for="confirmPassword">Confirm New Password</label>
                                         <div class="input-group input-group-merge">
                                             <input class="form-control @error('new-password_confirmation') is-invalid @enderror" type="password" name="new-password_confirmation" id="confirmPassword" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" required />
-                                            <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
 
                                             @error('password_confirmation')
                                                 <div class="invalid-feedback">

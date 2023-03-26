@@ -51,13 +51,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/wip/ma', [WipController::class, 'wipMa'])->name('wip.ma');
         Route::get('/wip/assy', [WipController::class, 'wipAssy'])->name('wip.assy');
 
-        Route::get('/material-dashboard', [MaterialController::class, 'index'])->name('material.dashboard');
+        // material dashboard
+        Route::get('/material/ppic', [MaterialController::class, 'materialPpic'])->name('material.ppic');
+        Route::get('/material/dc', [MaterialController::class, 'materialDc'])->name('material.dc');
+        Route::get('/material/ma', [MaterialController::class, 'materialMa'])->name('material.ma');
+        Route::get('/material/assy', [MaterialController::class, 'materialAssy'])->name('material.assy');
+
         Route::get('/getMaterial', [MaterialController::class, 'getMaterial'])->name('material.get');
 
         // get finsih good part
-        Route::get('/getFgPart/Ma', [FgController::class, 'getPartMa'])->name('partMa.get');
-        Route::get('/getFgPart/Dc', [FgController::class, 'getPartDc'])->name('partDc.get');
-        Route::get('/getFgPart/Assy', [FgController::class, 'getPartAssy'])->name('partAssy.get');
+        Route::get('/getFgPart/ma', [FgController::class, 'getPartMa'])->name('partMa.get');
+        Route::get('/getFgPart/dc', [FgController::class, 'getPartDc'])->name('partDc.get');
+        Route::get('/getFgPart/assy', [FgController::class, 'getPartAssy'])->name('partAssy.get');
+
+        // get wip part
+        Route::get('/getWipPart/ma', [WipController::class, 'getPartMa'])->name('partMa.get');
+        Route::get('/getWipPart/dc', [WipController::class, 'getPartDc'])->name('partDc.get');
+        Route::get('/getWipPart/assy', [WipController::class, 'getPartAssy'])->name('partAssy.get');
         
         // checkout proccess
         Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');

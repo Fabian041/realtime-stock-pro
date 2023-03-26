@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TtStock extends Model
+class TmMaterial extends Model
 {
     use HasFactory;
-    protected $table = 'tt_stocks';
+    protected $table = 'tm_materials';
 
-    protected $guarded = ['updated_at']; 
+    protected $guarded = ['id']; 
 }

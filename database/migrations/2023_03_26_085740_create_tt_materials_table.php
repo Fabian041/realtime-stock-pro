@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tt_fgs', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('part_number')->unique();
-            $table->bigInteger('qty');
+        Schema::create('tt_materials', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('id_material')->unsigned();
+            $table->foreign('id_material')->references('id')->on('tm_materials');
+            $table->integer('qty');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tm_fgs');
+        Schema::dropIfExists('tt_materials');
     }
 };

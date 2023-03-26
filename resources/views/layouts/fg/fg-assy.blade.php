@@ -23,7 +23,7 @@
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total F/G</span>
+                        <span class="mb-1">Total Stock</span>
                         <h3 class="card-title text-nowrap mt-2"><strong class="quantity">87</strong> Pcs</h3>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total F/G</span>
+                        <span class="mb-1">Total Stock</span>
                         <h3 class="card-title text-nowrap mt-2"><strong class="quantity">76</strong> Pcs</h3>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total F/G</span>
+                        <span class="mb-1">Total Stock</span>
                         <h3 class="card-title text-nowrap mt-2"><strong class="quantity">98</strong> Pcs</h3>
                     </div>
                 </div>
@@ -122,24 +122,27 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="navs-pills-top-home" role="tabpanel">
                     <div class="card-body">
-                        <div id="incomeChart"></div>
+                        <div id="tccChart"></div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
                     <div class="card-body">
-                        <div id="totalRevenueChart"></div>     
+                        <div id="opnChart"></div>     
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-messages" role="tabpanel">
                     <div class="card-body">
-                        <div id="profileReportChart"></div> 
+                        <div id="cshChart"></div> 
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+@vite('resources/js/app.js')
+<script src="https://cdn.jsdelivr.net/npm/countup.js@1.9.3/dist/countUp.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script> 
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     $( document ).ready(function() {
 
@@ -154,6 +157,212 @@
                 }
             });
         });
+
+        getTcc();
+        getOpn();
+        getCsh();    
+
+        var options = {
+            chart: {
+                height: 300,
+                type: 'bar',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                    from: 'bottom',
+                    animateGradually: {
+                        enabled: true,
+                        delay: 150
+                    },
+                    dynamicAnimation: {
+                        enabled: true,
+                        speed: 350
+                    }
+                }
+            },
+            colors: '#696CFF',
+            noData: {
+                text: 'Loading...'
+            },
+            legend: {
+                show: true,
+                showForSingleSeries: true,
+                customLegendItems: ['Actual', 'Limit'],
+                markers: {
+                    fillColors: ['#696CFF', '#00E396']
+                }
+            },
+            series: [{
+                name: 'Quantity',
+                data: []
+            }],
+        }
+
+        var options2 = {
+            chart: {
+                height: 300,
+                type: 'bar',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                    from: 'bottom',
+                    animateGradually: {
+                        enabled: true,
+                        delay: 150
+                    },
+                    dynamicAnimation: {
+                        enabled: true,
+                        speed: 350
+                    }
+                }
+            },
+            colors: '#696CFF',
+            noData: {
+                text: 'Loading...'
+            },
+            legend: {
+                show: true,
+                showForSingleSeries: true,
+                customLegendItems: ['Actual', 'Limit'],
+                markers: {
+                    fillColors: ['#696CFF', '#00E396']
+                }
+            },
+            series: [{
+                name: 'Quantity',
+                data: []
+            }],
+        }
+
+        var options3 = {
+            chart: {
+                height: 300,
+                type: 'bar',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                    from: 'bottom',
+                    animateGradually: {
+                        enabled: true,
+                        delay: 150
+                    },
+                    dynamicAnimation: {
+                        enabled: true,
+                        speed: 350
+                    }
+                }
+            },
+            colors: '#696CFF',
+            noData: {
+                text: 'Loading...'
+            },
+            legend: {
+                show: true,
+                showForSingleSeries: true,
+                customLegendItems: ['Actual', 'Limit'],
+                markers: {
+                    fillColors: ['#696CFF', '#00E396']
+                }
+            },
+            series: [{
+                name: 'Quantity',
+                data: []
+            }],
+        }
+
+        var chartTcc = new ApexCharts(document.querySelector("#tccChart"), options);
+        var chartOpn = new ApexCharts(document.querySelector("#opnChart"), options2);
+        var chartCsh = new ApexCharts(document.querySelector("#cshChart"), options3);
+
+        chartTcc.render(); 
+        chartOpn.render(); 
+        chartCsh.render(); 
+
+        function getTcc() {
+            $.ajax({
+                url: '/dashboard/getFgPart/assy',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    chartTcc.updateSeries([{
+                        name: 'Total Part',
+                        data: data.dataTcc.map(function(item){
+                            return {
+                                x: item.part_name,
+                                y: item.qty,
+                                goals: [
+                                    {
+                                        name: 'Limit',
+                                        value: item.qty_limit,
+                                        strokeHeight: 5,
+                                        strokeColor: '#00E396'
+                                    }
+                                ]
+                            }
+                        })
+                    }]);
+
+                }
+            });
+        };
+
+        function getOpn() {
+            $.ajax({
+                url: '/dashboard/getFgPart/assy',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    chartOpn.updateSeries([{
+                        name: 'Total Part',
+                        data: data.dataOpn.map(function(item){
+                            return {
+                                x: item.part_name,
+                                y: item.qty,
+                                goals: [
+                                    {
+                                        name: 'Limit',
+                                        value: item.qty_limit,
+                                        strokeHeight: 5,
+                                        strokeColor: '#00E396'
+                                    }
+                                ]
+                            }
+                        })
+                    }]);
+                }
+            });
+        };
+
+        function getCsh() {
+            $.ajax({
+                url: '/dashboard/getFgPart/assy',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    chartCsh.updateSeries([{
+                        name: 'Total Part',
+                        data: data.dataCsh.map(function(item){
+                            return {
+                                x: item.part_name,
+                                y: item.qty,
+                                goals: [
+                                    {
+                                        name: 'Limit',
+                                        value: item.qty_limit,
+                                        strokeHeight: 5,
+                                        strokeColor: '#00E396'
+                                    }
+                                ]
+                            }
+                        })
+                    }]);
+
+                }
+            });
+        };
 
     });
 </script>

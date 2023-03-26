@@ -5,10 +5,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb breadcrumb-style1">
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);">WIP Stock</a>
+                <a href="javascript:void(0);">Material Stock</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">Assy Area</a>
+                <a href="javascript:void(0);" class="active">PPIC Area</a>
             </li>
         </ol>
     </nav>
@@ -19,12 +19,12 @@
             <div class="card accordion-item active p-3">
                 <div class="accordion-header d-flex align-items-center row">
                     <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-warning px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-1" aria-controls="accordionIcon-1"">TCC</button>
+                        <button type="button" class="btn btn-lg btn-label-warning px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-1" aria-controls="accordionIcon-1"">CKD</button>
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">87</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity">1298</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -49,12 +49,12 @@
             <div class="card accordion-item active p-3">
                 <div class="accordion-header d-flex align-items-center row">
                     <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-danger px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-2" aria-controls="accordionIcon-2"">OPN</button>
+                        <button type="button" class="btn btn-lg btn-label-danger px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-2" aria-controls="accordionIcon-2"">IMPORT</button>
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">76</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity">1298</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -79,12 +79,12 @@
             <div class="card accordion-item active p-3">
                 <div class="accordion-header d-flex align-items-center row">
                     <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-info px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-3" aria-controls="accordionIcon-3"">CSH</button>
+                        <button type="button" class="btn btn-lg btn-label-info px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-3" aria-controls="accordionIcon-3"">LOCAL</button>
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">98</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity">1298</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -110,35 +110,36 @@
         <div class="nav-align-top mb-4">
             <ul class="nav nav-pills mb-3" role="tablist">
                 <li class="nav-item">
-                    <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-home" aria-controls="navs-pills-top-home" aria-selected="true">TCC</button>
+                    <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-home" aria-controls="navs-pills-top-home" aria-selected="true">CKD</button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-profile" aria-controls="navs-pills-top-profile" aria-selected="false">OPN</button>
+                    <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-profile" aria-controls="navs-pills-top-profile" aria-selected="false">IMPORT</button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-messages" aria-controls="navs-pills-top-messages" aria-selected="false">CSH</button>
+                    <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-messages" aria-controls="navs-pills-top-messages" aria-selected="false">LOCAL</button>
                 </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="navs-pills-top-home" role="tabpanel">
                     <div class="card-body">
-                        <div id="tccChart"></div>
+                        <div id="ckdChart"></div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
                     <div class="card-body">
-                        <div id="opnChart"></div>     
+                        <div id="importChart"></div>     
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-messages" role="tabpanel">
                     <div class="card-body">
-                        <div id="cshChart"></div> 
+                        <div id="localChart"></div> 
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @vite('resources/js/app.js')
 <script src="https://cdn.jsdelivr.net/npm/countup.js@1.9.3/dist/countUp.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script> 
@@ -146,6 +147,31 @@
 <script>
     $( document ).ready(function() {
 
+        let ckdCounter = new CountUp('ckd', 0);
+        let importCounter = new CountUp('import', 0);
+        let localCounter = new CountUp('local', 0);
+
+        var pusher = new Pusher('31df202f78fc0dace852', {
+                cluster: 'ap1',
+                forceTLS: true
+            });
+
+        pusher.subscribe('stock-data').bind('StockDataUpdated', function(data) {
+            
+            document.querySelector('#ckd').innerText = data[0];
+            document.querySelector('#import').innerText = data[1];
+            document.querySelector('#local').innerText = data[2];
+            
+            ckdCounter.update(data[0]);
+            importCounter.update(data[1]);
+            localCounter.update(data[2]);
+
+        });
+
+        getCkd();
+        getImport();
+        getLocal();        
+        
         $('.quantity').each(function () {
             var $this = $(this);
             console.log($this.text());
@@ -158,9 +184,6 @@
             });
         });
 
-        getTcc();
-        getOpn();
-        getCsh();    
 
         var options = {
             chart: {
@@ -273,23 +296,23 @@
             }],
         }
 
-        var chartTcc = new ApexCharts(document.querySelector("#tccChart"), options);
-        var chartOpn = new ApexCharts(document.querySelector("#opnChart"), options2);
-        var chartCsh = new ApexCharts(document.querySelector("#cshChart"), options3);
+        var chartCkd = new ApexCharts(document.querySelector("#ckdChart"), options);
+        var chartImport = new ApexCharts(document.querySelector("#importChart"), options2);
+        var chartLocal = new ApexCharts(document.querySelector("#localChart"), options3);
 
-        chartTcc.render(); 
-        chartOpn.render(); 
-        chartCsh.render(); 
+        chartCkd.render(); 
+        chartImport.render(); 
+        chartLocal.render(); 
 
-        function getTcc() {
+        function getCkd() {
             $.ajax({
-                url: '/dashboard/getWipPart/assy',
+                url: '/dashboard/getMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    chartTcc.updateSeries([{
-                        name: 'Total Part',
-                        data: data.dataTcc.map(function(item){
+                    chartCkd.updateSeries([{
+                        name: 'Total Material',
+                        data: data.dataCkd.map(function(item){
                             return {
                                 x: item.part_name,
                                 y: item.qty,
@@ -309,15 +332,15 @@
             });
         };
 
-        function getOpn() {
+        function getImport() {
             $.ajax({
-                url: '/dashboard/getWipPart/assy',
+                url: '/dashboard/getMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    chartOpn.updateSeries([{
-                        name: 'Total Part',
-                        data: data.dataOpn.map(function(item){
+                    chartImport.updateSeries([{
+                        name: 'Total Material',
+                        data: data.dataImport.map(function(item){
                             return {
                                 x: item.part_name,
                                 y: item.qty,
@@ -336,15 +359,15 @@
             });
         };
 
-        function getCsh() {
+        function getLocal() {
             $.ajax({
-                url: '/dashboard/getWipPart/assy',
+                url: '/dashboard/getMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    chartCsh.updateSeries([{
-                        name: 'Total Part',
-                        data: data.dataCsh.map(function(item){
+                    chartLocal.updateSeries([{
+                        name: 'Total Material',
+                        data: data.dataLocal.map(function(item){
                             return {
                                 x: item.part_name,
                                 y: item.qty,
@@ -363,7 +386,6 @@
                 }
             });
         };
-
     });
 </script>
 @endsection

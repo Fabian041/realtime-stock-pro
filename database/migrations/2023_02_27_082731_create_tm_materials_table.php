@@ -13,17 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tt_stocks', function (Blueprint $table) {
+        Schema::create('tm_materials', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('id_part')->unsigned();
-            $table->foreign('id_part')->references('id')->on('tm_parts');
-            $table->date('date');
+            $table->string('part_name');
+            $table->string('part_number');
             $table->string('pic');
+            $table->date('date');
             $table->time('time');
-            $table->string('name');
             $table->string('supplier');
             $table->string('source');
-            $table->integer('qty');
+            $table->integer('limit_qty');
             $table->timestamps();
         });
     }

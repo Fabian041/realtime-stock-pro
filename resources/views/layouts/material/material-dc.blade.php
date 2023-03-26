@@ -2,7 +2,16 @@
 
 @section('content')
 <div class="row">
-    <h4><strong>Material Stock Dashboard</strong></h4>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb breadcrumb-style1">
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0);">Material Stock</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0);" class="active">DC Area</a>
+            </li>
+        </ol>
+    </nav>
 </div>        
 <div class="row">
     <div class="col-lg-4 mb-4">
@@ -14,8 +23,8 @@
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total F/G</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity">{{ $ckd }}</strong> Pcs</h3>
+                        <span class="mb-1">Total Stock</span>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity">1298</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -44,8 +53,8 @@
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total F/G</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity">{{ $import }}</strong> Pcs</h3>
+                        <span class="mb-1">Total Stock</span>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity">1298</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -74,8 +83,8 @@
                     </div>
                     
                     <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total F/G</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity">{{ $local }}</strong> Pcs</h3>
+                        <span class="mb-1">Total Stock</span>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity">1298</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
