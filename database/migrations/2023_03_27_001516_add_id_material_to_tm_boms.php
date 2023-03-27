@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tm_boms', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('id_part')->unsigned();
-            $table->foreign('id_part')->references('id')->on('tm_parts');
-            $table->integer('qty_use');
-            $table->string('uom');
-            $table->timestamps();
+        Schema::table('tm_boms', function (Blueprint $table) {
+            $table->unsignedBigInteger('id_material')->unsigned()->after('id_area');
+            $table->foreign('id_material')->references('id')->on('tm_materials');
         });
     }
 
@@ -30,6 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tm_boms');
+        Schema::table('tm_boms', function (Blueprint $table) {
+            //
+        });
     }
 };

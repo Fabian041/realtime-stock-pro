@@ -6,6 +6,8 @@ use Pusher\Pusher;
 use App\Models\TtStock;
 use Illuminate\Http\Request;
 use App\Imports\ImportTtStock;
+use App\Imports\TmMaterialImport;
+use App\Models\TmMaterial;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -95,7 +97,7 @@ class MaterialMasterController extends Controller
     public function import(Request $request)
     {
 
-        Excel::import(new ImportTtStock, $request->file('file')->store('files'));
+        Excel::import(new TmMaterialImport, $request->file('file')->store('files'));
 
         // connection to pusher
         $options = array(
@@ -122,7 +124,7 @@ class MaterialMasterController extends Controller
      */
     public function getData()
     {
-        $input = TtStock::all();
+        $input = TmMaterial::all();
         return DataTables::of($input)
                 ->toJson();
     }

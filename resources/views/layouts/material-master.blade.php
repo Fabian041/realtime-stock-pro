@@ -22,12 +22,13 @@
                 <table class="datatables-basics table border-top material-datatable">
                     <thead>
                         <tr>
+                            <th>Part Number</th>
                             <th>Part Name</th>
                             <th>Supplier</th>
                             <th>Source</th>
                             <th>PIC</th>
                             <th>Date</th>
-                            <th>Qty</th>
+                            <th>Limit Qty</th>
                         </tr>
                     </thead>
                 </table>
@@ -73,12 +74,13 @@ $(document).ready(function () {
     $('.material-datatable').DataTable({
         ajax: `{{ route('material.master.getData') }}`,
         columns: [
-            { data: 'name' },
+            { data: 'part_number' },
+            { data: 'part_name' },
             { data: 'supplier' },
             { data: 'source' },
             { data: 'pic' },
             { data: 'date' },
-            { data: 'qty' },
+            { data: 'limit_qty' },
         ],
     });
 });
