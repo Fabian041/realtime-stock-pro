@@ -198,6 +198,11 @@
                         <div>Part</div>
                     </a>  
                 </li>
+                <li class="menu-item {{ (request()->is('master/bom-master')) ? 'active' : '' }}">
+                    <a href="{{ route('bom.master') }}" class="menu-link" >
+                        <div>BOM</div>
+                    </a>  
+                </li>
                 <li class="menu-item {{ (request()->is('master/transaction-master')) ? 'active' : '' }}">
                     <a href="{{ route('transaction.master') }}" class="menu-link" >
                         <div>Transaction</div>

@@ -8,6 +8,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\BomMasterController;
 use App\Http\Controllers\MaterialMasterController;
 use App\Http\Controllers\PartNumberMasterController;
 use App\Http\Controllers\TransactionMasterController;
@@ -60,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Material transaction
         Route::get('/checkin', [MaterialController::class, 'index'])->name('checkin.index');
-        Route::post('/checkin/import', [MaterialController::class, 'import'])->name('material.import');
+        Route::post('/checkin/import', [MaterialController::class, 'import'])->name('checkin.import');
 
         Route::get('/getMaterial', [MaterialController::class, 'getMaterial'])->name('material.get');
 
@@ -99,6 +100,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/transaction-master', [TransactionMasterController::class, 'index'])->name('transaction.master');
         Route::post('/transaction-master/import', [TransactionMasterController::class, 'store'])->name('transaction.master.insertData');
         Route::get('/transaction-master/getData', [TransactionMasterController::class, 'getData'])->name('transaction.master.getData');
+
+        // BOM Master
+        Route::get('/bom-master', [BomMasterController::class, 'index'])->name('bom.master');
+        Route::post('/bom-master/store', [BomMasterController::class, 'store'])->name('bom.master.insertData');
+        Route::post('/bom-master/import', [BomMasterController::class, 'store'])->name('bom.master.import');
+        Route::get('/bom-master/getData', [BomMasterController::class, 'getData'])->name('bom.master.getData');
     
     });
     
