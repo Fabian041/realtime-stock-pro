@@ -130,7 +130,7 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="col-6">
+                    <div class="col-3">
                         <label class="form-label" for="qty">Quantity</label>
                         <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" required/>
 
@@ -140,7 +140,15 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="col-12 text-end mt-3">
+                    <div class="col-3">
+                        <label class="form-label" for="uom">UOM</label>
+                        <select class="form-select" id="uom" aria-label="Default select example" name="uom">
+                            <option value="null" selected>Pilih Uom</option>
+                            <option value="pcs">Pcs</option>
+                            <option value="kg">Kg</option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-end mt-5">
                         <button type="reset" class="btn btn-label-secondary me-sm-3 me-1" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>

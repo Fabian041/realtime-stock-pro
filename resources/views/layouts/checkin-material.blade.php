@@ -28,7 +28,7 @@
                             <th>Source</th>
                             <th>PIC</th>
                             <th>Date</th>
-                            <th>Limit Qty</th>
+                            <th>Quantity</th>
                         </tr>
                     </thead>
                 </table>
@@ -70,7 +70,7 @@
     
     $(document).ready(function () {
         $('.material-datatable').DataTable({
-            ajax: `{{ route('material.master.getData') }}`,
+            ajax: `{{ route('checkin.getData') }}`,
             columns: [
             { data: 'part_number' },
             { data: 'part_name' },
@@ -78,7 +78,7 @@
             { data: 'source' },
             { data: 'pic' },
             { data: 'date' },
-            { data: 'limit_qty' },
+            { data: 'qty' },
             ],
         });
     });

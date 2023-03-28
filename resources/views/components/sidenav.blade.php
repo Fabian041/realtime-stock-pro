@@ -170,18 +170,24 @@
                 </li>
             </ul>
         </li>
-        <li class="menu-item {{ (request()->is('dashboard/checkout')) ? 'active' : '' }}">
-          <a href="{{ route('checkout.index') }}" class="menu-link " >
-              <i class="menu-icon tf-icons bx bx-log-out"></i>
-              <div>Checkout Material</div>
-          </a>
-        </li>
-        <li class="menu-item {{ (request()->is('dashboard/checkin')) ? 'active' : '' }}">
-          <a href="{{ route('checkin.index') }}" class="menu-link " >
-              <i class="menu-icon tf-icons bx bx-log-in"></i>
-              <div>Checkin Material</div>
-          </a>
-        </li>
+        <li class="menu-item {{ (request()->is('dashboard/material-transaction/*')) ? 'active' : '' }} {{ (request()->is('dashboard/material-transaction/*')) ? 'open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle" >
+                <i class="menu-icon tf-icons bx bx-transfer"></i>
+                <div>Material Transaction</div>
+            </a>
+            <ul class="menu-sub">
+              <li class="menu-item {{ (request()->is('dashboard/material-transaction/checkout')) ? 'active' : '' }}">
+                <a href="{{ route('checkout.index') }}" class="menu-link " >
+                    <div>Checkout Material</div>
+                </a>
+              </li>
+              <li class="menu-item {{ (request()->is('dashboard/material-transaction/checkin')) ? 'active' : '' }}">
+                <a href="{{ route('checkin.index') }}" class="menu-link " >
+                    <div>Checkin Material</div>
+                </a>
+              </li>
+            </ul>
+        </li> 
         <li class="menu-item {{ (request()->is('master/*')) ? 'active' : '' }} {{ (request()->is('master/*')) ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle" >
                 <i class="menu-icon tf-icons bx bxs-cube-alt"></i>

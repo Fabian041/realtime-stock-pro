@@ -183,7 +183,7 @@ class MaterialController extends Controller
                     ->where('id_part', $validatedData['id_part'])
                     ->first();
 
-        // modify stock in table tt stock based on part used
+        // modify stock in table tt stock based on part used (add new record instead of update row)
         TtStock::where('id_part', $validatedData['id_part'])
                 ->update([
                     'qty' => $currStock->qty - $validatedData['qty']
@@ -250,9 +250,20 @@ class MaterialController extends Controller
     public function getDataCheckout()
     {
         $input = DB::table('tt_checkouts')
-                    ->join('tm_parts', 'tt_checkouts.id_part', '=', 'tm_parts.id')
+                    ->join('tm_materials', 'tt_checkouts.id_material', '=', 'tm_materials.id')
                     ->join('tm_areas', 'tt_checkouts.id_area', '=', 'tm_areas.id')
-                    ->select('tm_parts.part_name', 'tm_areas.name' , 'tt_checkouts.qty')
+                    ->select('tm_materials.part_name', 'tm_areas.name' , 'tt_checkouts.qty')
+                    ->get();
+
+        return DataTables::of($input)
+                ->toJson();
+    }
+    
+    public function getDataCheckin()
+    {
+        $input = DB::table('tt_materials')
+                    ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
+                    ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier','tm_materials.source' ,'tm_materials.pic','tm_materials.date','tt_materials.qty')
                     ->get();
 
         return DataTables::of($input)

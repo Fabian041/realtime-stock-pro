@@ -59,9 +59,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/material/ma', [MaterialController::class, 'materialMa'])->name('material.ma');
         Route::get('/material/assy', [MaterialController::class, 'materialAssy'])->name('material.assy');
 
-        // Material transaction
-        Route::get('/checkin', [MaterialController::class, 'index'])->name('checkin.index');
-        Route::post('/checkin/import', [MaterialController::class, 'import'])->name('checkin.import');
+        Route::prefix('/material-transaction')->group(function () {
+            
+            // Material transaction
+            Route::get('/checkin', [MaterialController::class, 'index'])->name('checkin.index');
+            Route::post('/checkin/import', [MaterialController::class, 'import'])->name('checkin.import');
+            Route::get('/checkin/getData', [MaterialController::class, 'getDataCheckin'])->name('checkin.getData');
+
+            // checkout proccess
+            Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');
+            Route::get('/checkout/getData', [MaterialController::class, 'getDataCheckout'])->name('checkout.getData');
+            Route::post('/checkout/store', [MaterialController::class, 'checkoutStore'])->name('checkout.store');
+
+        });
 
         Route::get('/getMaterial', [MaterialController::class, 'getMaterial'])->name('material.get');
 
@@ -75,11 +85,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/getWipPart/dc', [WipController::class, 'getPartDc'])->name('wipDc.get');
         Route::get('/getWipPart/assy', [WipController::class, 'getPartAssy'])->name('wipAssy.get');
         
-        // checkout proccess
-        Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');
-        Route::get('/checkout/getData', [MaterialController::class, 'getDataCheckout'])->name('checkout.getData');
-        Route::post('/checkout/store', [MaterialController::class, 'checkoutStore'])->name('checkout.store');
-
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
         Route::post('/profile-update', [ProfileController::class, 'update'])->name('profile.update');
     });
