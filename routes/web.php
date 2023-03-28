@@ -5,11 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FgController;
 use App\Http\Controllers\WipController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\MaterialMasterController;
 use App\Http\Controllers\PartNumberMasterController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransactionMasterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +90,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/material-master', [MaterialMasterController::class, 'index'])->name('material.master');
         Route::post('/material-master/import', [MaterialMasterController::class, 'import'])->name('material.master.import');
         Route::get('/material-master/getData', [MaterialMasterController::class, 'getData'])->name('material.master.getData');
+
+        // Transaction Master
+        Route::get('/transaction-master', [TransactionMasterController::class, 'index'])->name('transaction.master');
+        Route::post('/transaction-master/import', [TransactionMasterController::class, 'store'])->name('transaction.master.insertData');
+        Route::get('/transaction-master/getData', [TransactionMasterController::class, 'getData'])->name('transaction.master.getData');
     
     });
     

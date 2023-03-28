@@ -48,7 +48,7 @@ class PartNumberMasterController extends Controller
 
         TmPart::create($validatedData);
         
-        return redirect()->back()->with('success', 'Part Number created successfully.');
+        return redirect()->back()->with('success', 'Part created successfully.');
     }
 
     /**

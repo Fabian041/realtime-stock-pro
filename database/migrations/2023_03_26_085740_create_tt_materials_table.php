@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('tt_materials', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->bigInteger('id_material')->unsigned();
             $table->foreign('id_material')->references('id')->on('tm_materials');
             $table->integer('qty');

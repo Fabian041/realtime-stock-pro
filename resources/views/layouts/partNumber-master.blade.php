@@ -2,11 +2,16 @@
 
 @section('content')
 <div class="row">
-    <div class="col">
-        <div class="row">
-            <h4><strong>Import Part</strong></h4>
-        </div>   
-    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb breadcrumb-style1">
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0);">Master</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0);" class="active">Part</a>
+            </li>
+        </ol>
+    </nav>
 </div>
 <div class="row">
     <div class="col-lg-12">

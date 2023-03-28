@@ -2,11 +2,16 @@
 
 @section('content')
 <div class="row">
-    <div class="col">
-        <div class="row">
-            <h4><strong>Import Material</strong></h4>
-        </div>   
-    </div>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-style1">
+        <li class="breadcrumb-item">
+            <a href="javascript:void(0);">Master</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="javascript:void(0);" class="active">Material</a>
+        </li>
+    </ol>
+</nav>
 </div>
 <div class="row">
     <div class="col-lg-12">
@@ -36,8 +41,6 @@
         </div>
     </div>
 </div>
-
-
 
 <!-- Modal -->
 <div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">

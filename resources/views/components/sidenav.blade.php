@@ -184,12 +184,17 @@
             <ul class="menu-sub">
                 <li class="menu-item {{ (request()->is('master/material-master')) ? 'active' : '' }}">
                     <a href="{{ route('material.master') }}" class="menu-link " >
-                        <div>Import Material</div>
+                        <div>Material</div>
                     </a>
                 </li>
                 <li class="menu-item {{ (request()->is('master/part-number-master')) ? 'active' : '' }}">
                     <a href="{{ route('part-number.master') }}" class="menu-link" >
-                        <div>Import Part</div>
+                        <div>Part</div>
+                    </a>  
+                </li>
+                <li class="menu-item {{ (request()->is('master/transaction-master')) ? 'active' : '' }}">
+                    <a href="{{ route('transaction.master') }}" class="menu-link" >
+                        <div>Transaction</div>
                     </a>  
                 </li>
             </ul>

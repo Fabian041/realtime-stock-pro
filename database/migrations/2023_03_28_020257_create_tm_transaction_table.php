@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tt_mas', function (Blueprint $table) {
+        Schema::create('tm_transactions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('id_part')->unsigned();
-            $table->foreign('id_part')->references('id')->on('tm_parts');
-            $table->date('date');
-            $table->bigInteger('qty');
+            $table->string('code')->unique();
+            $table->string('name');
+            $table->string('status');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tm_mas');
+        Schema::dropIfExists('tm_transactions');
     }
 };

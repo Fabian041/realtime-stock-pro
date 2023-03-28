@@ -3,11 +3,12 @@
 namespace App\Imports;
 
 use App\Models\TmMaterial;
-use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Validators\Failure;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class TmMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
 {
@@ -15,18 +16,49 @@ class TmMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
     {
         foreach($rows as $row)
         {
-            TmMaterial::updateOrCreate([
-                'part_name' => $row['part_name'],
-                'part_number' => $row['part_no'],
-                'pic' => auth()->user()->username,
-                'date' => date('Y-m-d'),
-                'time' => date('H:i:s'),
-                'supplier' => $row['supplier'],
-                'source' => $row['source'],
-                'limit_qty' => $row['limit']
-            ]);
+            TmMaterial::updateOrCreate(
+                [               
+                    'part_number' => $row['part_no'],
+                    'supplier' => $row['supplier'],
+                ],
+                [
+                    'part_name' => $row['part_name'],
+                    'pic' => auth()->user()->username,
+                    'date' => date('Y-m-d'),
+                    'time' => date('H:i:s'),
+                    'source' => $row['source'],
+                    'limit_qty' => $row['limit']
+                ]
+            );
         }
     }
+
+    public function onFailure(Failure ...$failures)
+    {
+        $partNumbers = [];
+
+        foreach ($failures as $failure) {
+            $partNumber = $failure->values()['part_no'];
+            if (!isset($partNumbers[$partNumber])) {
+                // this part number has not been processed yet, find all products with this part number
+                $materials = TmMaterial::where('part_no', $partNumber)->get();
+
+                // update all products with the new data from the Excel file
+                foreach ($materials as $material) {
+                    $material->part_name = $failure->values()['part_name'];
+                    $material->source = $failure->values()['source'];
+                    $material->supplier = $failure->values()['supplier'];
+                    $material->limit = $failure->values()['limit'];
+
+                    // save
+                    $material->save();
+                }
+
+                $partNumbers[$partNumber] = true; // mark this part number as processed
+            }
+        }
+    }
+
 
     public function startRow(): int
     {
