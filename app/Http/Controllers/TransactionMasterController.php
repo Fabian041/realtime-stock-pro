@@ -29,10 +29,20 @@ class TransactionMasterController extends Controller
         $validatedData = $request->validate([
             'name' => 'required',
             'code' => 'required',
-            'status' => 'required'
+            // 'status' => 'required'
         ]);
 
-        TmTransaction::create($validatedData);
+        TmTransaction::create([
+            'name' => $validatedData['name'],
+            'code' => $validatedData['code'],
+            'status' => 'plus'
+        ]);
+
+        TmTransaction::create([
+            'name' => $validatedData['name'] . ' (R)',
+            'code' => $validatedData['code'] + 1,
+            'status' => 'minus'
+        ]);
 
         return redirect()->back()->with('success', 'Transaction created successfully.');
     }

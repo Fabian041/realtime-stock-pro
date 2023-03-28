@@ -58,6 +58,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/material/ma', [MaterialController::class, 'materialMa'])->name('material.ma');
         Route::get('/material/assy', [MaterialController::class, 'materialAssy'])->name('material.assy');
 
+        // Material transaction
+        Route::get('/checkin', [MaterialController::class, 'index'])->name('checkin.index');
+        Route::post('/checkin/import', [MaterialController::class, 'import'])->name('material.import');
+
         Route::get('/getMaterial', [MaterialController::class, 'getMaterial'])->name('material.get');
 
         // get finsih good part

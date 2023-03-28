@@ -176,6 +176,12 @@
               <div>Checkout Material</div>
           </a>
         </li>
+        <li class="menu-item {{ (request()->is('dashboard/checkin')) ? 'active' : '' }}">
+          <a href="{{ route('checkin.index') }}" class="menu-link " >
+              <i class="menu-icon tf-icons bx bx-log-in"></i>
+              <div>Checkin Material</div>
+          </a>
+        </li>
         <li class="menu-item {{ (request()->is('master/*')) ? 'active' : '' }} {{ (request()->is('master/*')) ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle" >
                 <i class="menu-icon tf-icons bx bxs-cube-alt"></i>

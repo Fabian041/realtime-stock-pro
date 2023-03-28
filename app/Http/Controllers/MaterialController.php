@@ -63,7 +63,7 @@ class MaterialController extends Controller
      */
     public function index()
     {
-        //    
+        return view('layouts.checkin-material');    
     }
 
     /**
