@@ -20,7 +20,7 @@ class MaterialMasterController extends Controller
      */
     public function index()
     {
-        return view('layouts.material-master');
+        return view('layouts.master.material-master');
         
     }
 

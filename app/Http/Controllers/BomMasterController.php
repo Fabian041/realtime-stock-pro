@@ -19,7 +19,7 @@ class BomMasterController extends Controller
      */
     public function index()
     {
-        return view('layouts.bom',[
+        return view('layouts.master.bom-master',[
             'parts' => TmPart::all(),
             'materials' => TmMaterial::all(),
             'areas' => TmArea::all(),

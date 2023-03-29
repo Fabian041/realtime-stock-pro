@@ -16,7 +16,7 @@ class PartNumberMasterController extends Controller
      */
     public function index()
     {
-        return view('layouts.partNumber-master');
+        return view('layouts.master.partNumber-master');
         
     }
 

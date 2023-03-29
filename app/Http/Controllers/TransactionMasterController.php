@@ -15,7 +15,7 @@ class TransactionMasterController extends Controller
      */
     public function index()
     {
-        return view('layouts.transaction-master');
+        return view('layouts.master.transaction-master');
     }
 
     /**
