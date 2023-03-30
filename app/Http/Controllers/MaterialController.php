@@ -11,10 +11,14 @@ use App\Models\TtAssy;
 use App\Models\TtStock;
 use App\Models\TmMaterial;
 use App\Models\TtCheckout;
+use App\Models\TtMaterial;
 use Illuminate\Http\Request;
+use App\Models\TmTransaction;
 use App\Events\StockDataUpdated;
+use App\Imports\TtMaterialImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Broadcasting\Channel;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -25,9 +29,18 @@ class MaterialController extends Controller
      *
      * 
      */
-    public function materialPpic()
+    public function materialWh()
     {
-        return view('layouts.material.material-ppic');
+        return view('layouts.material.material-wh');
+    }
+    /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    public function materialOh()
+    {
+        return view('layouts.material.material-oh');
     }
     /**
      * Display DC dashboard
@@ -162,100 +175,83 @@ class MaterialController extends Controller
 
     public function checkout()
     {
+        // get id transaction
+        $transaction_id = TmTransaction::select('id')->where('name', 'Checkout Material')->first();
+
         return view('layouts.checkout-material',[
-            'area' => TmArea::all(),
+            'area' => TmArea::where('name', '<>', 'PPIC')->get(),
             'materials' => TmMaterial::all(),
+            'checkouts' => TtMaterial::where('id_transaction',$transaction_id->id)->get()
         ]);
     }
 
     public function checkoutStore(Request $request)
     {
-        $validatedData = $request->validate([
-            'id_area' => 'required', //get id
-            'id_material' => 'required', //get id
-            'qty' => 'required'
+        // ppic pov
+        $code = 112;
+        $transaction = TmTransaction::select('id')->where('code', $code)->first();
+        $code_id = $transaction->id;
+
+        // production pov
+        $prd_code = 211;
+        $prd_transaction = TmTransaction::select('id')->where('code', $prd_code)->first();
+        $prd_code_id = $prd_transaction->id;
+        
+        // get id area
+        $ppic_id = TmArea::select('id')->where('name', 'PPIC')->first();
+
+        // after checkout add transaction of ppic area
+        $ppic = TtMaterial::create([
+            'id_material' => $request->id_material,
+            'qty' => $request->qty,
+            'id_area' => $ppic_id->id,
+            'id_transaction' => $code_id,
+            'date' => date('Y-m-d H:i:s')
         ]);
 
-        TtCheckout::create($validatedData);
+        // add transaction based on area too
+        $production = TtMaterial::create([
+            'id_material' => $request->id_material,
+            'qty' => $request->qty,
+            'id_area' => $request->id_area,
+            'id_transaction' => $prd_code_id,
+            'date' => date('Y-m-d H:i:s')
+        ]);
 
-        // get part name current stock
-        $currStock = TtStock::select('qty')
-                    ->where('id_part', $validatedData['id_part'])
-                    ->first();
-
-        // modify stock in table tt stock based on part used (add new record instead of update row)
-        TtStock::where('id_part', $validatedData['id_part'])
-                ->update([
-                    'qty' => $currStock->qty - $validatedData['qty']
-                ]);
-                
+        // get material name, area, and transaction name
+        $material = DB::table('tt_materials')
+        ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
+        ->join('tm_areas', 'tt_materials.id_area', '=', 'tm_areas.id')
+        ->join('tm_transactions', 'tt_materials.id_transaction', '=', 'tm_transactions.id')
+        ->select('tm_materials.part_name','tm_areas.name','tm_materials.date')
+        ->where('tt_materials.id', $production->id)
+        ->first();
         
-        // get current stock each area
-        $currentDcStock = TtDc::select('qty')->where('id_part',$validatedData['id_part'])->first();
-        $currentMaStock = TtMa::select('qty')->where('id_part',$validatedData['id_part'])->first();
-        $currentAsStock = TtAssy::select('qty')->where('id_part',$validatedData['id_part'])->first();
-
-        // modify material stock in each area
-        if($validatedData['id_area'] == 3)
-        {
-            if($currentDcStock !== null){
-
-                TtDc::where('id_part', $validatedData['id_part'])
-                    ->update([
-                        'qty' => $currentDcStock->qty + $validatedData['qty']
-                    ]);
-            }
-
-            TtDc::create([
-                'id_part' => $validatedData['id_part'],
-                'qty' => $validatedData['qty']
-            ]);
-
-        }elseif($validatedData['id_area'] == 1){
-
-            if($currentMaStock !== null){
-
-                TtMa::where('id_part', $validatedData['id_part'])
-                    ->update([
-                        'qty' => $currentMaStock->qty + $validatedData['qty']
-                    ]);
-            }
-
-            TtMa::create([
-                'id_part' => $validatedData['id_part'],
-                'qty' => $validatedData['qty']
-            ]);
-
-        }elseif($validatedData['id_area'] == 5){
-
-            if($currentAsStock !== null){
-
-                TtAssy::where('id_part', $validatedData['id_part'])
-                    ->update([
-                        'qty' => $currentAsStock->qty + $validatedData['qty']
-                    ]);
-            }
-
-            TtAssy::create([
-                'id_part' => $validatedData['id_part'],
-                'qty' => $validatedData['qty']
-            ]);
-
-        }
-
-        
-        return redirect()->route('checkout.index')->with('success', 'Success checkout item id-' . $validatedData['id_part']);
+        return redirect()->route('checkout.index')->with('success', 'Success checkout item ' . $material->part_name . ' to ' .  $material->name . ' area');
     }
 
     public function getDataCheckout()
     {
-        $input = DB::table('tt_checkouts')
-                    ->join('tm_materials', 'tt_checkouts.id_material', '=', 'tm_materials.id')
-                    ->join('tm_areas', 'tt_checkouts.id_area', '=', 'tm_areas.id')
-                    ->select('tm_materials.part_name', 'tm_areas.name' , 'tt_checkouts.qty')
-                    ->get();
+        // get id transaction
+        $transaction_id = TmTransaction::select('id')->where('name', 'Checkout Material')->first();
+
+        $input =  DB::table('tt_materials')
+                ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
+                ->join('tm_areas', 'tt_materials.id_area', '=', 'tm_areas.id')
+                ->join('tm_transactions', 'tt_materials.id_transaction', '=', 'tm_transactions.id')
+                ->select('tt_materials.id','tm_materials.part_name','tm_areas.name','tm_materials.date', 'tt_materials.qty', 'tm_transactions.name as detail')
+                ->where('tt_materials.id_transaction',$transaction_id->id)
+                ->get();
 
         return DataTables::of($input)
+                ->addColumn('edit', function($row) use ($input){
+
+                    $btn = '<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#edit-'. $row->id .'"><span class="d-none d-sm-inline-block">Edit</span></button>';
+
+                    return $btn;
+
+                })
+                ->rawColumns(['edit'])
                 ->toJson();
     }
     
@@ -268,5 +264,28 @@ class MaterialController extends Controller
 
         return DataTables::of($input)
                 ->toJson();
+    }
+
+    public function import(Request $request)
+    {
+        Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
+
+        // connection to pusher
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            '31df202f78fc0dace852',
+            'f1d1fd7c838cdd9f25d6',
+            '1567188',
+            $options
+        );
+
+        // sending data
+        $pusher->trigger('stock-data', 'StockDataUpdated', []);
+
+        return redirect()->back();
     }
 }

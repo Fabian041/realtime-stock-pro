@@ -8,7 +8,7 @@
                 <a href="javascript:void(0);">Material Stock</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">PPIC Area</a>
+                <a href="javascript:void(0);" class="active">WH Area</a>
             </li>
         </ol>
     </nav>

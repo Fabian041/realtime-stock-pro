@@ -34,7 +34,10 @@
                         <tr>
                             <th>Area</th>
                             <th>Part Name</th>
+                            <th>Date</th>
                             <th>Quantity</th>
+                            <th>Detail</th>
+                            <th>action</th>
                         </tr>
                     </thead>
                 </table>
@@ -59,15 +62,15 @@
                     @method('POST')
                     @csrf
                     <div class="col-12 col-md-12">
-                        <label class="form-label" for="id_part">Material Name</label>
-                        <select class="form-select" id="id_part" aria-label="Default select example" name="id_part">
+                        <label class="form-label" for="id_material">Material Name</label>
+                        <select class="form-select" id="id_material" aria-label="Default select example" name="id_material">
                             <option value="null" selected>Pilih Material</option>
                             @foreach ($materials as $item)
                                 <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
                             @endforeach
                         </select>
 
-                        @error('id_part')
+                        @error('id_material')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
@@ -88,9 +91,9 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="col-6">
+                    <div class="col-12 col-md-6">
                         <label class="form-label" for="qty_limit">Quantity</label>
-                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" required/>
+                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required/>
 
                         @error('qty')
                             <div class="invalid-feedback">
@@ -110,6 +113,73 @@
 </div>
 {{-- end modal --}}
 
+<!-- Modal -->
+@foreach ($checkouts as $checkout)
+<div class="modal fade" id="edit-{{ $checkout->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-simple modal-edit-user">
+        <div class="modal-content p-2 p-md-5">
+            <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="text-center mb-4">
+                    <h3>Edit Checkout Information</h3>
+                    {{-- <p>Mastering Detail Part Information</p> --}}
+                </div>
+                <form method="POST" action="" id="editUserForm" class="row g-3">
+                    @method('POST')
+                    @csrf
+                    <div class="col-12 col-md-12">
+                        <label class="form-label" for="id_material">Material Name</label>
+                        <select class="form-select" id="id_material" aria-label="Default select example" name="id_material">
+                            <option value="null" selected>Pilih Material</option>
+                            @foreach ($materials as $item)
+                                <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
+                            @endforeach
+                        </select>
+
+                        @error('id_material')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="area">Area</label>
+                        <select class="form-select" id="area" aria-label="Default select example" name="id_area">
+                            <option selected>Pilih Area</option>
+                            @foreach ($area as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+
+                        @error('area')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="qty_limit">Quantity</label>
+                        <input type="number" id="qty" name="qty" value="{{ $checkout->qty }}" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required/>
+
+                        @error('qty')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="col-12 text-end mt-3">
+                        <button type="reset" class="btn btn-label-secondary me-sm-3 me-1" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+{{-- end modal --}}
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
     
@@ -119,7 +189,10 @@
             columns: [
                 { data: 'name' },
                 { data: 'part_name' },
+                { data: 'date' },
                 { data: 'qty' },
+                { data: 'detail' },
+                { data: 'edit', orderable: false, searchable: false},
             ],
         });
     });

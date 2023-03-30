@@ -147,9 +147,14 @@
                 <div>Material Stock</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ (request()->is('dashboard/material/ppic')) ? 'active' : '' }}">
-                    <a href="{{ route('material.ppic') }}" class="menu-link " >
-                        <div>PPIC Area</div>
+                <li class="menu-item {{ (request()->is('dashboard/material/wh')) ? 'active' : '' }}">
+                    <a href="{{ route('material.wh') }}" class="menu-link " >
+                        <div>WH Area</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ (request()->is('dashboard/material/oh')) ? 'active' : '' }}">
+                    <a href="{{ route('material.oh') }}" class="menu-link " >
+                        <div>OH Area</div>
                     </a>
                 </li>
                 <li class="menu-item {{ (request()->is('dashboard/material/dc')) ? 'active' : '' }}">
@@ -173,7 +178,7 @@
         <li class="menu-item {{ (request()->is('dashboard/material-transaction/*')) ? 'active' : '' }} {{ (request()->is('dashboard/material-transaction/*')) ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle" >
                 <i class="menu-icon tf-icons bx bx-transfer"></i>
-                <div>Material Transaction</div>
+                <div>Transaction</div>
             </a>
             <ul class="menu-sub">
               <li class="menu-item {{ (request()->is('dashboard/material-transaction/checkout')) ? 'active' : '' }}">
@@ -181,9 +186,14 @@
                     <div>Checkout Material</div>
                 </a>
               </li>
-              <li class="menu-item {{ (request()->is('dashboard/material-transaction/checkin')) ? 'active' : '' }}">
+              <li class="menu-item {{ (request()->is('dashboard/material-transaction/entry-wh')) ? 'active' : '' }}">
                 <a href="{{ route('checkin.index') }}" class="menu-link " >
-                    <div>Checkin Material</div>
+                    <div>Entry Stock WH</div>
+                </a>
+              </li>
+              <li class="menu-item {{ (request()->is('dashboard/material-transaction/entry-oh')) ? 'active' : '' }}">
+                <a href="{{ route('checkin.index') }}" class="menu-link " >
+                    <div>Entry Stock OH</div>
                 </a>
               </li>
             </ul>

@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col">
         <div class="row">
-            <h4><strong>Checkin Material</strong></h4>
+            <h4><strong>Entry Stock OH</strong></h4>
         </div>   
     </div>
 </div>
@@ -41,7 +41,7 @@
 <div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('material.master.import') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('entry-oh.import') }}" method="POST" enctype="multipart/form-data">
                 @method('POST')
                 @csrf
                 <div class="modal-header">
@@ -70,7 +70,7 @@
     
     $(document).ready(function () {
         $('.material-datatable').DataTable({
-            ajax: `{{ route('checkin.getData') }}`,
+            ajax: `{{ route('entry-oh.getData') }}`,
             columns: [
             { data: 'part_number' },
             { data: 'part_name' },

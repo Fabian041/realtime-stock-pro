@@ -20,7 +20,9 @@ class MaterialMasterController extends Controller
      */
     public function index()
     {
-        return view('layouts.master.material-master');
+        return view('layouts.master.material-master',[
+            'materials' => TmMaterial::all()
+        ]);
         
     }
 
@@ -96,24 +98,7 @@ class MaterialMasterController extends Controller
      */
     public function import(Request $request)
     {
-
         Excel::import(new TmMaterialImport, $request->file('file')->store('files'));
-
-        // connection to pusher
-        $options = array(
-            'cluster' => 'ap1',
-            'encrypted' => true
-        );
-
-        $pusher = new Pusher(
-            '31df202f78fc0dace852',
-            'f1d1fd7c838cdd9f25d6',
-            '1567188',
-            $options
-        );
-
-        // sending data
-        $pusher->trigger('stock-data', 'StockDataUpdated', []);
 
         return redirect()->back();
     }
@@ -126,6 +111,14 @@ class MaterialMasterController extends Controller
     {
         $input = TmMaterial::all();
         return DataTables::of($input)
+                ->addColumn('edit', function($row) use ($input){
+
+                    $btn = '<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#edit-'. $row->id .'"><span class="d-none d-sm-inline-block">Edit</span></button>';
+
+                    return $btn;
+
+                })
+                ->rawColumns(['edit'])
                 ->toJson();
     }
 }

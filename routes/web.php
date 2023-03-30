@@ -54,7 +54,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/wip/assy', [WipController::class, 'wipAssy'])->name('wip.assy');
 
         // material dashboard
-        Route::get('/material/ppic', [MaterialController::class, 'materialPpic'])->name('material.ppic');
+        Route::get('/material/wh', [MaterialController::class, 'materialWh'])->name('material.wh');
+        Route::get('/material/oh', [MaterialController::class, 'materialOh'])->name('material.oh');
         Route::get('/material/dc', [MaterialController::class, 'materialDc'])->name('material.dc');
         Route::get('/material/ma', [MaterialController::class, 'materialMa'])->name('material.ma');
         Route::get('/material/assy', [MaterialController::class, 'materialAssy'])->name('material.assy');
@@ -62,9 +63,14 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('/material-transaction')->group(function () {
             
             // Material transaction
-            Route::get('/checkin', [MaterialController::class, 'index'])->name('checkin.index');
-            Route::post('/checkin/import', [MaterialController::class, 'import'])->name('checkin.import');
-            Route::get('/checkin/getData', [MaterialController::class, 'getDataCheckin'])->name('checkin.getData');
+            Route::get('/entry-wh', [MaterialController::class, 'entryWh'])->name('entry-wh.index');
+            Route::post('/entry-wh/import', [MaterialController::class, 'importWh'])->name('entry-wh.import');
+            Route::get('/entry-wh/getData', [MaterialController::class, 'getDataWh'])->name('entry-wh.getData');
+
+            // Material transaction
+            Route::get('/entry-oh', [MaterialController::class, 'entryOh'])->name('entry-oh.index');
+            Route::post('/entry-oh/import', [MaterialController::class, 'importOh'])->name('entry-oh.import');
+            Route::get('/entry-oh/getData', [MaterialController::class, 'getDataOh'])->name('entry-oh.getData');
 
             // checkout proccess
             Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');

@@ -39,7 +39,7 @@
                         <tr>
                             <th>Transaction Code</th>
                             <th>Transaction Name</th>
-                            <th>Transaction Status</th>
+                            {{-- <th>Transaction Status</th> --}}
                         </tr>
                     </thead>
                 </table>
@@ -56,14 +56,14 @@
         <div class="modal-content p-2 p-md-5">
             <div class="modal-body">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div class="text-center mb-4">
+                <div class="text-center mb-5">
                     <h3>Transaction Information</h3>
                     <p>Mastering Detail Transaction Information</p>
                 </div>
                 <form method="POST" action="{{ route('transaction.master.insertData') }}" id="editUserForm" class="row g-3">
                     @method('POST')
                     @csrf
-                    <div class="col-12 col-md-12">
+                    <div class="col-12 col-md-6">
                         <label class="form-label" for="name">Transaction Name</label>
                         <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Pulling" required/>
 
@@ -73,7 +73,7 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="col-12 col-md-12">
+                    <div class="col-12 col-md-6">
                         <label class="form-label" for="code">Transaction Code</label>
                         <input type="text" id="code" name="code" class="form-control @error('code') is-invalid @enderror" placeholder="411" required/>
 
@@ -84,7 +84,7 @@
                         @enderror
                     </div>
 
-                    <div class="col-12 text-end mt-3">
+                    <div class="col-12 text-end mt-4">
                         <button type="reset" class="btn btn-label-secondary me-sm-3 me-1" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -104,7 +104,7 @@
             columns: [
                 { data: 'code' },
                 { data: 'name' },
-                { data: 'status' },
+                // { data: 'status' },
             ],
         });
     });

@@ -31,9 +31,8 @@
                             <th>Part Name</th>
                             <th>Supplier</th>
                             <th>Source</th>
-                            <th>PIC</th>
-                            <th>Date</th>
                             <th>Limit Qty</th>
+                            <th></th>
                         </tr>
                     </thead>
                 </table>
@@ -69,6 +68,82 @@
   </div>
 </div>
 
+<!-- Modal -->
+@foreach ($materials as $material)
+<div class="modal fade" id="edit-{{ $material->id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-simple modal-edit-user">
+      <div class="modal-content p-2 p-md-5">
+          <div class="modal-body">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <div class="text-center mb-5">
+                  <h3>Edit Material</h3>
+                  {{-- <p>Mastering Detail BOM Information</p> --}}
+              </div>
+              <form method="POST" action="" id="editUserForm" class="row g-3">
+                  @method('POST')
+                  @csrf
+                  <div class="col-12 col-md-6">
+                      <label class="form-label" for="part_number">Part Number</label>
+                      <input type="text" id="part_number" name="part_number" class="form-control @error('part_number') is-invalid @enderror" placeholder="11821-18182" min="1" required/>
+
+                      @error('part_number')
+                          <div class="invalid-feedback">
+                              {{ $message }}
+                          </div>
+                      @enderror
+                  </div>
+                  <div class="col-12 col-md-6">
+                      <label class="form-label" for="part_name">Part Name</label>
+                      <input type="text" id="part_name" name="part_name" class="form-control @error('part_name') is-invalid @enderror" placeholder="Screw" min="1" required/>
+
+                      @error('part_name')
+                          <div class="invalid-feedback">
+                              {{ $message }}
+                          </div>
+                      @enderror
+                  </div>
+                  <div class="col-12 col-md-6">
+                      <label class="form-label" for="supplier">Supplier</label>
+                      <input type="text" id="supplier" name="supplier" class="form-control @error('supplier') is-invalid @enderror" placeholder="D1920" min="1" required/>
+
+                      @error('supplier')
+                          <div class="invalid-feedback">
+                              {{ $message }}
+                          </div>
+                      @enderror
+                  </div>
+                  <div class="col-12 col-md-3">
+                      <label class="form-label" for="source">Source</label>
+                      <input type="text" id="source" name="part_name" class="form-control @error('source') is-invalid @enderror" placeholder="CKD" min="1" required/>
+
+                      @error('source')
+                          <div class="invalid-feedback">
+                              {{ $message }}
+                          </div>
+                      @enderror
+                  </div>
+                  <div class="col-12 col-md-3">
+                      <label class="form-label" for="qty">Quantity</label>
+                      <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required/>
+
+                      @error('qty')
+                          <div class="invalid-feedback">
+                              {{ $message }}
+                          </div>
+                      @enderror
+                  </div>
+                  <div class="col-12 text-end mt-5">
+                      <button type="reset" class="btn btn-label-secondary me-sm-3 me-1" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+@endforeach
+{{-- end modal --}}
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
@@ -81,9 +156,8 @@ $(document).ready(function () {
             { data: 'part_name' },
             { data: 'supplier' },
             { data: 'source' },
-            { data: 'pic' },
-            { data: 'date' },
             { data: 'limit_qty' },
+            { data: 'edit', orderable: false, searchable: false },
         ],
     });
 });

@@ -20,7 +20,8 @@
                 <div class="col-md-8"></div>
                 <div class="col-md-2 text-end pe-1">
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal"><i class="bx bx-import me-sm-2"></i>
-                        <span class="d-none d-sm-inline-block">Import</span></button>
+                        <span class="d-none d-sm-inline-block">Import</span>
+                    </button>
                 </div>
                 <div class="col-md-2 text-end">
                     <button class="btn btn-label-primary" data-bs-toggle="modal" data-bs-target="#addPart"><i class="bx bx-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Manual</span></button>
@@ -120,7 +121,7 @@
                         <select class="form-select" id="area" aria-label="Default select example" name="area">
                             <option value="null" selected>Pilih Area</option>
                             @foreach ($areas as $item)
-                                <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
 
@@ -132,7 +133,7 @@
                     </div>
                     <div class="col-3">
                         <label class="form-label" for="qty">Quantity</label>
-                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" required/>
+                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required/>
 
                         @error('qty')
                             <div class="invalid-feedback">
@@ -141,9 +142,9 @@
                         @enderror
                     </div>
                     <div class="col-3">
-                        <label class="form-label" for="uom">UOM</label>
+                        <label class="form-label" for="uom">Unit</label>
                         <select class="form-select" id="uom" aria-label="Default select example" name="uom">
-                            <option value="null" selected>Pilih Uom</option>
+                            <option value="null" selected>Pilih Unit</option>
                             <option value="pcs">Pcs</option>
                             <option value="kg">Kg</option>
                         </select>

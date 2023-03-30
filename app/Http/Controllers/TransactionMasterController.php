@@ -28,7 +28,7 @@ class TransactionMasterController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required',
-            'code' => 'required',
+            'code' => 'required|unique:tm_transactions,code',
             // 'status' => 'required'
         ]);
 
