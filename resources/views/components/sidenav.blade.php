@@ -187,12 +187,12 @@
                 </a>
               </li>
               <li class="menu-item {{ (request()->is('dashboard/material-transaction/entry-wh')) ? 'active' : '' }}">
-                <a href="{{ route('checkin.index') }}" class="menu-link " >
+                <a href="{{ route('entry-wh.index') }}" class="menu-link " >
                     <div>Entry Stock WH</div>
                 </a>
               </li>
               <li class="menu-item {{ (request()->is('dashboard/material-transaction/entry-oh')) ? 'active' : '' }}">
-                <a href="{{ route('checkin.index') }}" class="menu-link " >
+                <a href="{{ route('entry-oh.index') }}" class="menu-link " >
                     <div>Entry Stock OH</div>
                 </a>
               </li>

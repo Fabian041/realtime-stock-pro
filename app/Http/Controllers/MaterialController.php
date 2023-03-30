@@ -29,6 +29,24 @@ class MaterialController extends Controller
      *
      * 
      */
+    public function entryWh()
+    {
+        return view('layouts.entry-wh-material');
+    }
+    /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    public function entryOh()
+    {
+        return view('layouts.entry-oh-material');
+    }
+    /**
+     * Display DC dashboard
+     *
+     * 
+     */
     public function materialWh()
     {
         return view('layouts.material.material-wh');
