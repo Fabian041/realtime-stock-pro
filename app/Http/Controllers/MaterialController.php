@@ -29,21 +29,44 @@ class MaterialController extends Controller
      *
      * 
      */
-    public function entryWh()
+    public function indexWh()
     {
-        return view('layouts.entry-wh-material');
+        return view('layouts.wh-material');
     }
     /**
      * Display DC dashboard
      *
      * 
      */
-    public function entryOh()
+    public function insertWh(Request $request)
+    {
+        $barcode = $request->barcode;
+
+        if($barcode){
+            $arr = preg_split('/ +/', $barcode);
+            $back_number = $arr[6];
+            $part_number = substr($arr[3], 9, 20);
+            $supplier = substr($arr[3], 0,9);
+            $qty = substr($arr[7], 4, 3);
+            
+
+        }
+
+        return [
+            'code' => $arr
+        ];
+    }
+    /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    public function indexOh()
     {
         // get id transaction
         $transaction_id = TmTransaction::select('id')->where('name', 'Planning Unboxing')->first();
 
-        return view('layouts.entry-oh-material',[
+        return view('layouts.oh-material',[
             'area' => TmArea::all(),
             'materials' => TmMaterial::all(),
             'checkouts' => TtMaterial::where('id_transaction',$transaction_id->id)->get()

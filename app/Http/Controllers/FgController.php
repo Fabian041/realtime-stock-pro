@@ -19,7 +19,7 @@ class FgController extends Controller
 
     public function getPartMa()
     {
-        
+        // get all partnum each model
     }
     /**
      * Display MA dashboard

@@ -18,7 +18,7 @@
         <div class="card" style="padding: 2rem;">
             <form action="" method="post">
                 <label class="form-label" for="material">Scan Barcode</label>
-                <input type="text" id="material" name="material" class="form-control @error('material') is-invalid @enderror" placeholder="Scan Barcode..." required/>
+                <input type="text" id="material" name="material" class="form-control" placeholder="Scan Barcode..." required/>
             </form>
         </div>
     </div>
@@ -56,7 +56,7 @@
 <div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('entry-wh.import') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('wh.import') }}" method="POST" enctype="multipart/form-data">
                 @method('POST')
                 @csrf
                 <div class="modal-header">
@@ -85,10 +85,8 @@
     
     $(document).ready(function () {
 
-        $('#material').focus();
-
         $('.material-datatable').DataTable({
-            ajax: `{{ route('entry-wh.getData') }}`,
+            ajax: `{{ route('wh.getData') }}`,
             columns: [
             { data: 'part_number' },
             { data: 'part_name' },
@@ -99,6 +97,64 @@
             { data: 'qty' },
             ],
         });
+
+        // $('#material').prop('readonly', true);
+        $('#material').focus();
+        let barcode = "";
+        let barcodecomplete = "";
+
+        $('#material').keypress(function(e) {
+            e.preventDefault();
+            let code = (e.keyCode ? e.keyCode : e.which);
+            // key ente
+            if (code == 13) {
+                barcodecomplete = barcode;
+                barcode = "";
+                // end of isi dengan line
+                if (barcodecomplete.length == 122) {
+                    insertWh(barcodecomplete);
+                    return;
+                    
+                } else {
+
+                    // error alert / toast
+                    alert("kanban tidak dikenali")
+
+                }
+            } else {
+                barcode = barcode + String.fromCharCode(e.which);
+            }
+        });
+
+        function insertWh(barcode) {
+            $.ajax({
+                type: 'get',
+                url: "{{ url('dashboard/material-transaction/wh/insert') }}",
+                data: {
+                    barcode : barcode,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == "success") {
+                        notifMessege("success", "Data Saved");
+                        $('#counter').text(data.counter);
+                        return true
+                    } else if (data.code == "error") {
+                        notifMessege("error", data.messege);
+                        return false
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status == 0) {
+                        // error alert / toast
+                        return;
+                    }
+                    // error alert / toast
+                }
+            });
+        }
+
     });
 </script>
 

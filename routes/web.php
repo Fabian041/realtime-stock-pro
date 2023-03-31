@@ -63,15 +63,16 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('/material-transaction')->group(function () {
             
             // Material transaction
-            Route::get('/entry-wh', [MaterialController::class, 'entryWh'])->name('entry-wh.index');
-            Route::post('/entry-wh/import', [MaterialController::class, 'importWh'])->name('entry-wh.import');
-            Route::get('/entry-wh/getData', [MaterialController::class, 'getDataWh'])->name('entry-wh.getData');
+            Route::get('/wh', [MaterialController::class, 'indexWh'])->name('wh.index');
+            Route::post('/wh/import', [MaterialController::class, 'importWh'])->name('wh.import');
+            Route::get('/wh/insert', [MaterialController::class, 'insertWh'])->name('wh.insert');
+            Route::get('/wh/getData', [MaterialController::class, 'getDataWh'])->name('wh.getData');
 
             // Material transaction
-            Route::get('/entry-oh', [MaterialController::class, 'entryOh'])->name('entry-oh.index');
-            Route::post('/entry-oh/import', [MaterialController::class, 'importOh'])->name('entry-oh.import');
-            Route::get('/entry-oh/getData', [MaterialController::class, 'getDataOh'])->name('entry-oh.getData');
-            Route::post('/entry-oh/store', [MaterialController::class, 'entryOhStore'])->name('entry-oh.store');
+            Route::get('/oh', [MaterialController::class, 'indexOh'])->name('oh.index');
+            Route::post('/oh/import', [MaterialController::class, 'importOh'])->name('oh.import');
+            Route::get('/oh/getData', [MaterialController::class, 'getDataOh'])->name('oh.getData');
+            Route::post('/oh/store', [MaterialController::class, 'entryOhStore'])->name('oh.store');
 
             // checkout proccess
             Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');
