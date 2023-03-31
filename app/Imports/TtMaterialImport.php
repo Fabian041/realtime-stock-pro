@@ -22,7 +22,7 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
         $code_id = $transaction->id;
 
         // area id
-        $area = \App\Models\TmArea::select('id')->where('name', 'PPIC')->first();
+        $area = \App\Models\TmArea::select('id')->where('name', 'Warehouse')->first();
         $area_id = $area->id;
 
         foreach($rows as $row)

@@ -24,7 +24,7 @@ class LoginController extends Controller
         {
             $request->session()->regenerate();
 
-            return redirect()->intended('/dashboard/material/ppic');
+            return redirect()->intended('/dashboard/material/wh');
         }
 
         return redirect()->back()->with('error', 'Email or password do not match our records!');

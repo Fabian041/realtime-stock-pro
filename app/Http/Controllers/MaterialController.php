@@ -40,7 +40,14 @@ class MaterialController extends Controller
      */
     public function entryOh()
     {
-        return view('layouts.entry-oh-material');
+        // get id transaction
+        $transaction_id = TmTransaction::select('id')->where('name', 'Planning Unboxing')->first();
+
+        return view('layouts.entry-oh-material',[
+            'area' => TmArea::all(),
+            'materials' => TmMaterial::all(),
+            'checkouts' => TtMaterial::where('id_transaction',$transaction_id->id)->get()
+        ]);
     }
     /**
      * Display DC dashboard
@@ -94,7 +101,7 @@ class MaterialController extends Controller
      */
     public function index()
     {
-        return view('layouts.checkin-material');    
+        // 
     }
 
     /**
@@ -163,24 +170,30 @@ class MaterialController extends Controller
         //
     }
 
-    public function getMaterial(){
+    public function getMaterial()
+    {
+        // get id area
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
 
-        $dataCkd = DB::table('tm_parts')->join('tt_stocks','tm_parts.id', '=', 'tt_stocks.id_part')
-                ->select('part_name','qty_limit','source', 'qty')
+        $dataCkd = DB::table('tm_materials')->join('tt_materials','tm_materials.id', '=', 'tt_materialss.id_material')
+                ->select(DB::raw('SUM(qty) where') ,'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
                 ->where('source', 'like', '%CKD%')
-                ->groupBy('id_part')
+                ->where('id_area', $wh->id)
+                ->groupBy('tm_materials.part_number')
                 ->get();
 
-        $dataImport = DB::table('tm_parts')->join('tt_stocks','tm_parts.id', '=', 'tt_stocks.id_part')
-                ->select('part_name','qty_limit','source', 'qty')
+        $dataImport = DB::table('tm_materials')->join('tt_materials','tm_materials.id', '=', 'tt_materialss.id_material')
+                ->select('tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source', 'tt_materials.qty')
                 ->where('source', 'like', '%IMPORT%')
-                ->groupBy('id_part')
+                ->where('id_area', $wh->id)
+                ->groupBy('tm_materials.part_number')
                 ->get();
 
-        $dataLocal= DB::table('tm_parts')->join('tt_stocks','tm_parts.id', '=', 'tt_stocks.id_part')
-                ->select('part_name','qty_limit','source', 'qty')
+        $dataLocal= DB::table('tm_materials')->join('tt_materials','tm_materials.id', '=', 'tt_materialss.id_material')
+                ->select('tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source', 'tt_materials.qty')
                 ->where('source', 'like', '%LOCAL%')
-                ->groupBy('id_part')
+                ->where('id_area', $wh->id)
+                ->groupBy('tm_materials.part_number')
                 ->get();
                 
         return response()->json([
@@ -197,7 +210,7 @@ class MaterialController extends Controller
         $transaction_id = TmTransaction::select('id')->where('name', 'Checkout Material')->first();
 
         return view('layouts.checkout-material',[
-            'area' => TmArea::where('name', '<>', 'PPIC')->get(),
+            'area' => TmArea::all(),
             'materials' => TmMaterial::all(),
             'checkouts' => TtMaterial::where('id_transaction',$transaction_id->id)->get()
         ]);
@@ -216,12 +229,14 @@ class MaterialController extends Controller
         $prd_code_id = $prd_transaction->id;
         
         // get id area
-        $ppic_id = TmArea::select('id')->where('name', 'PPIC')->first();
+        $ppic_id = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+        // check first , is that any stock in OH Store? (calculate the quantity per item in Oh store)
 
         // after checkout add transaction of ppic area
         $ppic = TtMaterial::create([
             'id_material' => $request->id_material,
-            'qty' => $request->qty,
+            'qty' => - $request->qty, // minus in wh area
             'id_area' => $ppic_id->id,
             'id_transaction' => $code_id,
             'date' => date('Y-m-d H:i:s')
@@ -230,7 +245,7 @@ class MaterialController extends Controller
         // add transaction based on area too
         $production = TtMaterial::create([
             'id_material' => $request->id_material,
-            'qty' => $request->qty,
+            'qty' => $request->qty, //plus in prod area
             'id_area' => $request->id_area,
             'id_transaction' => $prd_code_id,
             'date' => date('Y-m-d H:i:s')
@@ -246,6 +261,50 @@ class MaterialController extends Controller
         ->first();
         
         return redirect()->route('checkout.index')->with('success', 'Success checkout item ' . $material->part_name . ' to ' .  $material->name . ' area');
+    }
+
+    public function entryOhStore(Request $request)
+    {
+        // OH pov
+        $oh_transaction = TmTransaction::select('id')->where('name', 'Planning Unboxing')->first();
+
+        // WH pov
+        $wh_transaction = TmTransaction::select('id')->where('name', 'Planning Unboxing (R)')->first();
+        
+        // get id area
+        $oh_id = TmArea::select('id')->where('name', 'OH Store')->first();
+        $wh_id = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+        // check first , is that any stock in WH? (calculate the quantity per item in warehouse)
+
+        // after checkout add transaction of ppic area
+        $oh = TtMaterial::create([
+            'id_material' => $request->id_material,
+            'qty' => $request->qty, //plus un oh area
+            'id_area' => $oh_id->id,
+            'id_transaction' => $oh_transaction->id,
+            'date' => date('Y-m-d H:i:s')
+        ]);
+
+        // add transaction based on area too
+        $wh = TtMaterial::create([
+            'id_material' => $request->id_material,
+            'qty' => - $request->qty, //minus in wh area
+            'id_area' => $wh_id->id,
+            'id_transaction' => $wh_transaction->id,
+            'date' => date('Y-m-d H:i:s')
+        ]);
+
+        // get material name, area, and transaction name
+        $material = DB::table('tt_materials')
+        ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
+        ->join('tm_areas', 'tt_materials.id_area', '=', 'tm_areas.id')
+        ->join('tm_transactions', 'tt_materials.id_transaction', '=', 'tm_transactions.id')
+        ->select('tm_materials.part_name','tm_areas.name','tm_materials.date')
+        ->where('tt_materials.id', $oh->id)
+        ->first();
+        
+        return redirect()->route('entry-oh.index')->with('success', 'Success move ' . $material->part_name . ' to ' .  $material->name . ' area');
     }
 
     public function getDataCheckout()
@@ -273,14 +332,45 @@ class MaterialController extends Controller
                 ->toJson();
     }
     
-    public function getDataCheckin()
+    // initial stock from supplier
+    public function getDataWh()
     {
+        // get id transaction
+        $transaction_id = TmTransaction::select('id')->where('name', 'Supply Material')->first();
+
         $input = DB::table('tt_materials')
                     ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
                     ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier','tm_materials.source' ,'tm_materials.pic','tm_materials.date','tt_materials.qty')
+                    ->where('id_transaction', $transaction_id->id)
                     ->get();
 
         return DataTables::of($input)
+                ->toJson();
+    }
+
+    // stock in planning unboxing today
+    public function getDataOh()
+    {
+        // get id transaction
+        $transaction_id = TmTransaction::select('id')->where('name', 'Planning Unboxing')->first();
+
+        $input =  DB::table('tt_materials')
+                ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
+                ->join('tm_areas', 'tt_materials.id_area', '=', 'tm_areas.id')
+                ->join('tm_transactions', 'tt_materials.id_transaction', '=', 'tm_transactions.id')
+                ->select('tt_materials.id','tm_materials.part_name','tm_areas.name','tm_materials.part_number', 'tt_materials.qty', 'tm_transactions.name as detail')
+                ->where('tt_materials.id_transaction',$transaction_id->id)
+                ->get();
+
+        return DataTables::of($input)
+                ->addColumn('edit', function($row) use ($input){
+
+                    $btn = '<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#edit-'. $row->id .'"><span class="d-none d-sm-inline-block">Edit</span></button>';
+
+                    return $btn;
+
+                })
+                ->rawColumns(['edit'])
                 ->toJson();
     }
 

@@ -8,12 +8,22 @@
                 <a href="javascript:void(0);">Transaction</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">Entry Stock WH</a>
+                <a href="javascript:void(0);" class="active">STO</a>
             </li>
         </ol>
     </nav>
 </div>
 <div class="row">
+    <div class="col-md-12">
+        <div class="card" style="padding: 2rem;">
+            <form action="" method="post">
+                <label class="form-label" for="material">Scan Barcode</label>
+                <input type="text" id="material" name="material" class="form-control @error('material') is-invalid @enderror" placeholder="Scan Barcode..." required/>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
     <div class="col-lg-12">
         <div class="card" style="padding: 2rem;">
             <div class="row">
@@ -74,6 +84,9 @@
 <script>
     
     $(document).ready(function () {
+
+        $('#material').focus();
+
         $('.material-datatable').DataTable({
             ajax: `{{ route('entry-wh.getData') }}`,
             columns: [

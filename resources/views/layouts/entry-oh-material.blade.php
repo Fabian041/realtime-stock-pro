@@ -8,18 +8,32 @@
                 <a href="javascript:void(0);">Transaction</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">Entry Stock OH</a>
+                {{-- <a href="javascript:void(0);" class="active">Entry Stock OH</a> --}}
+                <a href="javascript:void(0);" class="active">Unboxing</a>
             </li>
         </ol>
     </nav>
 </div>
 <div class="row">
+    <div class="col-md-12">
+        <div class="card" style="padding: 2rem;">
+            <form action="" method="post">
+                <label class="form-label" for="material">Scan Barcode</label>
+                <input type="text" id="material" name="material" class="form-control @error('material') is-invalid @enderror" placeholder="Scan Barcode..." required/>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
     <div class="col-lg-12">
         <div class="card" style="padding: 2rem;">
             <div class="row">
                 <div class="col-md-10"></div>
-                <div class="col-md-2 text-end">
+                {{-- <div class="col-md-2 text-end">
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal"><i class="bx bx-import me-sm-2"></i> <span class="d-none d-sm-inline-block">Import</span></button>
+                </div> --}}
+                <div class="col-md-2 text-end">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPart"><i class="bx bx-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Unboxing</span></button>
                 </div>
             </div>
             
@@ -29,11 +43,9 @@
                         <tr>
                             <th>Part Number</th>
                             <th>Part Name</th>
-                            <th>Supplier</th>
-                            <th>Source</th>
-                            <th>PIC</th>
-                            <th>Date</th>
                             <th>Quantity</th>
+                            <th>Detail</th>
+                            <th>action</th>
                         </tr>
                     </thead>
                 </table>
@@ -69,21 +81,87 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="addPart" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-simple modal-edit-user">
+        <div class="modal-content p-2 p-md-5">
+            <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="text-center mb-4">
+                    <h3>Planning Unboxing Information</h3>
+                    {{-- <p>Mastering Detail Part Information</p> --}}
+                </div>
+                <form method="POST" action="{{ route('entry-oh.store') }}" id="editUserForm" class="row g-3">
+                    @method('POST')
+                    @csrf
+                    <div class="col-12 col-md-12">
+                        <label class="form-label" for="id_material">Material Name</label>
+                        <select class="form-select" id="id_material" aria-label="Default select example" name="id_material">
+                            <option value="null" selected>Pilih Material</option>
+                            @foreach ($materials as $item)
+                                <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
+                            @endforeach
+                        </select>
+
+                        @error('id_material')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="area">Area</label>
+                        <select class="form-select" id="area" aria-label="Default select example" name="id_area">
+                            <option selected>Pilih Area</option>
+                            @foreach ($area as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+
+                        @error('area')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="qty_limit">Quantity</label>
+                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required/>
+
+                        @error('qty')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="col-12 text-end mt-3">
+                        <button type="reset" class="btn btn-label-secondary me-sm-3 me-1" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{-- end modal --}}
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
     
     $(document).ready(function () {
+
+        $('#material').focus();
+
         $('.material-datatable').DataTable({
             ajax: `{{ route('entry-oh.getData') }}`,
             columns: [
-            { data: 'part_number' },
-            { data: 'part_name' },
-            { data: 'supplier' },
-            { data: 'source' },
-            { data: 'pic' },
-            { data: 'date' },
-            { data: 'qty' },
+                { data: 'part_number' },
+                { data: 'part_name' },
+                { data: 'qty' },
+                { data: 'detail' },
+                { data: 'edit', orderable: false, searchable: false},
             ],
         });
     });

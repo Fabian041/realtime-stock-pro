@@ -14,6 +14,16 @@
     </nav>
 </div>
 <div class="row">
+    <div class="col-md-12">
+        <div class="card" style="padding: 2rem;">
+            <form action="" method="post">
+                <label class="form-label" for="material">Scan Barcode</label>
+                <input type="text" id="material" name="material" class="form-control @error('material') is-invalid @enderror" placeholder="Scan Barcode..." required/>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
     <div class="col-lg-12">
 
         {{-- alert when registered --}}
@@ -187,8 +197,11 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
-    
+
     $(document).ready(function () {
+
+        $('#material').focus();
+
         $('.part-datatable').DataTable({
             ajax: `{{ route('checkout.getData') }}`,
             columns: [

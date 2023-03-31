@@ -188,12 +188,14 @@
               </li>
               <li class="menu-item {{ (request()->is('dashboard/material-transaction/entry-wh')) ? 'active' : '' }}">
                 <a href="{{ route('entry-wh.index') }}" class="menu-link " >
-                    <div>Entry Stock WH</div>
+                    {{-- <div>Entry Stock WH</div> --}}
+                    <div>STO</div>
                 </a>
               </li>
               <li class="menu-item {{ (request()->is('dashboard/material-transaction/entry-oh')) ? 'active' : '' }}">
                 <a href="{{ route('entry-oh.index') }}" class="menu-link " >
-                    <div>Entry Stock OH</div>
+                    {{-- <div>Entry Stock OH</div> --}}
+                    <div>Unboxing</div>
                 </a>
               </li>
             </ul>

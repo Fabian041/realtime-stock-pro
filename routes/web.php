@@ -71,6 +71,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/entry-oh', [MaterialController::class, 'entryOh'])->name('entry-oh.index');
             Route::post('/entry-oh/import', [MaterialController::class, 'importOh'])->name('entry-oh.import');
             Route::get('/entry-oh/getData', [MaterialController::class, 'getDataOh'])->name('entry-oh.getData');
+            Route::post('/entry-oh/store', [MaterialController::class, 'entryOhStore'])->name('entry-oh.store');
 
             // checkout proccess
             Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');
