@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tm_transactions', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('code')->unique();
-            $table->string('name');
-            $table->string('type');
-            $table->timestamps();
+        Schema::table('current_stocks', function (Blueprint $table) {
+            $table->unsignedBigInteger('id_area')->unsigned()->after('id_material');
+            $table->foreign('id_area')->references('id')->on('tm_areas');
+            $table->date('date')->after('id_area');
         });
     }
 
@@ -29,6 +27,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tm_transactions');
+        Schema::table('current_stocks', function (Blueprint $table) {
+            //
+        });
     }
 };

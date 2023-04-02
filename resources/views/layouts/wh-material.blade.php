@@ -85,7 +85,9 @@
     
     $(document).ready(function () {
 
-        $('.material-datatable').DataTable({
+        var table = $('.material-datatable').DataTable({
+            processing: true,
+            serverSide: true,
             ajax: `{{ route('wh.getData') }}`,
             columns: [
             { data: 'part_number' },
@@ -117,8 +119,7 @@
                     
                 } else {
 
-                    // error alert / toast
-                    alert("kanban tidak dikenali")
+                    showToast("error", "Kanban tidak dikenali");
 
                 }
             } else {
@@ -137,22 +138,36 @@
                 success: function (data) {
                     console.log(data);
                     if (data.status == "success") {
-                        notifMessege("success", "Data Saved");
-                        $('#counter').text(data.counter);
-                        return true
+                        table.draw();
+                        showToast("success", `Part ${data.back_number} berhasil disimpan`);
+                        return true;
                     } else if (data.code == "error") {
-                        notifMessege("error", data.messege);
-                        return false
+                        showToast("error", data.messege);
+                        return false;
                     }
                 },
                 error: function (xhr) {
                     if (xhr.status == 0) {
-                        // error alert / toast
+                        showToast("error", "Data tidak terkirim");
                         return;
                     }
-                    // error alert / toast
+                    showToast("error", xhr.status);
                 }
             });
+        }
+
+
+        function showToast(type, message){
+            Toastify({
+                text: message,
+                duration: 5000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: type === 'success' ? "#2ecc71" : "#e74c3c",
+                stopOnFocus: true
+            }).showToast();
         }
 
     });

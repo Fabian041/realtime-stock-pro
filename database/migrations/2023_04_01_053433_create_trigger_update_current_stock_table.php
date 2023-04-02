@@ -16,7 +16,10 @@ return new class extends Migration
     {
         DB::unprepared('CREATE TRIGGER update_current_stock AFTER INSERT ON tt_materials FOR EACH ROW
             BEGIN
-                IF NEW.transaction_type = "supply" THEN
+                DECLARE type VARCHAR(255);
+                SELECT type INTO type FROM tm_transactions WHERE id = NEW.id_transaction;
+
+                IF type = "supply" THEN
                     UPDATE current_stocks SET current_stock = current_stock + NEW.qty WHERE id_material = NEW.id_material;
                 ELSE
                     UPDATE current_stocks SET current_stock = current_stock - NEW.qty WHERE id_material = NEW.id_material;

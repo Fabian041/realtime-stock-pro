@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tm_transactions', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('code')->unique();
-            $table->string('name');
-            $table->string('type');
-            $table->timestamps();
+        Schema::table('tt_materials', function (Blueprint $table) {
+            $table->string('pic')->after('id_transaction');
         });
     }
 
@@ -29,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tm_transactions');
+        Schema::table('tt_materials', function (Blueprint $table) {
+            //
+        });
     }
 };

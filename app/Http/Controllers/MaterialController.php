@@ -48,13 +48,50 @@ class MaterialController extends Controller
             $part_number = substr($arr[3], 9, 20);
             $supplier = substr($arr[3], 0,9);
             $qty = substr($arr[7], 4, 3);
+
+            // get id area
+            $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+            // check in tm material table, if it exists
+            $material = TmMaterial::where('part_number', $part_number)->first();
+
+            if(!$material){
+                return [
+                    'status' => 'error',
+                    'message' => 'Part atau komponen tidak ditemukan'
+                ];
+            }
+
+            // get id transaction
+            $transaction = TmTransaction::select('id')->where('name', 'STO')->first();
             
+            try {
+                DB::beginTransaction();
 
+                if($material){
+                    TtMaterial::create([
+                        'id_material' => $material->id,
+                        'qty' => $qty,
+                        'id_area' => $wh->id,
+                        'id_transaction' => $transaction->id,
+                        'pic' => auth()->user()->username,
+                        'date' => date('Y-m-d H:i:s')
+                    ]); 
+                }
+
+                DB::commit();
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                return [
+                    'status' => 'error',
+                    'message' => $e->getMessage()
+                ];
+            }
+            return [
+                'status' => 'success',
+                'back_number' => $back_number,
+            ];
         }
-
-        return [
-            'code' => $arr
-        ];
     }
     /**
      * Display DC dashboard
@@ -64,13 +101,169 @@ class MaterialController extends Controller
     public function indexOh()
     {
         // get id transaction
-        $transaction_id = TmTransaction::select('id')->where('name', 'Planning Unboxing')->first();
+        $transaction_id = TmTransaction::select('id')->where('name', 'Unboxing')->first();
 
         return view('layouts.oh-material',[
             'area' => TmArea::all(),
             'materials' => TmMaterial::all(),
             'checkouts' => TtMaterial::where('id_transaction',$transaction_id->id)->get()
         ]);
+    }
+    /**
+     * Display DC dashboard
+     *
+     * 
+     */
+    // Scan unboxing
+    public function insertOh(Request $request)
+    {
+        $barcode = $request->barcode;
+
+        if($barcode){
+            $arr = preg_split('/ +/', $barcode);
+            $back_number = $arr[6];
+            $part_number = substr($arr[3], 9, 20);
+            $supplier = substr($arr[3], 0,9);
+            $qty = substr($arr[7], 4, 3);
+
+            // get id area
+            $oh = TmArea::select('id')->where('name', 'OH Store')->first();
+            $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+            // check stock in warehouse
+            $material = DB::table('tt_materials')
+                        ->join('tm_materials', 'tm_materials.id', '=', 'tt_materials.id_material')
+                        ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_materials.id_transaction')
+                        ->select('tm_materials.part_number','tm_materials.back_number', DB::raw('SUM(CASE WHEN tm_transactions.type = "supply" THEN qty ELSE -qty END) AS current_stock'))
+                        ->where('tt_materials.id_area', $wh->id)
+                        ->where('tm_materials.part_number', $part_number)
+                        ->groupBy('tm_materials.part_number')
+                        ->get();
+
+            if(!$material){
+                return [
+                    'status' => 'error',
+                    'message' => 'Part atau komponen tidak ditemukan'
+                ];
+            }elseif ($material->current_stock == 0) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Part atau komponen habis atau tidak ditemukan'
+                ];
+            }
+
+            // get id transaction
+            $transaction = TmTransaction::select('id')->where('name', 'Unboxing')->first();
+            $reversalTransaction= TmTransaction::select('id')->where('name', 'Unboxing (R)')->first();
+            
+            try {
+                DB::beginTransaction();
+
+                if($material){
+
+                    // supply OH area
+                    TtMaterial::create([
+                        'id_material' => $material->id,
+                        'qty' => $qty,
+                        'id_area' => $oh->id,
+                        'id_transaction' => $transaction->id,
+                        'pic' => auth()->user()->username,
+                        'date' => date('Y-m-d H:i:s')
+                    ]); 
+
+                    // checkout WH area
+                    TtMaterial::create([
+                        'id_material' => $material->id,
+                        'qty' => $qty,
+                        'id_area' => $wh->id,
+                        'id_transaction' => $reversalTransaction->id,
+                        'pic' => auth()->user()->username,
+                        'date' => date('Y-m-d H:i:s')
+                    ]); 
+                }
+
+                DB::commit();
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                return [
+                    'status' => 'error',
+                    'message' => $e->getMessage()
+                ];
+            }
+            return [
+                'status' => 'success',
+                'back_number' => $back_number,
+            ];
+        }
+    }
+    /**
+     * Update OH
+     *
+     * 
+     */
+    // Manual unboxing 
+    public function unboxOh(Request $request)
+    {
+        // get id area
+        $oh = TmArea::select('id')->where('name', 'OH Store')->first();
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+        // get id transaction
+        $transaction = TmTransaction::select('id')->where('name', 'Unboxing')->first();
+        $reversalTransaction= TmTransaction::select('id')->where('name', 'Unboxing (R)')->first();
+
+        // check first , is that any stock in WH
+        $material = DB::table('tt_materials')
+                    ->join('tm_materials', 'tm_materials.id', '=', 'tt_materials.id_material')
+                    ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_materials.id_transaction')
+                    ->select('tt_materials.id_material','tm_materials.part_number','tm_materials.back_number', DB::raw('SUM(CASE WHEN tm_transactions.type = "supply" THEN qty ELSE -qty END) AS current_stock'))
+                    ->where('tt_materials.id_area', $wh->id)
+                    ->where('tt_materials.id_material', $request->id_material)
+                    ->groupBy('tm_materials.part_number')
+                    ->first();
+
+        if($material == null  || !$material || $material == []){
+
+            return redirect()->back()->with('error', 'Part tidak ditemukan');
+
+        }elseif($material->current_stock == 0) {
+
+            return redirect()->back()->with('error', 'Part' . $material->part_number . 'habis atau tidak ditemukan');
+        }
+
+        try {
+            DB::beginTransaction();
+            
+            if($material){
+                
+                // supply OH area
+                TtMaterial::create([
+                    'id_material' => $material->id,
+                    'qty' => $request->qty * $request->pcs,
+                    'id_area' => $oh->id,
+                    'id_transaction' => $transaction->id,
+                    'pic' => auth()->user()->username,
+                    'date' => date('Y-m-d H:i:s')
+                ]); 
+                
+                // checkout WH area
+                TtMaterial::create([
+                    'id_material' => $material->id,
+                    'qty' => $request->qty * $request->pcs,
+                    'id_area' => $wh->id,
+                    'id_transaction' => $reversalTransaction->id,
+                    'pic' => auth()->user()->username,
+                    'date' => date('Y-m-d H:i:s')
+                ]); 
+            }
+            
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error',$e->getMessage());
+        }
+        
+        return redirect()->back()->with('success', 'Part' . $material->part_name. ' siap diunboxing');
     }
     /**
      * Display DC dashboard
@@ -230,7 +423,7 @@ class MaterialController extends Controller
     public function checkout()
     {
         // get id transaction
-        $transaction_id = TmTransaction::select('id')->where('name', 'Checkout Material')->first();
+        $transaction_id = TmTransaction::select('id')->where('name', 'Pulling Production')->first();
 
         return view('layouts.checkout-material',[
             'area' => TmArea::all(),
@@ -359,11 +552,11 @@ class MaterialController extends Controller
     public function getDataWh()
     {
         // get id transaction
-        $transaction_id = TmTransaction::select('id')->where('name', 'Supply Material')->first();
+        $transaction_id = TmTransaction::select('id')->where('name', 'STO')->first();
 
         $input = DB::table('tt_materials')
                     ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
-                    ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier','tm_materials.source' ,'tm_materials.pic','tm_materials.date','tt_materials.qty')
+                    ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier','tm_materials.source' ,'tt_materials.pic','tm_materials.date','tt_materials.qty')
                     ->where('id_transaction', $transaction_id->id)
                     ->get();
 
@@ -375,25 +568,15 @@ class MaterialController extends Controller
     public function getDataOh()
     {
         // get id transaction
-        $transaction_id = TmTransaction::select('id')->where('name', 'Planning Unboxing')->first();
+        $transaction_id = TmTransaction::select('id')->where('name', 'Unboxing')->first();
 
-        $input =  DB::table('tt_materials')
-                ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
-                ->join('tm_areas', 'tt_materials.id_area', '=', 'tm_areas.id')
-                ->join('tm_transactions', 'tt_materials.id_transaction', '=', 'tm_transactions.id')
-                ->select('tt_materials.id','tm_materials.part_name','tm_areas.name','tm_materials.part_number', 'tt_materials.qty', 'tm_transactions.name as detail')
-                ->where('tt_materials.id_transaction',$transaction_id->id)
-                ->get();
+        $input =   DB::table('tt_materials')
+                    ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
+                    ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier','tm_materials.source' ,'tt_materials.pic','tm_materials.date','tt_materials.qty')
+                    ->where('id_transaction', $transaction_id->id)
+                    ->get();
 
         return DataTables::of($input)
-                ->addColumn('edit', function($row) use ($input){
-
-                    $btn = '<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#edit-'. $row->id .'"><span class="d-none d-sm-inline-block">Edit</span></button>';
-
-                    return $btn;
-
-                })
-                ->rawColumns(['edit'])
                 ->toJson();
     }
 

@@ -41,7 +41,8 @@
                 <table class="datatables-basics table border-top part-datatable">
                     <thead>
                         <tr>
-                            <th>part Number</th>
+                            <th>Part Number</th>
+                            <th>Back Number</th>
                             <th>Part Name</th>
                             <th>Limit Quantity</th>
                         </tr>
@@ -67,11 +68,21 @@
                 <form method="POST" action="{{ route('part-number.master.insertData') }}" id="editUserForm" class="row g-3">
                     @method('POST')
                     @csrf
-                    <div class="col-12 col-md-12">
+                    <div class="col-12 col-md-6">
                         <label class="form-label" for="part_name">Part Name</label>
                         <input type="text" id="part_name" name="part_name" class="form-control @error('part_name') is-invalid @enderror" placeholder="Oil Pan" required/>
 
                         @error('part_name')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="back_number">Back Number</label>
+                        <input type="text" id="back_number" name="back_number" class="form-control @error('back_number') is-invalid @enderror" placeholder="CI05" required/>
+
+                        @error('back_number')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
@@ -186,6 +197,7 @@
             ajax: `{{ route('part-number.master.getData') }}`,
             columns: [
                 { data: 'part_number' },
+                { data: 'back_number' },
                 { data: 'part_name' },
                 { data: 'qty_limit' },
             ],

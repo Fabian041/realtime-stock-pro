@@ -70,9 +70,9 @@ Route::middleware(['auth'])->group(function () {
 
             // Material transaction
             Route::get('/oh', [MaterialController::class, 'indexOh'])->name('oh.index');
-            Route::post('/oh/import', [MaterialController::class, 'importOh'])->name('oh.import');
+            Route::post('/oh/unbox', [MaterialController::class, 'unboxOh'])->name('oh.unbox');
+            Route::post('/oh/insert', [MaterialController::class, 'insertOh'])->name('oh.insert');
             Route::get('/oh/getData', [MaterialController::class, 'getDataOh'])->name('oh.getData');
-            Route::post('/oh/store', [MaterialController::class, 'entryOhStore'])->name('oh.store');
 
             // checkout proccess
             Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');

@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('tm_materials', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('part_name');
+            $table->string('back_number');
             $table->string('part_number');
-            $table->string('pic');
             $table->date('date');
             $table->time('time');
             $table->string('supplier');

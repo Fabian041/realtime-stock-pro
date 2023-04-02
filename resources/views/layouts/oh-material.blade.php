@@ -43,9 +43,11 @@
                         <tr>
                             <th>Part Number</th>
                             <th>Part Name</th>
+                            <th>Supplier</th>
+                            <th>Source</th>
+                            <th>PIC</th>
+                            <th>Date</th>
                             <th>Quantity</th>
-                            <th>Detail</th>
-                            <th>action</th>
                         </tr>
                     </thead>
                 </table>
@@ -55,7 +57,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+{{-- <div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form action="{{ route('oh.import') }}" method="POST" enctype="multipart/form-data">
@@ -79,7 +81,7 @@
             </form>
         </div>
     </div>
-</div>
+</div> --}}
 
 <!-- Modal -->
 <div class="modal fade" id="addPart" tabindex="-1" aria-hidden="true">
@@ -88,10 +90,10 @@
             <div class="modal-body">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="text-center mb-4">
-                    <h3>Planning Unboxing Information</h3>
+                    <h3>Unboxing Information</h3>
                     {{-- <p>Mastering Detail Part Information</p> --}}
                 </div>
-                <form method="POST" action="{{ route('entry-oh.store') }}" id="editUserForm" class="row g-3">
+                <form method="POST" action="{{ route('oh.unbox') }}" id="editUserForm" class="row g-3">
                     @method('POST')
                     @csrf
                     <div class="col-12 col-md-12">
@@ -110,25 +112,20 @@
                         @enderror
                     </div>
                     <div class="col-12 col-md-6">
-                        <label class="form-label" for="area">Area</label>
-                        <select class="form-select" id="area" aria-label="Default select example" name="id_area">
-                            <option selected>Pilih Area</option>
-                            @foreach ($area as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
+                        <label class="form-label" for="pcs">Box Quantity</label>
+                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="20" min="1" required/>
 
-                        @error('area')
+                        @error('qty')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
                         @enderror
                     </div>
                     <div class="col-12 col-md-6">
-                        <label class="form-label" for="qty_limit">Quantity</label>
-                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required/>
+                        <label class="form-label" for="pcs">Qty/Box</label>
+                        <input type="number" id="pcs" name="pcs" class="form-control @error('pcs') is-invalid @enderror" placeholder="80" min="1" required/>
 
-                        @error('qty')
+                        @error('pcs')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
@@ -146,25 +143,103 @@
 </div>
 {{-- end modal --}}
 
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
     
     $(document).ready(function () {
 
-        $('#material').focus();
+        var errorMessage = "{!! session('error') !!}";
 
-        $('.material-datatable').DataTable({
+        if(errorMessage){
+            showToast('error', errorMessage);
+        }
+                
+        function showToast(type, message){
+            Toastify({
+                text: message,
+                duration: 5000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: type === 'success' ? "#2ecc71" : "#e74c3c",
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        var table = $('.material-datatable').DataTable({
+            processing: true,
+            serverSide: true,
             ajax: `{{ route('oh.getData') }}`,
             columns: [
-                { data: 'part_number' },
-                { data: 'part_name' },
-                { data: 'qty' },
-                { data: 'detail' },
-                { data: 'edit', orderable: false, searchable: false},
+            { data: 'part_number' },
+            { data: 'part_name' },
+            { data: 'supplier' },
+            { data: 'source' },
+            { data: 'pic' },
+            { data: 'date' },
+            { data: 'qty' },
             ],
         });
+
+        // $('#material').prop('readonly', true);
+        $('#material').focus();
+        let barcode = "";
+        let barcodecomplete = "";
+
+        $('#material').keypress(function(e) {
+            e.preventDefault();
+            let code = (e.keyCode ? e.keyCode : e.which);
+            // key ente
+            if (code == 13) {
+                barcodecomplete = barcode;
+                barcode = "";
+                // end of isi dengan line
+                if (barcodecomplete.length == 122) {
+                    insertWh(barcodecomplete);
+                    return;
+                    
+                } else {
+
+                    showToast("error", "Kanban tidak dikenali");
+
+                }
+            } else {
+                barcode = barcode + String.fromCharCode(e.which);
+            }
+        });
+
+        function insertOh(barcode) {
+            $.ajax({
+                type: 'get',
+                url: "{{ url('dashboard/material-transaction/oh/insert') }}",
+                data: {
+                    barcode : barcode,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == "success") {
+                        table.draw();
+                        showToast("success", `Part ${data.back_number} siap diunboxing`);
+                        return true;
+                    } else if (data.code == "error") {
+                        showToast("error", data.messege);
+                        return false;
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status == 0) {
+                        showToast("error", "Data tidak terkirim");
+                        return;
+                    }
+                    showToast("error", xhr.status);
+                }
+            });
+        }
+
     });
 </script>
+
 
 @endsection

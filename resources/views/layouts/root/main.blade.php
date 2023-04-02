@@ -16,6 +16,11 @@
   <meta name="csrf-token" content="TRJBlEhmYek8o5uYJpjNfDyqTIKILSWlz9hcVRpS">
   <!-- Canonical SEO -->
   <link rel="canonical" href="https://themeselection.com/item/sneat-bootstrap-html-laravel-admin-template/">
+  <!-- Include the toastify CSS file -->
+  <link rel="stylesheet" href="{{ asset('css/toastify.css') }}">
+
+  <!-- Include the toastify JS file -->
+  <script src="{{ asset('js/toastify.js') }}"></script>
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="https://demos.themeselection.com/sneat-bootstrap-html-laravel-admin-template/demo/assets/img/favicon/favicon.ico" />
   

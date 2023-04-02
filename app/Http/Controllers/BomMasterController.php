@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Pusher\Pusher;
 use App\Models\TmBom;
 use App\Models\TmArea;
 use App\Models\TmPart;
 use App\Models\TmMaterial;
 use Illuminate\Http\Request;
+use App\Imports\TmMaterialImport;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -34,7 +37,17 @@ class BomMasterController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'id_part' => 'required',
+            'id_area' => 'required',
+            'id_material' => 'required',
+            'qty_use' => 'required',
+            'uom' => 'required'
+        ]);
+
+        TmBom::create($validatedData);
+        
+        return redirect()->back()->with('success', 'Part created successfully.');
     }
 
     /**
@@ -101,8 +114,22 @@ class BomMasterController extends Controller
      */
     public function getData()
     {
-        $input = TmBom::all();
+        $input =  DB::table('tm_boms')
+                ->join('tm_materials', 'tm_boms.id_material', '=', 'tm_materials.id')
+                ->join('tm_areas', 'tm_boms.id_area', '=', 'tm_areas.id')
+                ->join('tm_parts', 'tm_boms.id_part', '=', 'tm_parts.id')
+                ->select('tm_boms.id','tm_parts.part_name','tm_areas.name','tm_parts.part_number', 'tm_materials.part_number as material_number' , 'tm_boms.qty_use')
+                ->get();
+
         return DataTables::of($input)
+                ->addColumn('edit', function($row) use ($input){
+
+                    $btn = '<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#edit-'. $row->id .'"><span class="d-none d-sm-inline-block">Edit</span></button>';
+
+                    return $btn;
+
+                })
+                ->rawColumns(['edit'])
                 ->toJson();
     }
 }

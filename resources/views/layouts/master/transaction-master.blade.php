@@ -39,7 +39,7 @@
                         <tr>
                             <th>Transaction Code</th>
                             <th>Transaction Name</th>
-                            {{-- <th>Transaction Status</th> --}}
+                            <th>Transaction Type</th>
                         </tr>
                     </thead>
                 </table>
@@ -104,7 +104,7 @@
             columns: [
                 { data: 'code' },
                 { data: 'name' },
-                // { data: 'status' },
+                { data: 'type' },
             ],
         });
     });
