@@ -44,15 +44,15 @@
                 </div>
             </div>
             <div class="card-datatable table-responsive">
-                <table class="datatables-basics table border-top part-datatable">
+                <table class="datatables-basics table border-top material-datatable">
                     <thead>
                         <tr>
                             <th>Area</th>
                             <th>Part Name</th>
                             <th>Date</th>
+                            <th>PIC</th>
                             <th>Quantity</th>
-                            <th>Detail</th>
-                            <th>action</th>
+                            <th></th>
                         </tr>
                     </thead>
                 </table>
@@ -60,8 +60,6 @@
         </div>
     </div>
 </div>
-
-
 
 <!-- Modal -->
 <div class="modal fade" id="addPart" tabindex="-1" aria-hidden="true">
@@ -76,7 +74,7 @@
                 <form method="POST" action="{{ route('checkout.store') }}" id="editUserForm" class="row g-3">
                     @method('POST')
                     @csrf
-                    <div class="col-12 col-md-12">
+                    <div class="col-12 col-md-6">
                         <label class="form-label" for="id_material">Material Name</label>
                         <select class="form-select" id="id_material" aria-label="Default select example" name="id_material">
                             <option value="null" selected>Pilih Material</option>
@@ -92,23 +90,8 @@
                         @enderror
                     </div>
                     <div class="col-12 col-md-6">
-                        <label class="form-label" for="area">Area</label>
-                        <select class="form-select" id="area" aria-label="Default select example" name="id_area">
-                            <option selected>Pilih Area</option>
-                            @foreach ($area as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
-
-                        @error('area')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label class="form-label" for="qty_limit">Quantity</label>
-                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required/>
+                        <label class="form-label" for="pcs">Box Quantity</label>
+                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="20" min="1" required/>
 
                         @error('qty')
                             <div class="invalid-feedback">
@@ -197,22 +180,98 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
-
+    
     $(document).ready(function () {
-
-        $('#material').focus();
-
-        $('.part-datatable').DataTable({
+        
+        var errorMessage = "{!! session('error') !!}";
+        
+        if(errorMessage){
+            showToast('error', errorMessage);
+        }
+        
+        function showToast(type, message){
+            Toastify({
+                text: message,
+                duration: 5000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: type === 'success' ? "#2ecc71" : "#e74c3c",
+                stopOnFocus: true
+            }).showToast();
+        }
+        
+        var table = $('.material-datatable').DataTable({
+            processing: true,
+            serverSide: true,
             ajax: `{{ route('checkout.getData') }}`,
             columns: [
-                { data: 'name' },
-                { data: 'part_name' },
-                { data: 'date' },
-                { data: 'qty' },
-                { data: 'detail' },
-                { data: 'edit', orderable: false, searchable: false},
+            { data: 'name' },
+            { data: 'part_name' },
+            { data: 'date' },
+            { data: 'pic' },
+            { data: 'qty' },
+            { data: 'edit', orderable: false, searchable: false },
             ],
         });
+        
+        // $('#material').prop('readonly', true);
+        $('#material').focus();
+        let barcode = "";
+        let barcodecomplete = "";
+        
+        $('#material').keypress(function(e) {
+            e.preventDefault();
+            let code = (e.keyCode ? e.keyCode : e.which);
+            // key enter
+            if (code == 13) {
+                barcodecomplete = barcode;
+                barcode = "";
+                // end of isi dengan line
+                if (barcodecomplete.length == 122) {
+                    insertProd(barcodecomplete);
+                    return;
+                    
+                } else {
+                    
+                    showToast("error", "Kanban tidak dikenali");
+                    
+                }
+            } else {
+                barcode = barcode + String.fromCharCode(e.which);
+            }
+        });
+        
+        function insertProd(barcode) {
+            $.ajax({
+                type: 'get',
+                url: "{{ url('dashboard/material-transaction/checkout/scan') }}",
+                data: {
+                    barcode : barcode,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == "success") {
+                        table.draw();
+                        showToast("success", `Part ${data.back_number} siap dipulling`);
+                        return true;
+                    } else if (data.code == "error") {
+                        showToast("error", data.messege);
+                        return false;
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status == 0) {
+                        showToast("error", "Data tidak terkirim");
+                        return;
+                    }
+                    showToast("error", xhr.status);
+                }
+            });
+        }
+        
     });
 </script>
 

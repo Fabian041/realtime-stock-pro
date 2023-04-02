@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('current_stocks', function (Blueprint $table) {
+        Schema::create('material_stocks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('id_material')->unsigned();
             $table->foreign('id_material')->references('id')->on('tm_materials');

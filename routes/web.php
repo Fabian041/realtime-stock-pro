@@ -65,19 +65,20 @@ Route::middleware(['auth'])->group(function () {
             // Material transaction
             Route::get('/wh', [MaterialController::class, 'indexWh'])->name('wh.index');
             Route::post('/wh/import', [MaterialController::class, 'importWh'])->name('wh.import');
-            Route::get('/wh/insert', [MaterialController::class, 'insertWh'])->name('wh.insert');
+            Route::get('/wh/scan', [MaterialController::class, 'scanWh'])->name('wh.scan');
             Route::get('/wh/getData', [MaterialController::class, 'getDataWh'])->name('wh.getData');
 
             // Material transaction
             Route::get('/oh', [MaterialController::class, 'indexOh'])->name('oh.index');
             Route::post('/oh/unbox', [MaterialController::class, 'unboxOh'])->name('oh.unbox');
-            Route::post('/oh/insert', [MaterialController::class, 'insertOh'])->name('oh.insert');
+            Route::post('/oh/scan', [MaterialController::class, 'scanOh'])->name('oh.scan');
             Route::get('/oh/getData', [MaterialController::class, 'getDataOh'])->name('oh.getData');
 
             // checkout proccess
             Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');
-            Route::get('/checkout/getData', [MaterialController::class, 'getDataCheckout'])->name('checkout.getData');
+            Route::get('/checkout/scan', [MaterialController::class, 'scanProd'])->name('checkout.scan');
             Route::post('/checkout/store', [MaterialController::class, 'checkoutStore'])->name('checkout.store');
+            Route::get('/checkout/getData', [MaterialController::class, 'getDataCheckout'])->name('checkout.getData');
 
         });
 

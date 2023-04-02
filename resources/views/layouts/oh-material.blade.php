@@ -153,7 +153,7 @@
         if(errorMessage){
             showToast('error', errorMessage);
         }
-                
+
         function showToast(type, message){
             Toastify({
                 text: message,
@@ -196,7 +196,7 @@
                 barcode = "";
                 // end of isi dengan line
                 if (barcodecomplete.length == 122) {
-                    insertWh(barcodecomplete);
+                    insertOh(barcodecomplete);
                     return;
                     
                 } else {
@@ -212,7 +212,7 @@
         function insertOh(barcode) {
             $.ajax({
                 type: 'get',
-                url: "{{ url('dashboard/material-transaction/oh/insert') }}",
+                url: "{{ url('dashboard/material-transaction/oh/scan') }}",
                 data: {
                     barcode : barcode,
                 },

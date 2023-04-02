@@ -5,136 +5,123 @@ namespace App\Http\Controllers;
 use Pusher\Pusher;
 use App\Models\TtDc;
 use App\Models\TtMa;
+use App\Models\Stock;
 use App\Models\TmBom;
 use App\Models\TmArea;
 use App\Models\TmPart;
 use App\Models\TtAssy;
 use App\Models\TtStock;
 use App\Models\TtOutput;
+use App\Models\TtMaterial;
 use Illuminate\Http\Request;
+use App\Models\TmTransaction;
 use App\Events\StockDataUpdated;
+use Illuminate\Support\Facades\DB;
 
 class StockController extends Controller
 {
     public function stock_control($line , $code)
     {
-        //search code part in tm part number table
-        $idPart = TmPart::select('id')->where('part_number',$code)->first();
+        //ex LINE = MA001
+        //ex CODE will be generate as part number or back number in avicenna, so code will be part number or back 
+        
+        // (i think we need authenticated avicenna username / npk)
 
-        //search area in tm area table
-        $idArea = TmArea::select('id')->where('name', $line)->first();
+        // get id part based on part number or back number
+        $part = TmPart::select('id')->where('part_number', $code)->first();
+
+        // get id area based on lihe
+        $area = TmArea::select('id')->where('name', 'like', '%' . $line . '%')->first();
 
         //search bom of the part number based on line in tm bom table
-        $boms = TmBom::select('id','id_partBom','qty_use')
-                    ->where('id_area', $idArea->id)
-                    ->where('id_part', $idPart->id)
-                    ->get();
+        $boms = TmBom::where('id_area', $area->id)
+                ->where('id_part', $part->id)
+                ->get();
 
-        // get current stock quantity
-        foreach ($boms as $bom) {
-            $currStock = TtStock::select('qty')
-                            ->where('id_part',$bom->id_partBom)
-                            ->first();
-                            
-            //modify quantiy of material in tt stock table
-            $updateStock = TtStock::where('id_part',$bom->id_partBom)
-                            ->update([
-                                'qty' => $currStock->qty - $bom->qty_use
-                            ]);
+        // get id transaction
+        $transaction = TmTransaction::select('id')->where('name', 'Traceability')->first();
+        $reversalTransaction= TmTransaction::select('id')->where('name', 'Traceability (R)')->first();
 
-            // insert id bom inside tt output table
-            TtOutput::create([
-                'id_bom' => $bom->id,
-                'date' => date('Y-m-d'),
-            ]);
-        }
+        try {
 
-        // get current quantity
-        $currentDcStock = TtDc::select('qty')->where('id_part',$idPart)->first();
-        $currentMaStock = TtMa::select('qty')->where('id_part',$idPart)->first();
-        $currentAsStock = TtAssy::select('qty')->where('id_part',$idPart)->first();
+            DB::beginTransaction();
+            // material transaction
+            foreach($boms as $bom){
 
-        //insert part number in line table (tt dc/tt ma) based on line
-        if($line == 'DC'){
-            
-            // DC Line
-            if($currentDcStock === null){
-                TtDc::where('id_part', $idPart)->create([
-                    'id_part' => $idPart,
-                    'qty' => 1
+                // it will decrease current material stock and 
+                //increase FG / WIP stock in spesific area
+                TtMaterial::create([
+                    'id_material' => $bom->id,
+                    'qty' => $bom->qty_use,
+                    'id_area' => $area->id,
+                    'id_transaction' => $reversalTransaction->id,
+                    'pic' => 'avicenna user',
+                    'date' => date('Y-m-d H:i:s')
                 ]);
-            }else{
-                TtDc::where('part_number', $idPart)->update([
-                    'id_part' => $idPart,
-                    'qty' => $currentDcStock->qty + 1
+            }
+
+            // FG / WIP transaction
+            $dcModel = 'TtDC';
+            $maModel = 'TtMa';
+            $assyModel = 'TtAssy';
+
+            function partTransaction($area, $part, $transaction, $qty){
+                $area->create([
+                    'id_part' => $part,
+                    'id_transaction' => $transaction,
+                    'pic' => 'avicenna user',
+                    'date' => date('Y-m-d H:i:s'),
+                    'qty' => $qty
                 ]);
+            }
+
+            if($line == 'DC'){
+
+                partTransaction($dcModel, $part->id, $transaction->id, 1);
+
+            }elseif($line == 'MA'){
+
+                // increase ma stock
+                partTransaction($maModel, $part->id, $transaction->id, 1);
+
+                // decrease dc stock
+                partTransaction($dcModel, $part->id, $reversalTransaction->id, 1);
+
+            }elseif($line == 'AS'){
+
+                // increase assy stock
+                partTransaction($assyModel, $part->id, $transaction->id, 1);
+
+                // decrease ma stock
+                partTransaction($maModel, $part->id, $reversalTransaction->id, 1);
             }
             
-        }elseif($line == 'MA'){
+            // connection to pusher
+            $options = array(
+                'cluster' => 'ap1',
+                'encrypted' => true
+            );
 
-            if($currentMaStock === null){
-                // MA Line
-                TtMa::where('id_part', $idPart)->create([
-                    'id_part' => $idPart,
-                    'qty' => 1
-                ]);
-            }
+            $pusher = new Pusher(
+                '31df202f78fc0dace852',
+                'f1d1fd7c838cdd9f25d6',
+                '1567188',
+                $options
+            );
 
-            TtMa::where('id_part', $idPart)->update([
-                'id_part' => $idPart,
-                'qty' => $currentMaStock->qty + 1
-            ]);
+            // sending stock data all items
+            $pusher->trigger('stock-data', 'StockDataUpdated', []);
 
-            // modify DC stock
-            TtDc::where('id_part', $idPart)->update([
-                'id_part' => $idPart,
-                'qty' => $currentDcStock->qty - 1
-            ]);
+            return response()->json([
+                'message' => 'success'
+            ],200);
 
-        }elseif($line == 'AS'){
-            if($currentAsStock === null){
-                // AS Line
-                TtAssy::where('id_part', $idPart)->create([
-                    'id_part' => $idPart,
-                    'qty' => 1
-                ]);
-            }
+        } catch (\Throwable $e) {
 
-            TtAssy::where('id_part', $code)->update([
-                'id_part' => $code,
-                'qty' => $currentAsStock->qty + 1
-            ]);
+            return response()->json([
+                'message' => $e->getMessage(),
+            ],$e->getCode());
 
-            // modify MA stock
-            TtMa::where('id_part', $code)->update([
-                'id_part' => $code,
-                'qty' => $currentMaStock->qty - 1
-            ]);
         }
-
-        // get currnet stock quantity
-        $ckd = TtStock::where('source', 'like', '%CKD%')->sum('qty');
-        $import = TtStock::where('source', 'like', '%IMPORT%')->sum('qty');
-        $local = TtStock::where('source', 'like', '%LOCAL%')->sum('qty');
-
-        // connection to pusher
-        $options = array(
-            'cluster' => 'ap1',
-            'encrypted' => true
-        );
-
-        $pusher = new Pusher(
-            '31df202f78fc0dace852',
-            'f1d1fd7c838cdd9f25d6',
-            '1567188',
-            $options
-        );
-
-        // sending stock data all items
-        $pusher->trigger('stock-data', 'StockDataUpdated', [$ckd,$import,$local]);
-
-        return response()->json([
-            'message' => 'success'
-        ],200);
     }
 }

@@ -130,7 +130,7 @@
         function insertWh(barcode) {
             $.ajax({
                 type: 'get',
-                url: "{{ url('dashboard/material-transaction/wh/insert') }}",
+                url: "{{ url('dashboard/material-transaction/wh/scan') }}",
                 data: {
                     barcode : barcode,
                 },

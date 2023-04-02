@@ -38,7 +38,7 @@ class MaterialController extends Controller
      *
      * 
      */
-    public function insertWh(Request $request)
+    public function scanWh(Request $request)
     {
         $barcode = $request->barcode;
 
@@ -115,7 +115,7 @@ class MaterialController extends Controller
      * 
      */
     // Scan unboxing
-    public function insertOh(Request $request)
+    public function scanOh(Request $request)
     {
         $barcode = $request->barcode;
 
@@ -432,6 +432,92 @@ class MaterialController extends Controller
         ]);
     }
 
+    public function scanProd(Request $request)
+    {
+        $barcode = $request->barcode;
+
+        if($barcode){
+            $arr = preg_split('/ +/', $barcode);
+            $back_number = $arr[6];
+            $part_number = substr($arr[3], 9, 20);
+            $supplier = substr($arr[3], 0,9);
+            $qty = substr($arr[7], 4, 3);
+
+            // get id area
+            $oh = TmArea::select('id')->where('name', 'OH Store')->first();
+            $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+            // get id prod area, from authenticated user
+            $area = auth()->user()->department;
+            $prod = TmArea::select('id')->where('name', $area)->first();
+
+            // check stock in OH store
+            $material = DB::table('tt_materials')
+                        ->join('tm_materials', 'tm_materials.id', '=', 'tt_materials.id_material')
+                        ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_materials.id_transaction')
+                        ->select('tm_materials.part_number','tm_materials.back_number', DB::raw('SUM(CASE WHEN tm_transactions.type = "supply" THEN qty ELSE -qty END) AS current_stock'))
+                        ->where('tt_materials.id_area', $oh->id)
+                        ->where('tm_materials.part_number', $part_number)
+                        ->groupBy('tm_materials.part_number')
+                        ->get();
+
+            if(!$material){
+                return [
+                    'status' => 'error',
+                    'message' => 'Part atau komponen tidak ditemukan'
+                ];
+            }elseif ($material->current_stock == 0) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Part atau komponen habis atau tidak ditemukan'
+                ];
+            }
+
+            // get id transaction
+            $transaction = TmTransaction::select('id')->where('name', 'Pulling Production')->first();
+            $reversalTransaction= TmTransaction::select('id')->where('name', 'Pulling Production (R)')->first();
+            
+            try {
+                DB::beginTransaction();
+
+                if($material){
+
+                    // supply Prod area
+                    TtMaterial::create([
+                        'id_material' => $material->id,
+                        'qty' => $qty,
+                        'id_area' => $prod->id,
+                        'id_transaction' => $transaction->id,
+                        'pic' => auth()->user()->username,
+                        'date' => date('Y-m-d H:i:s')
+                    ]); 
+
+                    // checkout OH area
+                    TtMaterial::create([
+                        'id_material' => $material->id,
+                        'qty' => $qty,
+                        'id_area' => $oh->id,
+                        'id_transaction' => $reversalTransaction->id,
+                        'pic' => auth()->user()->username,
+                        'date' => date('Y-m-d H:i:s')
+                    ]); 
+                }
+
+                DB::commit();
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                return [
+                    'status' => 'error',
+                    'message' => $e->getMessage()
+                ];
+            }
+            return [
+                'status' => 'success',
+                'back_number' => $back_number,
+            ];
+        }
+    }
+
     public function checkoutStore(Request $request)
     {
         // ppic pov
@@ -516,7 +602,7 @@ class MaterialController extends Controller
         ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
         ->join('tm_areas', 'tt_materials.id_area', '=', 'tm_areas.id')
         ->join('tm_transactions', 'tt_materials.id_transaction', '=', 'tm_transactions.id')
-        ->select('tm_materials.part_name','tm_areas.name','tm_materials.date')
+        ->select('tm_materials.part_name','tm_areas.name','tt_materials.date')
         ->where('tt_materials.id', $oh->id)
         ->first();
         
@@ -526,13 +612,13 @@ class MaterialController extends Controller
     public function getDataCheckout()
     {
         // get id transaction
-        $transaction_id = TmTransaction::select('id')->where('name', 'Checkout Material')->first();
+        $transaction_id = TmTransaction::select('id')->where('name', 'Pulling Production')->first();
 
         $input =  DB::table('tt_materials')
                 ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
                 ->join('tm_areas', 'tt_materials.id_area', '=', 'tm_areas.id')
                 ->join('tm_transactions', 'tt_materials.id_transaction', '=', 'tm_transactions.id')
-                ->select('tt_materials.id','tm_materials.part_name','tm_areas.name','tm_materials.date', 'tt_materials.qty', 'tm_transactions.name as detail')
+                ->select('tt_materials.id','tm_materials.part_name','tm_areas.name', 'tt_materials.qty', 'tt_materials.date', 'tt_materials.pic')
                 ->where('tt_materials.id_transaction',$transaction_id->id)
                 ->get();
 
