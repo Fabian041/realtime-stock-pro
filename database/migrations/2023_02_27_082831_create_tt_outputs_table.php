@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('id_bom')->unsigned();
             $table->foreign('id_bom')->references('id')->on('tm_boms');
-            $table->date('date');
+            $table->timestamp('date');
             $table->timestamps();
         });
     }

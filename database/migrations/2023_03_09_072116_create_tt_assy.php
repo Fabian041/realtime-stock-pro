@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('id_part')->unsigned();
             $table->foreign('id_part')->references('id')->on('tm_parts');
-            $table->date('date');
+            $table->timestamp('date');
             $table->bigInteger('qty');
             $table->timestamps();
         });

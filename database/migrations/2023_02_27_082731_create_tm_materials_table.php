@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('part_name');
             $table->string('back_number');
             $table->string('part_number');
-            $table->date('date');
+            $table->timestamp('date');
             $table->time('time');
             $table->string('supplier');
             $table->string('source');

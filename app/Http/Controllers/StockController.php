@@ -58,6 +58,12 @@ class StockController extends Controller
                     'pic' => 'avicenna user',
                     'date' => date('Y-m-d H:i:s')
                 ]);
+
+                // insert to BOM table
+                TtOutput::create([
+                    'id_bom' => $bom->id,
+                    'date' => date('Y-m-d H:i:s')
+                ]);
             }
 
             // FG / WIP transaction
