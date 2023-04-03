@@ -48,6 +48,7 @@ class MaterialController extends Controller
             $part_number = substr($arr[3], 9, 20);
             $supplier = substr($arr[3], 0,9);
             $qty = substr($arr[7], 4, 3);
+            $seri = substr($arr[8], 9, 13);
 
             // get id area
             $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
@@ -134,13 +135,13 @@ class MaterialController extends Controller
             $material = DB::table('tt_materials')
                         ->join('tm_materials', 'tm_materials.id', '=', 'tt_materials.id_material')
                         ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_materials.id_transaction')
-                        ->select('tm_materials.part_number','tm_materials.back_number', DB::raw('SUM(CASE WHEN tm_transactions.type = "supply" THEN qty ELSE -qty END) AS current_stock'))
+                        ->select('tm_materials.id','tm_materials.part_number','tm_materials.back_number', DB::raw('SUM(CASE WHEN tm_transactions.type = "supply" THEN qty ELSE -qty END) AS current_stock'))
                         ->where('tt_materials.id_area', $wh->id)
                         ->where('tm_materials.part_number', $part_number)
                         ->groupBy('tm_materials.part_number')
-                        ->get();
+                        ->first();
 
-            if(!$material){
+            if($material == null  || !$material || $material == []){
                 return [
                     'status' => 'error',
                     'message' => 'Part atau komponen tidak ditemukan'
@@ -148,7 +149,7 @@ class MaterialController extends Controller
             }elseif ($material->current_stock == 0) {
                 return [
                     'status' => 'error',
-                    'message' => 'Part atau komponen habis atau tidak ditemukan'
+                    'message' => 'Komponen habis atau tidak ditemukan'
                 ];
             }
 
@@ -223,11 +224,8 @@ class MaterialController extends Controller
                     ->first();
 
         if($material == null  || !$material || $material == []){
-
             return redirect()->back()->with('error', 'Part tidak ditemukan');
-
         }elseif($material->current_stock == 0) {
-
             return redirect()->back()->with('error', 'Part' . $material->part_number . 'habis atau tidak ditemukan');
         }
 
@@ -386,37 +384,85 @@ class MaterialController extends Controller
         //
     }
 
-    public function getMaterial()
+    public function getWhMaterial()
     {
         // get id area
         $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
 
-        $dataCkd = DB::table('tm_materials')->join('tt_materials','tm_materials.id', '=', 'tt_materialss.id_material')
-                ->select(DB::raw('SUM(qty) where') ,'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
-                ->where('source', 'like', '%CKD%')
-                ->where('id_area', $wh->id)
-                ->groupBy('tm_materials.part_number')
-                ->get();
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
 
-        $dataImport = DB::table('tm_materials')->join('tt_materials','tm_materials.id', '=', 'tt_materialss.id_material')
-                ->select('tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source', 'tt_materials.qty')
-                ->where('source', 'like', '%IMPORT%')
-                ->where('id_area', $wh->id)
+        function getWhMaterial($area,$source){
+            DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
+                ->select('material_stocks.current_stock', 'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
+                ->where('tm_areas.id', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
                 ->groupBy('tm_materials.part_number')
                 ->get();
+        }
 
-        $dataLocal= DB::table('tm_materials')->join('tt_materials','tm_materials.id', '=', 'tt_materialss.id_material')
-                ->select('tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source', 'tt_materials.qty')
-                ->where('source', 'like', '%LOCAL%')
-                ->where('id_area', $wh->id)
+        try {
+            // stock material WH
+            $dataCkd = getWhMaterial($wh->id,$ckd);
+            $dataImport = getWhMaterial($wh->id, $import);
+            $dataLocal = getWhMaterial($wh->id, $local);
+
+            return response()->json([
+                'dataCkd' => $dataCkd,
+                'dataImport' => $dataImport,
+                'dataLocal' => $dataLocal,
+            ],200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ],404);
+        }
+
+
+    }
+    public function getOhMaterial()
+    {
+        // get id area
+        $oh = TmArea::select('id')->where('name', 'OH Store')->first();
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        function getOhMaterial($area,$source){
+            DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
+                ->select('material_stocks.current_stock', 'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
+                ->where('tm_areas.id', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
                 ->groupBy('tm_materials.part_number')
                 ->get();
-                
-        return response()->json([
-            'dataCkd' => $dataCkd,
-            'dataImport' => $dataImport,
-            'dataLocal' => $dataLocal,
-        ]);
+        }
+
+        try {
+            // stock material WH
+            $dataCkd = getOhMaterial($oh->id,$ckd);
+            $dataImport = getOhMaterial($oh->id, $import);
+            $dataLocal = getOhMaterial($oh->id, $local);
+
+            return response()->json([
+                'dataCkd' => $dataCkd,
+                'dataImport' => $dataImport,
+                'dataLocal' => $dataLocal,
+            ],200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ],404);
+        }
 
     }
 
@@ -455,13 +501,13 @@ class MaterialController extends Controller
             $material = DB::table('tt_materials')
                         ->join('tm_materials', 'tm_materials.id', '=', 'tt_materials.id_material')
                         ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_materials.id_transaction')
-                        ->select('tm_materials.part_number','tm_materials.back_number', DB::raw('SUM(CASE WHEN tm_transactions.type = "supply" THEN qty ELSE -qty END) AS current_stock'))
+                        ->select('tm_materials.id','tm_materials.part_number','tm_materials.back_number', DB::raw('SUM(CASE WHEN tm_transactions.type = "supply" THEN qty ELSE -qty END) AS current_stock'))
                         ->where('tt_materials.id_area', $oh->id)
                         ->where('tm_materials.part_number', $part_number)
                         ->groupBy('tm_materials.part_number')
-                        ->get();
+                        ->first();
 
-            if(!$material){
+            if($material == null  || !$material || $material == []){
                 return [
                     'status' => 'error',
                     'message' => 'Part atau komponen tidak ditemukan'
@@ -469,7 +515,7 @@ class MaterialController extends Controller
             }elseif ($material->current_stock == 0) {
                 return [
                     'status' => 'error',
-                    'message' => 'Part atau komponen habis atau tidak ditemukan'
+                    'message' => 'Komponen habis, unboxing dulu!'
                 ];
             }
 

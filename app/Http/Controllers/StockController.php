@@ -14,6 +14,7 @@ use App\Models\TtStock;
 use App\Models\TtOutput;
 use App\Models\TtMaterial;
 use Illuminate\Http\Request;
+use App\Models\MaterialStock;
 use App\Models\TmTransaction;
 use App\Events\StockDataUpdated;
 use Illuminate\Support\Facades\DB;
@@ -38,9 +39,30 @@ class StockController extends Controller
                 ->where('id_part', $part->id)
                 ->get();
 
+        // get id area
+        $oh = TmArea::select('id')->where('name', 'OH Store')->first();
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+
         // get id transaction
         $transaction = TmTransaction::select('id')->where('name', 'Traceability')->first();
         $reversalTransaction= TmTransaction::select('id')->where('name', 'Traceability (R)')->first();
+
+        // FG / WIP transaction
+        $dcModel = 'TtDC';
+        $maModel = 'TtMa';
+        $assyModel = 'TtAssy';
+
+        // area
+        $dc = 'DC';
+        $ma = 'MA';
+        $assy = 'ASSY';
+        $warehouse = 'Warehouse';
+        $ohStore = 'OH Store';
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
 
         try {
 
@@ -65,11 +87,6 @@ class StockController extends Controller
                     'date' => date('Y-m-d H:i:s')
                 ]);
             }
-
-            // FG / WIP transaction
-            $dcModel = 'TtDC';
-            $maModel = 'TtMa';
-            $assyModel = 'TtAssy';
 
             function partTransaction($area, $part, $transaction, $qty){
                 $area->create([
@@ -101,7 +118,47 @@ class StockController extends Controller
                 // decrease ma stock
                 partTransaction($maModel, $part->id, $reversalTransaction->id, 1);
             }
-            
+
+            function getMaterialArea($line,$source){
+                DB::table('material_stocks')
+                    ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                    ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
+                    ->where('tm_areas.name', $line)
+                    ->where('tm_materials.source', 'like', '%' . $source . '%')
+                    ->get();
+            }
+
+            // stock material DC area
+            $dcCkd = getMaterialArea($dc,$ckd);
+            $dcImport = getMaterialArea($dc, $import);
+            $dcLocal = getMaterialArea($dc, $local);
+
+            // stock material MA
+            $maCkd = getMaterialArea($ma,$ckd);
+            $maImport = getMaterialArea($ma, $import);
+            $maLocal = getMaterialArea($ma, $local);
+
+            // stock material Assy
+            $assyCkd = getMaterialArea($assy,$ckd);
+            $assyImport = getMaterialArea($assy, $import);
+            $assyLocal = getMaterialArea($assy, $local);
+
+            // stock material WH
+            $warehouseCkd = getMaterialArea($warehouse,$ckd);
+            $warehouseImport = getMaterialArea($warehouse, $import);
+            $warehouseLocal = getMaterialArea($warehouse, $local);
+
+            // stock material WH
+            $ohStoreCkd = getMaterialArea($ohStore,$ckd);
+            $ohStoreImport = getMaterialArea($ohStore, $import);
+            $ohStoreLocal = getMaterialArea($ohStore, $local);
+
+            $dcStock = [$dcCkd,$dcImport, $dcLocal];
+            $maStock = [$maCkd,$maImport, $maLocal];
+            $assyStock = [$assyCkd,$assyImport, $assyLocal];
+            $warehouseStock = [$warehouseCkd,$warehouseImport, $warehouseLocal];
+            $ohStoreStock = [$ohStoreCkd,$ohStoreImport, $ohStoreLocal];
+
             // connection to pusher
             $options = array(
                 'cluster' => 'ap1',
@@ -116,7 +173,7 @@ class StockController extends Controller
             );
 
             // sending stock data all items
-            $pusher->trigger('stock-data', 'StockDataUpdated', []);
+            $pusher->trigger('stock-data', 'StockDataUpdated', [$dcStock, $maStock, $assyStock, $warehouseStock, $ohStoreStock]);
 
             return response()->json([
                 'message' => 'success'

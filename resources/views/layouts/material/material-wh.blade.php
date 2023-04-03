@@ -206,7 +206,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data...'
             },
             legend: {
                 show: true,
@@ -243,7 +243,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data...'
             },
             legend: {
                 show: true,
@@ -280,7 +280,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data...'
             },
             legend: {
                 show: true,
@@ -306,10 +306,11 @@
 
         function getCkd() {
             $.ajax({
-                url: '/dashboard/getMaterial',
+                url: '/dashboard/getWhMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
+                    console.log(data);
                     chartCkd.updateSeries([{
                         name: 'Total Material',
                         data: data.dataCkd.map(function(item){
@@ -334,7 +335,7 @@
 
         function getImport() {
             $.ajax({
-                url: '/dashboard/getMaterial',
+                url: '/dashboard/getWhMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -361,7 +362,7 @@
 
         function getLocal() {
             $.ajax({
-                url: '/dashboard/getMaterial',
+                url: '/dashboard/getWhMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {

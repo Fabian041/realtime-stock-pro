@@ -100,7 +100,7 @@
             ],
         });
 
-        // $('#material').prop('readonly', true);
+        $('#material').prop('readonly', true);
         $('#material').focus();
         let barcode = "";
         let barcodecomplete = "";
@@ -141,8 +141,8 @@
                         table.draw();
                         showToast("success", `Part ${data.back_number} berhasil disimpan`);
                         return true;
-                    } else if (data.code == "error") {
-                        showToast("error", data.messege);
+                    } else if (data.status == "error") {
+                        showToast("error", data.message);
                         return false;
                     }
                 },

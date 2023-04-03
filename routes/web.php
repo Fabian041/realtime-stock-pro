@@ -71,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
             // Material transaction
             Route::get('/oh', [MaterialController::class, 'indexOh'])->name('oh.index');
             Route::post('/oh/unbox', [MaterialController::class, 'unboxOh'])->name('oh.unbox');
-            Route::post('/oh/scan', [MaterialController::class, 'scanOh'])->name('oh.scan');
+            Route::get('/oh/scan', [MaterialController::class, 'scanOh'])->name('oh.scan');
             Route::get('/oh/getData', [MaterialController::class, 'getDataOh'])->name('oh.getData');
 
             // checkout proccess
@@ -82,7 +82,12 @@ Route::middleware(['auth'])->group(function () {
 
         });
 
-        Route::get('/getMaterial', [MaterialController::class, 'getMaterial'])->name('material.get');
+        // Material Dashboard
+        Route::get('/getWhMaterial', [MaterialController::class, 'getWhMaterial'])->name('material.getWh');
+        Route::get('/getOhMaterial', [MaterialController::class, 'getOhMaterial'])->name('material.getOh');
+        Route::get('/getDcMaterial', [MaterialController::class, 'getDcMaterial'])->name('material.getDc');
+        Route::get('/getMaMaterial', [MaterialController::class, 'getMaMaterial'])->name('material.getMa');
+        Route::get('/getAssyMaterial', [MaterialController::class, 'getAssyMaterial'])->name('material.getAssy');
 
         // get finsih good part
         Route::get('/getFgPart/ma', [FgController::class, 'getPartMa'])->name('fgMa.get');

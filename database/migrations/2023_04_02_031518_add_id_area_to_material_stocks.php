@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::table('material_stocks', function (Blueprint $table) {
             $table->unsignedBigInteger('id_area')->unsigned()->after('id_material');
             $table->foreign('id_area')->references('id')->on('tm_areas');
-            $table->date('date')->after('id_area');
+            $table->timestamp('date')->after('id_area');
         });
     }
 

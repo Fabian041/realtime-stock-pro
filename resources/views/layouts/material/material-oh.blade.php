@@ -8,7 +8,7 @@
                 <a href="javascript:void(0);">Material Stock</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">OH Area</a>
+                <a href="javascript:void(0);" class="active">OHOh Area</a>
             </li>
         </ol>
     </nav>
@@ -206,7 +206,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data...'
             },
             legend: {
                 show: true,
@@ -243,7 +243,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data...'
             },
             legend: {
                 show: true,
@@ -280,7 +280,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data...'
             },
             legend: {
                 show: true,
@@ -306,7 +306,7 @@
 
         function getCkd() {
             $.ajax({
-                url: '/dashboard/getMaterial',
+                url: '/dashboard/getOhMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -334,7 +334,7 @@
 
         function getImport() {
             $.ajax({
-                url: '/dashboard/getMaterial',
+                url: '/dashboard/getOhMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -361,7 +361,7 @@
 
         function getLocal() {
             $.ajax({
-                url: '/dashboard/getMaterial',
+                url: '/dashboard/getOhMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {

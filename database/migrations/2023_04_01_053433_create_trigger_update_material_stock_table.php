@@ -21,15 +21,21 @@ return new class extends Migration
                 JOIN tt_materials ON tm_transactions.id = NEW.id_transaction LIMIT 1;
             
                 IF type = "supply" THEN
-                    INSERT INTO material_stocks (id_material, id_area, DATE, current_stock) 
-                    VALUES (NEW.id_material, NEW.id_area, NEW.date ,NEW.qty) 
-                    ON DUPLICATE KEY UPDATE 
-                    current_stock = current_stock + VALUES(current_stock);
+                    IF EXISTS (SELECT 1 FROM material_stocks WHERE id_material = NEW.id_material AND id_area = NEW.id_area) THEN
+                        UPDATE material_stocks SET current_stock = current_stock + NEW.qty 
+                        WHERE id_material = NEW.id_material AND id_area = NEW.id_area;
+                    ELSE
+                        INSERT INTO material_stocks (id_material, id_area, DATE, current_stock) 
+                        VALUES (NEW.id_material, NEW.id_area, NEW.date ,NEW.qty);
+                    END IF;
                 ELSE
-                    INSERT INTO material_stocks (id_material, id_area, DATE, current_stock)
-                    VALUES (NEW.id_material,NEW.id_area, NEW.date , -NEW.qty) 
-                    ON DUPLICATE KEY UPDATE 
-                    current_stock = current_stock - VALUES(current_stock);
+                    IF EXISTS (SELECT 1 FROM material_stocks WHERE id_material = NEW.id_material AND id_area = NEW.id_area) THEN
+                        UPDATE material_stocks SET current_stock = current_stock - NEW.qty 
+                        WHERE id_material = NEW.id_material AND id_area = NEW.id_area;
+                    ELSE
+                        INSERT INTO material_stocks (id_material, id_area, DATE, current_stock) 
+                        VALUES (NEW.id_material, NEW.id_area, NEW.date ,-NEW.qty);
+                    END IF;
                 END IF;
             END'
         );

@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('part_stocks', function (Blueprint $table) {
+        Schema::create('assy_stocks', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('id_part')->unsigned();
-            $table->bigInteger('id_area')->unsigned();
+            $table->bigInteger('id_part')->unsigned()->unique();
             $table->foreign('id_part')->references('id')->on('tm_parts');
-            $table->foreign('id_area')->references('id')->on('tm_areas');
             $table->timestamp('date');
             $table->integer('current_stock')->default(0);
             $table->timestamps();
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('part_stocks');
+        Schema::dropIfExists('assy_stocks');
     }
 };

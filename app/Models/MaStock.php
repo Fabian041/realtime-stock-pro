@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PartStock extends Model
+class MaStock extends Model
 {
     use HasFactory;
 
-    protected $table = 'part_stocks';
+    protected $table = 'ma_stocks';
 
     protected $guarded = ['id'];
 }
