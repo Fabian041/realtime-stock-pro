@@ -151,7 +151,7 @@
                         showToast("error", "Data tidak terkirim");
                         return;
                     }
-                    showToast("error", xhr.status);
+                    showToast("error",`[${xhr.status}] ${xhr.statusText}`);
                 }
             });
         }

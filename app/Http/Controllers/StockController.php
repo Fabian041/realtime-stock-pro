@@ -89,13 +89,15 @@ class StockController extends Controller
             }
 
             function partTransaction($area, $part, $transaction, $qty){
-                $area->create([
+                $result = $area->create([
                     'id_part' => $part,
                     'id_transaction' => $transaction,
                     'pic' => 'avicenna user',
                     'date' => date('Y-m-d H:i:s'),
                     'qty' => $qty
                 ]);
+
+                return $result;
             }
 
             if($line == 'DC'){

@@ -100,7 +100,7 @@ class MaterialMasterController extends Controller
     {
         Excel::import(new TmMaterialImport, $request->file('file')->store('files'));
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Success mastering material data!');
     }
 
     /**

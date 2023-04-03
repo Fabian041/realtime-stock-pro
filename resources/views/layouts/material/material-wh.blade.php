@@ -24,7 +24,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity">1298</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity"></strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -54,7 +54,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity">1298</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity"></strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -84,7 +84,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity">1298</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity"></strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -206,7 +206,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'No Data...'
+                text: 'No Data'
             },
             legend: {
                 show: true,
@@ -243,7 +243,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'No Data...'
+                text: 'No Data'
             },
             legend: {
                 show: true,
@@ -278,9 +278,14 @@
                     }
                 }
             },
+            xaxis: {
+                labels: {
+                    rotate: -45
+                },
+            },
             colors: '#696CFF',
             noData: {
-                text: 'No Data...'
+                text: 'No Data'
             },
             legend: {
                 show: true,
@@ -310,17 +315,16 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log(data);
                     chartCkd.updateSeries([{
                         name: 'Total Material',
                         data: data.dataCkd.map(function(item){
                             return {
                                 x: item.part_name,
-                                y: item.qty,
+                                y: item.current_stock,
                                 goals: [
                                     {
                                         name: 'Limit',
-                                        value: item.qty_limit,
+                                        value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
                                     }
@@ -328,6 +332,11 @@
                             }
                         })
                     }]);
+
+
+                    let totalCkd = data.dataCkd.map( (item) => item.current_stock)
+                                    .reduce( (acc,curr) => acc + curr );
+                    document.querySelector('#ckd').innerText = totalCkd;
 
                 }
             });
@@ -344,11 +353,11 @@
                         data: data.dataImport.map(function(item){
                             return {
                                 x: item.part_name,
-                                y: item.qty,
+                                y: item.current_stock,
                                 goals: [
                                     {
                                         name: 'Limit',
-                                        value: item.qty_limit,
+                                        value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
                                     }
@@ -356,6 +365,11 @@
                             }
                         })
                     }]);
+
+                    let totalImport = data.dataImport.map( (item) => item.current_stock)
+                                    .reduce( (acc,curr) => acc + curr );
+                    document.querySelector('#import').innerText = totalImport;
+
                 }
             });
         };
@@ -366,16 +380,17 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
+                    console.log(data.dataLocal);
                     chartLocal.updateSeries([{
                         name: 'Total Material',
                         data: data.dataLocal.map(function(item){
                             return {
-                                x: item.part_name,
-                                y: item.qty,
+                                x: `${item.part_name} - ${item.part_number}`,
+                                y: item.current_stock,
                                 goals: [
                                     {
                                         name: 'Limit',
-                                        value: item.qty_limit,
+                                        value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
                                     }
@@ -383,6 +398,10 @@
                             }
                         })
                     }]);
+
+                    let totalLocal = data.dataLocal.map( (item) => item.current_stock)
+                                    .reduce( (acc,curr) => acc + curr );
+                    document.querySelector('#local').innerHTML = totalLocal;
 
                 }
             });

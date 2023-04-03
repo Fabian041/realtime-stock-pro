@@ -21,15 +21,21 @@ return new class extends Migration
                 JOIN tt_assy ON tm_transactions.id = NEW.id_transaction LIMIT 1;
             
                 IF type = "supply" THEN
-                    INSERT INTO assy_stocks (id_part, DATE, current_stock) 
-                    VALUES (NEW.id_part, NEW.date ,NEW.qty) 
-                    ON DUPLICATE KEY UPDATE 
-                        current_stock = current_stock + VALUES(current_stock);
+                    IF EXISTS (SELECT 1 FROM assy_stocks WHERE id_part = NEW.id_part) THEN
+                        UPDATE assy_stocks SET current_stock = current_stock + NEW.qty 
+                        WHERE id_part = NEW.id_part;
+                    ELSE
+                        INSERT INTO assy_stocks (id_part, DATE, current_stock) 
+                        VALUES (NEW.id_part, NEW.date ,NEW.qty);
+                    END IF;
                 ELSE
-                    INSERT INTO assy_stocks (id_part, DATE, current_stock)
-                    VALUES (NEW.id_part, NEW.date , -NEW.qty) 
-                    ON DUPLICATE KEY UPDATE 
-                        current_stock = current_stock - VALUES(current_stock);
+                    IF EXISTS (SELECT 1 FROM assy_stocks WHERE id_part = NEW.id_part) THEN
+                        UPDATE assy_stocks SET current_stock = current_stock - NEW.qty 
+                        WHERE id_part = NEW.id_part;
+                    ELSE
+                        INSERT INTO assy_stocks (id_part, DATE, current_stock) 
+                        VALUES (NEW.id_part, NEW.date , - NEW.qty);
+                    END IF;
                 END IF;
             END'
         );

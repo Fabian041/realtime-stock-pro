@@ -394,8 +394,9 @@ class MaterialController extends Controller
         $import = 'IMPORT';
         $local = 'LOCAL';
 
+        
         function getWhMaterial($area,$source){
-            DB::table('material_stocks')
+            $result = DB::table('material_stocks')
                 ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
                 ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
                 ->select('material_stocks.current_stock', 'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
@@ -403,6 +404,8 @@ class MaterialController extends Controller
                 ->where('tm_materials.source', 'like', '%' . $source . '%')
                 ->groupBy('tm_materials.part_number')
                 ->get();
+
+            return $result;
         }
 
         try {
@@ -436,7 +439,7 @@ class MaterialController extends Controller
         $local = 'LOCAL';
 
         function getOhMaterial($area,$source){
-            DB::table('material_stocks')
+            $result = DB::table('material_stocks')
                 ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
                 ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
                 ->select('material_stocks.current_stock', 'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
@@ -444,6 +447,8 @@ class MaterialController extends Controller
                 ->where('tm_materials.source', 'like', '%' . $source . '%')
                 ->groupBy('tm_materials.part_number')
                 ->get();
+
+            return $result;
         }
 
         try {
@@ -451,6 +456,92 @@ class MaterialController extends Controller
             $dataCkd = getOhMaterial($oh->id,$ckd);
             $dataImport = getOhMaterial($oh->id, $import);
             $dataLocal = getOhMaterial($oh->id, $local);
+
+            return response()->json([
+                'dataCkd' => $dataCkd,
+                'dataImport' => $dataImport,
+                'dataLocal' => $dataLocal,
+            ],200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ],404);
+        }
+
+    }
+    
+    public function getDcMaterial()
+    {
+        // get id area
+        $dc = TmArea::select('id')->where('name', 'DC')->first();
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        function getDcMaterial($area,$source){
+            $result = DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
+                ->select('material_stocks.current_stock', 'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
+                ->where('tm_areas.id', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
+                ->groupBy('tm_materials.part_number')
+                ->get();
+
+            return $result;
+        }
+
+        try {
+            // stock material WH
+            $dataCkd = getDcMaterial($dc->id,$ckd);
+            $dataImport = getDcMaterial($dc->id, $import);
+            $dataLocal = getDcMaterial($dc->id, $local);
+
+            return response()->json([
+                'dataCkd' => $dataCkd,
+                'dataImport' => $dataImport,
+                'dataLocal' => $dataLocal,
+            ],200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ],404);
+        }
+
+    }
+
+    public function getMaMaterial()
+    {
+        // get id area
+        $ma = TmArea::select('id')->where('name', 'MA')->first();
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        function getMaMaterial($area,$source){
+            $result = DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
+                ->select('material_stocks.current_stock', 'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
+                ->where('tm_areas.id', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
+                ->groupBy('tm_materials.part_number')
+                ->get();
+
+            return $result;
+        }
+
+        try {
+            // stock material WH
+            $dataCkd = getMaMaterial($ma->id,$ckd);
+            $dataImport = getMaMaterial($ma->id, $import);
+            $dataLocal = getMaMaterial($ma->id, $local);
 
             return response()->json([
                 'dataCkd' => $dataCkd,

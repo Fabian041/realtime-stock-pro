@@ -14,22 +14,32 @@ class TmMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
 {
     public function collection(Collection $rows)
     {
-        foreach($rows as $row)
-        {
-            TmMaterial::updateOrCreate(
-                [               
-                    'part_number' => $row['part_no'],
-                    'supplier' => $row['supplier'],
-                ],
-                [
-                    'part_name' => $row['part_name'],
-                    'pic' => auth()->user()->username,
-                    'date' => date('Y-m-d'),
-                    'time' => date('H:i:s'),
-                    'source' => $row['source'],
-                    'limit_qty' => $row['limit']
-                ]
-            );
+        try {
+            foreach($rows as $row)
+            {
+                TmMaterial::updateOrCreate(
+                    [               
+                        'part_number' => $row['part_no'],
+                        'supplier' => $row['supplier'],
+                    ],
+                    [
+                        'part_name' => $row['part_name'],
+                        'pic' => auth()->user()->username,
+                        'date' => date('Y-m-d'),
+                        'time' => date('H:i:s'),
+                        'source' => $row['source'],
+                        'limit_qty' => $row['limit']
+                    ]
+                );
+            }
+
+            return ['status' => 'success'];
+
+        } catch (\Throwable $th) {
+            return [
+                'status' => 'error',
+                'message' => $th->getMessage()
+            ];
         }
     }
 

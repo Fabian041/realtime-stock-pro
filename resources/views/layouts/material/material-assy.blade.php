@@ -206,7 +206,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data'
             },
             legend: {
                 show: true,
@@ -243,7 +243,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data'
             },
             legend: {
                 show: true,
@@ -280,7 +280,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data'
             },
             legend: {
                 show: true,
@@ -306,7 +306,7 @@
 
         function getCkd() {
             $.ajax({
-                url: '/dashboard/getMaterial',
+                url: '/dashboard/getAssyMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -315,11 +315,11 @@
                         data: data.dataCkd.map(function(item){
                             return {
                                 x: item.part_name,
-                                y: item.qty,
+                                y: item.current_stock,
                                 goals: [
                                     {
                                         name: 'Limit',
-                                        value: item.qty_limit,
+                                        value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
                                     }
@@ -334,7 +334,7 @@
 
         function getImport() {
             $.ajax({
-                url: '/dashboard/getMaterial',
+                url: '/dashboard/getAssyMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -343,11 +343,11 @@
                         data: data.dataImport.map(function(item){
                             return {
                                 x: item.part_name,
-                                y: item.qty,
+                                y: item.current_stock,
                                 goals: [
                                     {
                                         name: 'Limit',
-                                        value: item.qty_limit,
+                                        value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
                                     }
@@ -361,7 +361,7 @@
 
         function getLocal() {
             $.ajax({
-                url: '/dashboard/getMaterial',
+                url: '/dashboard/getAssyMaterial',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -370,11 +370,11 @@
                         data: data.dataLocal.map(function(item){
                             return {
                                 x: item.part_name,
-                                y: item.qty,
+                                y: item.current_stock,
                                 goals: [
                                     {
                                         name: 'Limit',
-                                        value: item.qty_limit,
+                                        value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
                                     }
