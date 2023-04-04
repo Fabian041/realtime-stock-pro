@@ -8,7 +8,7 @@
                 <a href="javascript:void(0);">Material Stock</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">OHOh Area</a>
+                <a href="javascript:void(0);" class="active">OH Store Area</a>
             </li>
         </ol>
     </nav>
@@ -24,7 +24,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity">1298</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity">{{ $ckd }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -54,7 +54,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity">1298</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity">{{ $import }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -84,7 +84,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity">1298</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity">{{ $local }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -156,15 +156,19 @@
                 forceTLS: true
             });
 
-        pusher.subscribe('stock-data').bind('StockDataUpdated', function(data) {
+        pusher.subscribe('stock-oh').bind('StockDataUpdated', function(data) {
             
-            document.querySelector('#ckd').innerText = data[0];
-            document.querySelector('#import').innerText = data[1];
-            document.querySelector('#local').innerText = data[2];
-            
-            ckdCounter.update(data[0]);
-            importCounter.update(data[1]);
-            localCounter.update(data[2]);
+            let dataCkd = data[0] ? data[0] : document.querySelector('#ckd').innerText
+            let dataImport = data[1] ? data[1] : document.querySelector('#import').innerText
+            let dataLocal = data[2] ? data[2] : document.querySelector('#local').innerText
+
+            document.querySelector('#ckd').innerText = dataCkd;
+            document.querySelector('#import').innerText = dataImport;
+            document.querySelector('#local').innerText = dataLocal;
+
+            ckdCounter.update(dataCkd);
+            importCounter.update(dataImport);
+            localCounter.update(dataLocal);
 
         });
 

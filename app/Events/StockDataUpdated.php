@@ -36,7 +36,19 @@ class StockDataUpdated implements shouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('stock-data');
+        return [
+            // material
+            new Channel('stock-wh'),
+            new Channel('stock-oh'),
+            new Channel('stock-dc'),
+            new Channel('stock-ma'),
+            new Channel('stock-assy'),
+
+            // part
+            new Channel('part-dc'),
+            new Channel('part-ma'),
+            new Channel('part-assy')
+        ];
     }
 
 }

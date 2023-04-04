@@ -21,6 +21,56 @@ use Illuminate\Support\Facades\DB;
 
 class StockController extends Controller
 {
+    public function pushData($area, $dataMaterial){
+        // connection to pusher
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            '31df202f78fc0dace852',
+            'f1d1fd7c838cdd9f25d6',
+            '1567188',
+            $options
+        );
+
+        // sending data
+        $result = $pusher->trigger('stock-' . $area , 'StockDataUpdated', $dataMaterial);
+
+        return $result;
+    }
+
+    public function queryCurrentMaterialStock($area,$source){
+        
+        $result = DB::table('material_stocks')
+        ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+        ->select(DB::raw('SUM(current_stock) as current_stock'))
+        ->where('id_area', $area)
+        ->where('tm_materials.source', 'like', '%' . $source . '%')
+        ->first();
+        
+        return $result;
+    }
+
+    public function getCurrentMaterialStock($area){
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        $dataCkd = $this->queryCurrentMaterialStock($area,$ckd);
+        $dataImport = $this->queryCurrentMaterialStock($area, $import);
+        $dataLocal = $this->queryCurrentMaterialStock($area, $local);
+
+        $dataCkd = ($dataCkd) ? $dataCkd->current_stock : 0;
+        $dataImport = ($dataImport) ? $dataImport->current_stock : 0;
+        $dataLocal = ($dataLocal) ? $dataLocal->current_stock : 0;
+
+        return [$dataCkd,$dataImport,$dataLocal];
+    }
+    
     public function stock_control($line , $code)
     {
         //ex LINE = MA001
@@ -104,6 +154,12 @@ class StockController extends Controller
 
                 partTransaction($dcModel, $part->id, $transaction->id, 1);
 
+                // get current stock after scan
+                $result = $this->getCurrentMaterialStock($area->id);
+
+                // push to websocket
+                $this->pushData('dc',$result);
+
             }elseif($line == 'MA'){
 
                 // increase ma stock
@@ -112,6 +168,12 @@ class StockController extends Controller
                 // decrease dc stock
                 partTransaction($dcModel, $part->id, $reversalTransaction->id, 1);
 
+                // get current stock after scan
+                $result = $this->getCurrentMaterialStock($area->id);
+
+                 // push to websocket
+                $this->pushData('ma',$result);
+
             }elseif($line == 'AS'){
 
                 // increase assy stock
@@ -119,6 +181,12 @@ class StockController extends Controller
 
                 // decrease ma stock
                 partTransaction($maModel, $part->id, $reversalTransaction->id, 1);
+
+                // get current stock after scan
+                $result = $this->getCurrentMaterialStock($area->id);
+
+                 // push to websocket
+                $this->pushData('ma',$result);
             }
 
             function getMaterialArea($line,$source){

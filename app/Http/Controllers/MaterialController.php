@@ -24,6 +24,55 @@ use Illuminate\Support\Facades\Broadcast;
 
 class MaterialController extends Controller
 {
+    public function pushData($area, $dataMaterial){
+        // connection to pusher
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            '31df202f78fc0dace852',
+            'f1d1fd7c838cdd9f25d6',
+            '1567188',
+            $options
+        );
+
+        // sending data
+        $result = $pusher->trigger('stock-' . $area , 'StockDataUpdated', $dataMaterial);
+
+        return $result;
+    }
+
+    public function queryCurrentMaterialStock($area,$source){
+        
+        $result = DB::table('material_stocks')
+        ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+        ->select(DB::raw('SUM(current_stock) as current_stock'))
+        ->where('id_area', $area)
+        ->where('tm_materials.source', 'like', '%' . $source . '%')
+        ->first();
+        
+        return $result;
+    }
+
+    public function getCurrentMaterialStock($area){
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        $dataCkd = $this->queryCurrentMaterialStock($area,$ckd);
+        $dataImport = $this->queryCurrentMaterialStock($area, $import);
+        $dataLocal = $this->queryCurrentMaterialStock($area, $local);
+
+        $dataCkd = ($dataCkd) ? $dataCkd->current_stock : 0;
+        $dataImport = ($dataImport) ? $dataImport->current_stock : 0;
+        $dataLocal = ($dataLocal) ? $dataLocal->current_stock : 0;
+
+        return [$dataCkd,$dataImport,$dataLocal];
+    }
     /**
      * Display DC dashboard
      *
@@ -79,6 +128,12 @@ class MaterialController extends Controller
                         'date' => date('Y-m-d H:i:s')
                     ]); 
                 }
+                
+                // get current stock after scan
+                $result = $this->getCurrentMaterialStock($wh->id);
+
+                // // push to websocket
+                $this->pushData('wh',$result);
 
                 DB::commit();
             } catch (\Throwable $e) {
@@ -183,6 +238,14 @@ class MaterialController extends Controller
                     ]); 
                 }
 
+                // get current stock after scan
+                $currentWh = $this->getCurrentMaterialStock($wh->id);
+                $currentOh = $this->getCurrentMaterialStock($oh->id);
+
+                // push to websocket
+                $this->pushData('wh',$currentWh);
+                $this->pushData('oh',$currentOh);
+
                 DB::commit();
             } catch (\Throwable $e) {
                 DB::rollBack();
@@ -270,7 +333,39 @@ class MaterialController extends Controller
      */
     public function materialWh()
     {
-        return view('layouts.material.material-wh');
+        // get id area
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        // get material based on source 
+        function showWhMaterial($area,$source){
+            $result = DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->select(DB::raw('SUM(current_stock) as current_stock'))
+                ->where('id_area', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
+                ->first();
+
+            return $result;
+        }
+
+        $dataCkd = showWhMaterial($wh->id,$ckd);
+        $dataImport = showWhMaterial($wh->id, $import);
+        $dataLocal = showWhMaterial($wh->id, $local);
+
+        $dataCkd = ($dataCkd) ? $dataCkd->current_stock : 0;
+        $dataImport = ($dataImport) ? $dataImport->current_stock : 0;
+        $dataLocal = ($dataLocal) ? $dataLocal->current_stock : 0;
+
+        return view('layouts.material.material-wh',[
+            'ckd' => $dataCkd,
+            'import' => $dataImport,
+            'local' => $dataLocal,
+        ]);
     }
     /**
      * Display DC dashboard
@@ -279,7 +374,39 @@ class MaterialController extends Controller
      */
     public function materialOh()
     {
-        return view('layouts.material.material-oh');
+        // get id area
+        $oh = TmArea::select('id')->where('name', 'OH Store')->first();
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        // get material based on source 
+        function showOhMaterial($area,$source){
+            $result = DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->select(DB::raw('SUM(current_stock) as current_stock'))
+                ->where('id_area', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
+                ->first();
+
+            return $result;
+        }
+
+        $dataCkd = showOhMaterial($oh->id,$ckd);
+        $dataImport = showOhMaterial($oh->id, $import);
+        $dataLocal = showOhMaterial($oh->id, $local);
+
+        $dataCkd = ($dataCkd) ? $dataCkd->current_stock : 0;
+        $dataImport = ($dataImport) ? $dataImport->current_stock : 0;
+        $dataLocal = ($dataLocal) ? $dataLocal->current_stock : 0;
+
+        return view('layouts.material.material-oh',[
+            'ckd' => $dataCkd,
+            'import' => $dataImport,
+            'local' => $dataLocal,
+        ]);
     }
     /**
      * Display DC dashboard
@@ -288,7 +415,39 @@ class MaterialController extends Controller
      */
     public function materialDc()
     {
-        return view('layouts.material.material-dc');
+        // get id area
+        $dc = TmArea::select('id')->where('name', 'DC')->first();
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        // get material based on source 
+        function showDcMaterial($area,$source){
+            $result = DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->select(DB::raw('SUM(current_stock) as current_stock'))
+                ->where('id_area', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
+                ->first();
+
+            return $result;
+        }
+
+        $dataCkd = showDcMaterial($dc->id,$ckd);
+        $dataImport = showDcMaterial($dc->id, $import);
+        $dataLocal = showDcMaterial($dc->id, $local);
+
+        $dataCkd = ($dataCkd) ? $dataCkd->current_stock : 0;
+        $dataImport = ($dataImport) ? $dataImport->current_stock : 0;
+        $dataLocal = ($dataLocal) ? $dataLocal->current_stock : 0;
+
+        return view('layouts.material.material-dc',[
+            'ckd' => $dataCkd,
+            'import' => $dataImport,
+            'local' => $dataLocal,
+        ]);
     }
     /**
      * Display DC dashboard
@@ -297,7 +456,39 @@ class MaterialController extends Controller
      */
     public function materialMa()
     {
-        return view('layouts.material.material-ma');
+        // get id area
+        $ma = TmArea::select('id')->where('name', 'MA')->first();
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        // get material based on source 
+        function showMaMaterial($area,$source){
+            $result = DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->select(DB::raw('SUM(current_stock) as current_stock'))
+                ->where('id_area', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
+                ->first();
+
+            return $result;
+        }
+
+        $dataCkd = showMaMaterial($ma->id,$ckd);
+        $dataImport = showMaMaterial($ma->id, $import);
+        $dataLocal = showMaMaterial($ma->id, $local);
+
+        $dataCkd = ($dataCkd) ? $dataCkd->current_stock : 0;
+        $dataImport = ($dataImport) ? $dataImport->current_stock : 0;
+        $dataLocal = ($dataLocal) ? $dataLocal->current_stock : 0;
+
+        return view('layouts.material.material-ma',[
+            'ckd' => $dataCkd,
+            'import' => $dataImport,
+            'local' => $dataLocal,
+        ]);
     }
     /**
      * Display DC dashboard
@@ -306,7 +497,39 @@ class MaterialController extends Controller
      */
     public function materialAssy()
     {
-        return view('layouts.material.material-assy');
+        // get id area
+        $assy = TmArea::select('id')->where('name', 'ASSY')->first();
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        // get material based on source 
+        function showAssyMaterial($area,$source){
+            $result = DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->select(DB::raw('SUM(current_stock) as current_stock'))
+                ->where('id_area', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
+                ->first();
+
+            return $result;
+        }
+
+        $dataCkd = showAssyMaterial($assy->id,$ckd);
+        $dataImport = showAssyMaterial($assy->id, $import);
+        $dataLocal = showAssyMaterial($assy->id, $local);
+
+        $dataCkd = ($dataCkd) ? $dataCkd->current_stock : 0;
+        $dataImport = ($dataImport) ? $dataImport->current_stock : 0;
+        $dataLocal = ($dataLocal) ? $dataLocal->current_stock : 0;
+
+        return view('layouts.material.material-assy',[
+            'ckd' => $dataCkd,
+            'import' => $dataImport,
+            'local' => $dataLocal,
+        ]);
     }
     /**
      * Display a listing of the resource.
@@ -557,6 +780,49 @@ class MaterialController extends Controller
 
     }
 
+    public function getAssyMaterial()
+    {
+        // get id area
+        $assy = TmArea::select('id')->where('name', 'ASSY')->first();
+
+        // source
+        $ckd = 'CKD';
+        $import = 'IMPORT';
+        $local = 'LOCAL';
+
+        function getAssyMaterial($area,$source){
+            $result = DB::table('material_stocks')
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
+                ->select('material_stocks.current_stock', 'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
+                ->where('tm_areas.id', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
+                ->groupBy('tm_materials.part_number')
+                ->get();
+
+            return $result;
+        }
+
+        try {
+            // stock material WH
+            $dataCkd = getAssyMaterial($assy->id,$ckd);
+            $dataImport = getAssyMaterial($assy->id, $import);
+            $dataLocal = getAssyMaterial($assy->id, $local);
+
+            return response()->json([
+                'dataCkd' => $dataCkd,
+                'dataImport' => $dataImport,
+                'dataLocal' => $dataLocal,
+            ],200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ],404);
+        }
+
+    }
+
     public function checkout()
     {
         // get id transaction
@@ -587,6 +853,9 @@ class MaterialController extends Controller
             // get id prod area, from authenticated user
             $area = auth()->user()->department;
             $prod = TmArea::select('id')->where('name', $area)->first();
+            
+            // area (in lowercase)
+            $areaLower = strtolower($area);
 
             // check stock in OH store
             $material = DB::table('tt_materials')
@@ -639,6 +908,14 @@ class MaterialController extends Controller
                         'date' => date('Y-m-d H:i:s')
                     ]); 
                 }
+
+                // get current stock after scan based on authenticated user
+                $currentProd = $this->getCurrentMaterialStock($prod->id);
+                $currentOh = $this->getCurrentMaterialStock($oh->id);
+
+                // push to websocket
+                $this->pushData($areaLower,$currentProd);
+                $this->pushData('oh',$currentOh);
 
                 DB::commit();
             } catch (\Throwable $e) {

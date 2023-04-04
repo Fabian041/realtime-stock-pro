@@ -24,7 +24,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity">1298</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity">{{ $ckd }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -54,7 +54,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity">1298</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity">{{ $import }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -84,7 +84,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity">1298</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity">{{ $local }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -147,24 +147,28 @@
 <script>
     $( document ).ready(function() {
 
-        let ckdCounter = new CountUp('ckd', 0);
-        let importCounter = new CountUp('import', 0);
-        let localCounter = new CountUp('local', 0);
+        let ckdCounter = new CountUp('ckd');
+        let importCounter = new CountUp('import');
+        let localCounter = new CountUp('local');
 
         var pusher = new Pusher('31df202f78fc0dace852', {
                 cluster: 'ap1',
                 forceTLS: true
             });
 
-        pusher.subscribe('stock-data').bind('StockDataUpdated', function(data) {
+        pusher.subscribe('stock-ma').bind('StockDataUpdated', function(data) {
             
-            document.querySelector('#ckd').innerText = data[0];
-            document.querySelector('#import').innerText = data[1];
-            document.querySelector('#local').innerText = data[2];
-            
-            ckdCounter.update(data[0]);
-            importCounter.update(data[1]);
-            localCounter.update(data[2]);
+            let dataCkd = data[0] ? data[0] : document.querySelector('#ckd').innerText
+            let dataImport = data[1] ? data[1] : document.querySelector('#import').innerText
+            let dataLocal = data[2] ? data[2] : document.querySelector('#local').innerText
+
+            document.querySelector('#ckd').innerText = dataCkd;
+            document.querySelector('#import').innerText = dataImport;
+            document.querySelector('#local').innerText = dataLocal;
+
+            ckdCounter.update(dataCkd);
+            importCounter.update(dataImport);
+            localCounter.update(dataLocal);
 
         });
 
@@ -174,7 +178,6 @@
         
         $('.quantity').each(function () {
             var $this = $(this);
-            console.log($this.text());
             jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
                 duration: 1500,
                 easing: 'swing',
@@ -327,7 +330,9 @@
                             }
                         })
                     }]);
-
+                    // let totalCkd = data.dataCkd.map( (item) => item.current_stock)
+                    //                 .reduce( (acc,curr) => acc + curr );
+                    // document.querySelector('#ckd').innerText = totalCkd;
                 }
             });
         };
@@ -355,6 +360,9 @@
                             }
                         })
                     }]);
+                    // let totalImport = data.dataImport.map( (item) => item.current_stock)
+                    //                 .reduce( (acc,curr) => acc + curr );
+                    // document.querySelector('#import').innerText = totalImport;
                 }
             });
         };
@@ -382,7 +390,9 @@
                             }
                         })
                     }]);
-
+                    // let totalLocal = data.dataLocal.map( (item) => item.current_stock)
+                    //                 .reduce( (acc,curr) => acc + curr );
+                    // document.querySelector('#local').innerHTML = totalLocal;
                 }
             });
         };

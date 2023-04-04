@@ -109,6 +109,7 @@
             e.preventDefault();
             let code = (e.keyCode ? e.keyCode : e.which);
             // key ente
+            console.log(barcode.length);
             if (code == 13) {
                 barcodecomplete = barcode;
                 barcode = "";

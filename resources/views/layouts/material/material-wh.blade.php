@@ -24,7 +24,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity"></strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="ckd" class="quantity">{{ $ckd }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -54,7 +54,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity"></strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="import" class="quantity">{{ $import }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -84,7 +84,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity"></strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="local" class="quantity">{{ $local }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -156,15 +156,19 @@
                 forceTLS: true
             });
 
-        pusher.subscribe('stock-data').bind('StockDataUpdated', function(data) {
+        pusher.subscribe('stock-wh').bind('StockDataUpdated', function(data) {
             
-            document.querySelector('#ckd').innerText = data[0];
-            document.querySelector('#import').innerText = data[1];
-            document.querySelector('#local').innerText = data[2];
-            
-            ckdCounter.update(data[0]);
-            importCounter.update(data[1]);
-            localCounter.update(data[2]);
+            let dataCkd = data[0] ? data[0] : document.querySelector('#ckd').innerText
+            let dataImport = data[1] ? data[1] : document.querySelector('#import').innerText
+            let dataLocal = data[2] ? data[2] : document.querySelector('#local').innerText
+
+            document.querySelector('#ckd').innerText = dataCkd;
+            document.querySelector('#import').innerText = dataImport;
+            document.querySelector('#local').innerText = dataLocal;
+
+            ckdCounter.update(dataCkd);
+            importCounter.update(dataImport);
+            localCounter.update(dataLocal);
 
         });
 
@@ -176,7 +180,7 @@
             var $this = $(this);
             console.log($this.text());
             jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
-                duration: 1500,
+                duration: 1000,
                 easing: 'swing',
                 step: function () {
                 $this.text(Math.ceil(this.Counter));
@@ -334,9 +338,9 @@
                     }]);
 
 
-                    let totalCkd = data.dataCkd.map( (item) => item.current_stock)
-                                    .reduce( (acc,curr) => acc + curr );
-                    document.querySelector('#ckd').innerText = totalCkd;
+                    // let totalCkd = data.dataCkd.map( (item) => item.current_stock)
+                    //                 .reduce( (acc,curr) => acc + curr );
+                    // document.querySelector('#ckd').innerText = totalCkd;
 
                 }
             });
@@ -366,9 +370,9 @@
                         })
                     }]);
 
-                    let totalImport = data.dataImport.map( (item) => item.current_stock)
-                                    .reduce( (acc,curr) => acc + curr );
-                    document.querySelector('#import').innerText = totalImport;
+                    // let totalImport = data.dataImport.map( (item) => item.current_stock)
+                    //                 .reduce( (acc,curr) => acc + curr );
+                    // document.querySelector('#import').innerText = totalImport;
 
                 }
             });
@@ -399,9 +403,9 @@
                         })
                     }]);
 
-                    let totalLocal = data.dataLocal.map( (item) => item.current_stock)
-                                    .reduce( (acc,curr) => acc + curr );
-                    document.querySelector('#local').innerHTML = totalLocal;
+                    // let totalLocal = data.dataLocal.map( (item) => item.current_stock)
+                    //                 .reduce( (acc,curr) => acc + curr );
+                    // document.querySelector('#local').innerHTML = totalLocal;
 
                 }
             });
