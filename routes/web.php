@@ -64,7 +64,7 @@ Route::middleware(['auth'])->group(function () {
             
             // Material transaction
             Route::get('/wh', [MaterialController::class, 'indexWh'])->name('wh.index');
-            Route::post('/wh/import', [MaterialController::class, 'importWh'])->name('wh.import');
+            Route::post('/wh/import', [MaterialController::class, 'import'])->name('wh.import');
             Route::get('/wh/scan', [MaterialController::class, 'scanWh'])->name('wh.scan');
             Route::get('/wh/getData', [MaterialController::class, 'getDataWh'])->name('wh.getData');
 
@@ -73,6 +73,13 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/oh/unbox', [MaterialController::class, 'unboxOh'])->name('oh.unbox');
             Route::get('/oh/scan', [MaterialController::class, 'scanOh'])->name('oh.scan');
             Route::get('/oh/getData', [MaterialController::class, 'getDataOh'])->name('oh.getData');
+
+            // ng part
+            Route::get('/ng', [MaterialController::class, 'indexNg'])->name('ng.index');
+            Route::post('/ng/store', [MaterialController::class, 'storeNg'])->name('ng.store');
+            Route::get('/ng/scan', [MaterialController::class, 'scanNg'])->name('ng.scan');
+            Route::get('/ng/getData', [MaterialController::class, 'getDataNg'])->name('ng.getData');
+
 
             // checkout proccess
             Route::get('/checkout', [MaterialController::class, 'checkout'])->name('checkout.index');

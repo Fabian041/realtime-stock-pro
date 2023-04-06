@@ -5,10 +5,10 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb breadcrumb-style1">
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);">Material Stock</a>
+                <a href="javascript:void(0);">Component Stock</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">WH Area</a>
+                <a href="javascript:void(0);" class="active">PPIC Area</a>
             </li>
         </ol>
     </nav>
@@ -173,8 +173,19 @@
         });
 
         getCkd();
+        setInterval(function(){
+            getCkd();  
+        }, 5000);
+
         getImport();
-        getLocal();        
+        setInterval(function(){
+            getImport();  
+        }, 5000);
+
+        getLocal(); 
+        setInterval(function(){
+            getLocal();  
+        }, 5000);       
         
         $('.quantity').each(function () {
             var $this = $(this);
@@ -215,7 +226,7 @@
             legend: {
                 show: true,
                 showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
+                customLegendItems: ['Actual', 'Minimal Stock'],
                 markers: {
                     fillColors: ['#696CFF', '#00E396']
                 }
@@ -252,7 +263,7 @@
             legend: {
                 show: true,
                 showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
+                customLegendItems: ['Actual', 'Minimal Stock'],
                 markers: {
                     fillColors: ['#696CFF', '#00E396']
                 }
@@ -294,7 +305,7 @@
             legend: {
                 show: true,
                 showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
+                customLegendItems: ['Actual', 'Minimal Stock'],
                 markers: {
                     fillColors: ['#696CFF', '#00E396']
                 }
@@ -327,7 +338,7 @@
                                 y: item.current_stock,
                                 goals: [
                                     {
-                                        name: 'Limit',
+                                        name: 'Minimal Stock',
                                         value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
@@ -360,7 +371,7 @@
                                 y: item.current_stock,
                                 goals: [
                                     {
-                                        name: 'Limit',
+                                        name: 'Minimal Stock',
                                         value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
@@ -389,11 +400,11 @@
                         name: 'Total Material',
                         data: data.dataLocal.map(function(item){
                             return {
-                                x: `${item.part_name} - ${item.part_number}`,
+                                x: item.part_name,
                                 y: item.current_stock,
                                 goals: [
                                     {
-                                        name: 'Limit',
+                                        name: 'Minimal Stock',
                                         value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'

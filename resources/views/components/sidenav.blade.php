@@ -141,39 +141,11 @@
                 </li>
             </ul>
         </li>
-        <li class="menu-item {{ (request()->is('dashboard/material/*')) ? 'active' : '' }} {{ (request()->is('dashboard/material/*')) ? 'open' : '' }}">
-            <a href="javascript:void(0);" class="menu-link menu-toggle" >
-                <i class="menu-icon tf-icons bx bxs-component"></i>
-                <div>Material Stock</div>
+        <li class="menu-item {{ (request()->is('dashboard/material/wh')) ? 'active' : '' }}">
+            <a href="{{ route('material.wh') }}" class="menu-link " >
+              <i class="menu-icon tf-icons bx bxs-component"></i>
+              <div>Component Stock</div>
             </a>
-            <ul class="menu-sub">
-                <li class="menu-item {{ (request()->is('dashboard/material/wh')) ? 'active' : '' }}">
-                    <a href="{{ route('material.wh') }}" class="menu-link " >
-                        <div>WH Area</div>
-                    </a>
-                </li>
-                <li class="menu-item {{ (request()->is('dashboard/material/oh')) ? 'active' : '' }}">
-                    <a href="{{ route('material.oh') }}" class="menu-link " >
-                        <div>OH Area</div>
-                    </a>
-                </li>
-                <li class="menu-item {{ (request()->is('dashboard/material/dc')) ? 'active' : '' }}">
-                    <a href="{{ route('material.dc') }}" class="menu-link " >
-                        <div>DC Area</div>
-                    </a>
-                </li>
-                <li class="menu-item {{ (request()->is('dashboard/material/ma')) ? 'active' : '' }}">
-                    <a href="{{ route('material.ma') }}" class="menu-link" >
-                        <div>MA Area</div>
-                    </a>
-                    
-                </li>
-                <li class="menu-item {{ (request()->is('dashboard/material/assy')) ? 'active' : '' }}">
-                    <a href="{{ route('material.assy') }}" class="menu-link " >
-                        <div>ASSY Area</div>
-                    </a>
-                </li>
-            </ul>
         </li>
         <li class="menu-item {{ (request()->is('dashboard/material-transaction/*')) ? 'active' : '' }} {{ (request()->is('dashboard/material-transaction/*')) ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle" >
@@ -181,21 +153,27 @@
                 <div>Transaction</div>
             </a>
             <ul class="menu-sub">
-              <li class="menu-item {{ (request()->is('dashboard/material-transaction/checkout')) ? 'active' : '' }}">
+              {{-- <li class="menu-item {{ (request()->is('dashboard/material-transaction/checkout')) ? 'active' : '' }}">
                 <a href="{{ route('checkout.index') }}" class="menu-link " >
                     <div>Checkout Material</div>
                 </a>
-              </li>
+              </li> --}}
               <li class="menu-item {{ (request()->is('dashboard/material-transaction/wh')) ? 'active' : '' }}">
                 <a href="{{ route('wh.index') }}" class="menu-link " >
                     {{-- <div>Entry Stock WH</div> --}}
                     <div>STO</div>
                 </a>
               </li>
-              <li class="menu-item {{ (request()->is('dashboard/material-transaction/oh')) ? 'active' : '' }}">
+              {{-- <li class="menu-item {{ (request()->is('dashboard/material-transaction/oh')) ? 'active' : '' }}">
                 <a href="{{ route('oh.index') }}" class="menu-link " >
-                    {{-- <div>Entry Stock OH</div> --}}
+                    <div>Entry Stock OH</div>
                     <div>Unboxing</div>
+                </a>
+              </li> --}}
+              <li class="menu-item {{ (request()->is('dashboard/material-transaction/ng')) ? 'active' : '' }}">
+                <a href="{{ route('ng.index') }}" class="menu-link " >
+                    {{-- <div>Entry Stock OH</div> --}}
+                    <div>NG Component</div>
                 </a>
               </li>
             </ul>

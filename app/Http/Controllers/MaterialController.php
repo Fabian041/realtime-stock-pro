@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Pusher\Pusher;
 use App\Models\TtDc;
 use App\Models\TtMa;
@@ -154,6 +155,113 @@ class MaterialController extends Controller
      *
      * 
      */
+    public function indexNg()
+    {
+        // get id transaction
+        $transaction_id = TmTransaction::select('id')->where('name', 'Unboxing')->first();
+
+        return view('layouts.ng-material',[
+            'area' => TmArea::all(),
+            'materials' => TmMaterial::all(),
+            'checkouts' => TtMaterial::where('id_transaction',$transaction_id->id)->get()
+        ]);
+    }
+
+    public function scanNg(Request $request)
+    {
+        $barcode = $request->barcode;
+
+        try {
+            if($barcode){
+                $arr = preg_split('/ +/', $barcode);
+                $back_number = $arr[6];
+                $part_number = substr($arr[3], 9, 20);
+
+                // check in tm material table, if it exists
+                $material = TmMaterial::where('part_number', $part_number)->first();
+
+                if(!$material){
+                    return [
+                        'status' => 'error',
+                        'message' => 'Part atau komponen tidak ditemukan'
+                    ];
+                }
+            }
+
+            return [
+                'status' => 'success',
+                'part_number' => $material->part_number,
+                'part_name' => $material->part_name,
+                'back_number' => $material->back_number,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => 'error',
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    public function storeNg(Request $request)
+    {
+        // dd($request);
+        // get id area
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+        // get id material
+        $material_id = TtMaterial::join('tm_materials', 'tt_materials.id_material', '=' , 'tm_materials.id')
+                        ->select('tm_materials.id')->where('tm_materials.part_number', $request->part_number)->first();
+        
+                        
+        // get id transaction
+        $reversalTransaction= TmTransaction::select('id')->where('name', 'NG Judgement (R)')->first();
+
+        // check first , is that any stock in WH
+        $material = DB::table('tt_materials')
+                    ->join('tm_materials', 'tm_materials.id', '=', 'tt_materials.id_material')
+                    ->join('material_stocks','tm_materials.id', '=', 'material_stocks.id_material')
+                    ->select('tt_materials.id_material','tm_materials.part_number','tm_materials.back_number', 'material_stocks.current_stock', 'tm_materials.part_name')
+                    ->where('tt_materials.id_area', $wh->id)
+                    ->where('tt_materials.id_material', $material_id->id)
+                    ->first();
+
+        if($material == null  || !$material || $material == []){
+            return redirect()->back()->with('error', 'Part tidak ditemukan');
+        }elseif($material->current_stock == 0) {
+            return redirect()->back()->with('error', 'Part' . $material->part_number . 'habis atau tidak ditemukan');
+        }
+
+        try {
+            DB::beginTransaction();
+            
+            if($material){
+
+                // checkout WH area
+                TtMaterial::create([
+                    'id_material' => $material->id_material,
+                    'qty' => $request->qty,
+                    'id_area' => $wh->id,
+                    'id_transaction' => $reversalTransaction->id,
+                    'pic' => auth()->user()->username,
+                    'date' => Carbon::now()->format('Y-m-d H:i:s')
+                ]); 
+            }
+
+            // get current stock after scan
+            $result = $this->getCurrentMaterialStock($wh->id);
+
+            // push to websocket
+            $this->pushData('wh',$result);
+            
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error',$e->getMessage());
+        }
+        
+        return redirect()->back()->with('success', 'NG Part ' . $material->part_name);
+    }
+
     public function indexOh()
     {
         // get id transaction
@@ -1080,26 +1188,42 @@ class MaterialController extends Controller
                 ->toJson();
     }
 
+    public function getDataNg()
+    {
+        // get id transaction
+        $transaction_id = TmTransaction::select('id')->where('name', 'NG Judgement (R)')->first();
+
+        $input =   DB::table('tt_materials')
+                    ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
+                    ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier','tm_materials.source' ,'tt_materials.pic','tm_materials.date','tt_materials.qty')
+                    ->where('id_transaction', $transaction_id->id)
+                    ->get();
+
+        return DataTables::of($input)
+                ->toJson();
+    }
+
     public function import(Request $request)
     {
-        Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
 
-        // connection to pusher
-        $options = array(
-            'cluster' => 'ap1',
-            'encrypted' => true
-        );
+        try {
+            DB::beginTransaction();
+            Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
 
-        $pusher = new Pusher(
-            '31df202f78fc0dace852',
-            'f1d1fd7c838cdd9f25d6',
-            '1567188',
-            $options
-        );
+            // get current stock after scan
+            $result = $this->getCurrentMaterialStock($wh->id);
 
-        // sending data
-        $pusher->trigger('stock-data', 'StockDataUpdated', []);
+            // // push to websocket
+            $this->pushData('wh',$result);
+            
+            DB::commit();
 
-        return redirect()->back();
+            return redirect()->back()->with('success', 'Berhasil menambah stock');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+
     }
 }

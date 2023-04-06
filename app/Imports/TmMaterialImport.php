@@ -24,11 +24,10 @@ class TmMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                     ],
                     [
                         'part_name' => $row['part_name'],
-                        'pic' => auth()->user()->username,
                         'date' => date('Y-m-d'),
                         'time' => date('H:i:s'),
                         'source' => $row['source'],
-                        'limit_qty' => $row['limit']
+                        'limit_qty' => $row['minimum_qty'],
                     ]
                 );
             }

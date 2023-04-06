@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TtMaterial extends Model
 {
     use HasFactory;
+    
     protected $table = 'tt_materials';
 
     protected $guarded = ['updated_at']; 

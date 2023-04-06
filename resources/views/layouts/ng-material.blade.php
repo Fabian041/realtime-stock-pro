@@ -8,7 +8,7 @@
                 <a href="javascript:void(0);">Transaction</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">STO</a>
+                <a href="javascript:void(0);" class="active">NG Material</a>
             </li>
         </ol>
     </nav>
@@ -29,7 +29,7 @@
             <div class="row">
                 <div class="col-md-10"></div>
                 <div class="col-md-2 text-end">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal"><i class="bx bx-import me-sm-2"></i> <span class="d-none d-sm-inline-block">Import</span></button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal"><i class="bx bx-import me-sm-2"></i> <span class="d-none d-sm-inline-block">NG Part</span></button>
                 </div>
             </div>
             
@@ -53,42 +53,52 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="ngModal" tabindex="-1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('wh.import') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('ng.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('POST')
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel1">Upload Materials</h5>
+                    <h5 class="modal-title" id="exampleModalLabel1">Quantity NG of Component <span class="ngPart"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col mb-3">
-                            <input type="file" id="file" name="file" class="form-control">
+                        <div class="col-12 col-md-12">
+                            <label class="form-label" for="qty">Quantity</label>
+                            <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required autofocus/>
+                            <input type="hidden" id="part_number" name="part_number"/>
+                            
+                            @error('qty')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                            
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Import</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
+<!--  -->
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
-    
     $(document).ready(function () {
 
+        $('#ngModal').modal('hide');
+        // $('#ngModal').hide();
         var table = $('.material-datatable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: `{{ route('wh.getData') }}`,
+            ajax: `{{ route('ng.getData') }}`,
             columns: [
             { data: 'part_number' },
             { data: 'part_name' },
@@ -115,7 +125,7 @@
                 barcode = "";
                 // end of isi dengan line
                 if (barcodecomplete.length == 122) {
-                    insertWh(barcodecomplete);
+                    showNgPart(barcodecomplete);
                     return;
                     
                 } else {
@@ -128,10 +138,10 @@
             }
         });
 
-        function insertWh(barcode) {
+        function showNgPart(barcode) {
             $.ajax({
                 type: 'get',
-                url: "{{ url('dashboard/material-transaction/wh/scan') }}",
+                url: "{{ url('dashboard/material-transaction/ng/scan') }}",
                 data: {
                     barcode : barcode,
                 },
@@ -139,9 +149,10 @@
                 success: function (data) {
                     console.log(data);
                     if (data.status == "success") {
-                        table.draw();
-                        showToast("success", `Part ${data.back_number} berhasil disimpan`);
-                        return true;
+                        $('#ngModal').modal('show');
+                        $('#qty').focus();
+                        $('.ngPart').text(data.part_name);
+                        $('#part_number').val(data.part_number);
                     } else if (data.status == "error") {
                         showToast("error", data.message);
                         return false;
@@ -170,7 +181,6 @@
                 stopOnFocus: true
             }).showToast();
         }
-
     });
 </script>
 
