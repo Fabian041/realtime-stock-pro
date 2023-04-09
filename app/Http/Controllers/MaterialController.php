@@ -211,7 +211,10 @@ class MaterialController extends Controller
         // get id material
         $material_id = TtMaterial::join('tm_materials', 'tt_materials.id_material', '=' , 'tm_materials.id')
                         ->select('tm_materials.id')->where('tm_materials.part_number', $request->part_number)->first();
-        
+
+        if(!$material_id){
+            return redirect()->back()->with('error', 'Part tidak ditemukan');
+        }
                         
         // get id transaction
         $reversalTransaction= TmTransaction::select('id')->where('name', 'NG Judgement (R)')->first();

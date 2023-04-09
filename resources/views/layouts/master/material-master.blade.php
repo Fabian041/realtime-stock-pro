@@ -79,12 +79,12 @@
                     <h3>Edit Material</h3>
                     {{-- <p>Mastering Detail BOM Information</p> --}}
                 </div>
-                <form method="POST" action="" id="editUserForm" class="row g-3">
+                <form method="POST" action="/master/material-master/update/{{ $material->id }}" id="editUserForm" class="row g-3">
                     @method('POST')
                     @csrf
                     <div class="col-12 col-md-6">
                         <label class="form-label" for="part_number">Part Number</label>
-                        <input type="text" id="part_number" name="part_number" class="form-control @error('part_number') is-invalid @enderror" placeholder="11821-18182" min="1" required/>
+                        <input type="text" id="part_number" name="part_number" class="form-control @error('part_number') is-invalid @enderror" placeholder="11821-18182" value="{{ $material->part_number }}" min="1" required/>
                         
                         @error('part_number')
                         <div class="invalid-feedback">
@@ -94,7 +94,7 @@
                     </div>
                     <div class="col-12 col-md-6">
                         <label class="form-label" for="part_name">Part Name</label>
-                        <input type="text" id="part_name" name="part_name" class="form-control @error('part_name') is-invalid @enderror" placeholder="Screw" min="1" required/>
+                        <input type="text" id="part_name" name="part_name" class="form-control @error('part_name') is-invalid @enderror" placeholder="Screw" min="1" value="{{ $material->part_name }}" required/>
                         
                         @error('part_name')
                         <div class="invalid-feedback">
@@ -104,7 +104,7 @@
                     </div>
                     <div class="col-12 col-md-6">
                         <label class="form-label" for="supplier">Supplier</label>
-                        <input type="text" id="supplier" name="supplier" class="form-control @error('supplier') is-invalid @enderror" placeholder="D1920" min="1" required/>
+                        <input type="text" id="supplier" name="supplier" class="form-control @error('supplier') is-invalid @enderror" placeholder="D1920" min="1" value="{{ $material->supplier }}" required/>
                         
                         @error('supplier')
                         <div class="invalid-feedback">
@@ -114,7 +114,7 @@
                     </div>
                     <div class="col-12 col-md-3">
                         <label class="form-label" for="source">Source</label>
-                        <input type="text" id="source" name="part_name" class="form-control @error('source') is-invalid @enderror" placeholder="CKD" min="1" required/>
+                        <input type="text" id="source" name="source" class="form-control @error('source') is-invalid @enderror" placeholder="CKD" min="1" value="{{ $material->source }}" required/>
                         
                         @error('source')
                         <div class="invalid-feedback">
@@ -123,10 +123,10 @@
                         @enderror
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="form-label" for="qty">Quantity</label>
-                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required/>
+                        <label class="form-label" for="qty">Minimum Stock</label>
+                        <input type="number" id="limit_qty" name="limit_qty" class="form-control @error('limit_qty') is-invalid @enderror" placeholder="1920" min="1" value="{{ $material->limit_qty }}" required/>
                         
-                        @error('qty')
+                        @error('limit_qty')
                         <div class="invalid-feedback">
                             {{ $message }}
                         </div>

@@ -120,6 +120,7 @@ Route::middleware(['auth'])->group(function () {
         // Material Master
         Route::get('/material-master', [MaterialMasterController::class, 'index'])->name('material.master');
         Route::post('/material-master/import', [MaterialMasterController::class, 'import'])->name('material.master.import');
+        Route::post('/material-master/update/{material}', [MaterialMasterController::class, 'update'])->name('material.master.update');
         Route::get('/material-master/getData', [MaterialMasterController::class, 'getData'])->name('material.master.getData');
 
         // Transaction Master

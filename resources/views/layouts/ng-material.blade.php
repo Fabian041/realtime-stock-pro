@@ -29,7 +29,7 @@
             <div class="row">
                 <div class="col-md-10"></div>
                 <div class="col-md-2 text-end">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal"><i class="bx bx-import me-sm-2"></i> <span class="d-none d-sm-inline-block">NG Part</span></button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ngModal"><i class="bx bx-import me-sm-2"></i> <span class="d-none d-sm-inline-block">NG Part</span></button>
                 </div>
             </div>
             
@@ -65,7 +65,22 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-12 col-md-12">
+                        <div class="col-12 col-md-9">
+                            <label class="form-label" for="id_material">Build Of Material</label>
+                            <select class="form-select" id="id_material" aria-label="Default select example" name="id_material">
+                                <option value="null" selected>Pilih Material</option>
+                                @foreach ($materials as $item)
+                                    <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
+                                @endforeach
+                            </select>
+    
+                            @error('id_material')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-12 col-md-3">
                             <label class="form-label" for="qty">Quantity</label>
                             <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" placeholder="1920" min="1" required autofocus/>
                             <input type="hidden" id="part_number" name="part_number"/>
@@ -93,6 +108,28 @@
 <script>
     $(document).ready(function () {
 
+        var errorMessage = "{!! session('error') !!}";
+        var successMessage = "{!! session('success') !!}";
+
+        if(errorMessage){
+            showToast('error', errorMessage);
+        }else if(successMessage){
+            showToast('success', successMessage);
+        }
+
+        function showToast(type, message){
+            Toastify({
+                text: message,
+                duration: 5000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: type === 'success' ? "#2ecc71" : "#e74c3c",
+                stopOnFocus: true
+            }).showToast();
+        }
+
         $('#ngModal').modal('hide');
         // $('#ngModal').hide();
         var table = $('.material-datatable').DataTable({
@@ -100,13 +137,13 @@
             serverSide: true,
             ajax: `{{ route('ng.getData') }}`,
             columns: [
-            { data: 'part_number' },
-            { data: 'part_name' },
-            { data: 'supplier' },
-            { data: 'source' },
-            { data: 'pic' },
-            { data: 'date' },
-            { data: 'qty' },
+                { data: 'part_number' },
+                { data: 'part_name' },
+                { data: 'supplier' },
+                { data: 'source' },
+                { data: 'pic' },
+                { data: 'date' },
+                { data: 'qty' },
             ],
         });
 

@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Pusher\Pusher;
 use App\Models\TtStock;
+use App\Models\TmMaterial;
 use Illuminate\Http\Request;
 use App\Imports\ImportTtStock;
 use App\Imports\TmMaterialImport;
-use App\Models\TmMaterial;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -76,9 +77,34 @@ class MaterialMasterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, TmMaterial $material)
     {
-        //
+        $rules = [];
+
+        if($request->part_number !== $material->part_number){
+            $rules['part_number'] = 'required';
+        }else if($request->part_name !== $material->part_name){
+            $rules['part_name'] ='required';
+        }else if($request->source !== $material->source){
+            $rules['source'] ='required';
+        }else if($request->supplier !== $material->supplier){
+            $rules['supplier'] ='required';
+        }else if($request->limit_qty !== $material->limit_qty){
+            $rules['limit_qty'] ='required';
+        }
+
+        try {
+            DB::beginTransaction();
+            $validatedData = $request->validate($rules);
+
+            TmMaterial::where('id', $material->id)->update($validatedData);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return redirect()->back()->with('success', 'Part has been updated successfully');
     }
 
     /**

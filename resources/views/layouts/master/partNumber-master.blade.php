@@ -44,7 +44,7 @@
                             <th>Part Number</th>
                             <th>Back Number</th>
                             <th>Part Name</th>
-                            <th>Limit Quantity</th>
+                            <th>Minimum Quantity</th>
                         </tr>
                     </thead>
                 </table>

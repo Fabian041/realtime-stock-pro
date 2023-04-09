@@ -160,6 +160,95 @@
 </div>
 {{-- end modal --}}
 
+<!-- Modal -->
+@foreach ($parts as $part)   
+<div class="modal fade" id="edit-{{ $part->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-simple modal-edit-user">
+        <div class="modal-content p-2 p-md-5">
+            <div class="modal-body">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="text-center mb-5">
+                    <h3>Edit BOM Information</h3>
+                    <p>Mastering Detail BOM Information</p>
+                </div>
+                <form method="POST" action="" id="editUserForm" class="row g-3">
+                    @method('POST')
+                    @csrf
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="id_part">Part Name</label>
+                        <select class="form-select" id="id_part" aria-label="Default select example" name="id_part">
+                            <option value="null" selected>Pilih Part</option>
+                            @foreach ($parts as $item)
+                                <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
+                            @endforeach
+                        </select>
+
+                        @error('id_part')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="id_material">Build Of Material</label>
+                        <select class="form-select" id="id_material" aria-label="Default select example" name="id_material">
+                            <option value="null" selected>Pilih Material</option>
+                            @foreach ($materials as $item)
+                                <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
+                            @endforeach
+                        </select>
+
+                        @error('id_material')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="id_area">Area</label>
+                        <select class="form-select" id="id_area" aria-label="Default select example" name="id_area">
+                            <option value="null" selected>Pilih Area</option>
+                            @foreach ($areas as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+
+                        @error('id_area')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="qty_use">Quantity</label>
+                        <input type="number" id="qty_use" name="qty_use" class="form-control @error('qty_use') is-invalid @enderror" placeholder="1920" min="1" value="{{ $part->qty_use }}" required/>
+
+                        @error('qty_use')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="uom">Unit</label>
+                        <select class="form-select" id="uom" aria-label="Default select example" name="uom">
+                            <option value="null" selected>Pilih Unit</option>
+                            <option value="pcs">Pcs</option>
+                            <option value="kg">Kg</option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-end mt-5">
+                        <button type="reset" class="btn btn-label-secondary me-sm-3 me-1" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+{{-- end modal --}}
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
