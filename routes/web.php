@@ -97,13 +97,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/getAssyMaterial', [MaterialController::class, 'getAssyMaterial'])->name('material.getAssy');
 
         // get finsih good part
-        Route::get('/getFgPart/ma', [FgController::class, 'getPartMa'])->name('fgMa.get');
-        Route::get('/getFgPart/dc', [FgController::class, 'getPartDc'])->name('fgDc.get');
-        Route::get('/getFgPart/assy', [FgController::class, 'getPartAssy'])->name('fgAssy.get');
+        Route::get('/getFgPart/ma', [FgController::class, 'getFgMaStock'])->name('fgMa.get');
+        Route::get('/getFgPart/dc', [FgController::class, 'getFgDcStock'])->name('fgDc.get');
+        Route::get('/getFgPart/assy', [FgController::class, 'getFgAssyStock'])->name('fgAssy.get');
 
         // get wip part
-        Route::get('/getWipPart/ma', [WipController::class, 'getPartMa'])->name('wipMa.get');
-        Route::get('/getWipPart/dc', [WipController::class, 'getPartDc'])->name('wipDc.get');
+        Route::get('/getWipPart/ma', [WipController::class, 'getWipMaStock'])->name('wipMa.get');
+        Route::get('/getWipPart/dc', [WipController::class, 'getWipDcStock'])->name('wipDc.get');
         Route::get('/getWipPart/assy', [WipController::class, 'getPartAssy'])->name('wipAssy.get');
         
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');

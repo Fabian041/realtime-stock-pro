@@ -8,137 +8,36 @@
                 <a href="javascript:void(0);">F/G Stock</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">Assy Area</a>
+                <a href="javascript:void(0);" class="active">ASSY Area</a>
             </li>
         </ol>
     </nav>
 </div>        
 <div class="row">
-    <div class="col-lg-4 mb-4">
-        <div class="accordion mt-1 accordion-without-arrow" id="accordionWithIcon">
-            <div class="card accordion-item active p-3">
-                <div class="accordion-header d-flex align-items-center row">
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-warning px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-1" aria-controls="accordionIcon-1"">TCC</button>
-                    </div>
-                    
-                    <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">87</strong> Pcs</h3>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-12">
-                        <small class="text-muted">{{ Carbon\Carbon::now()->toDayDateTimeString() }}</small>
-                    </div>
-                </div>
-                
-                <div id="accordionIcon-1" class="accordion-collapse collapse" data-bs-parent="#accordionIcon">
-                    <hr>
-                    <div class="accordion-body">
-                        Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping. Sesame snaps icing marzipan gummi
-                        bears macaroon dragée danish caramels powder. Bear claw dragée pastry topping soufflé. Wafer gummi bears
-                        marshmallow pastry pie.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4 mb-4">
-        <div class="accordion mt-1 accordion-without-arrow" id="accordionWithIcon">
-            <div class="card accordion-item active p-3">
-                <div class="accordion-header d-flex align-items-center row">
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-danger px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-2" aria-controls="accordionIcon-2"">OPN</button>
-                    </div>
-                    
-                    <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">76</strong> Pcs</h3>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-12">
-                        <small class="text-muted">{{ Carbon\Carbon::now()->toDayDateTimeString() }}</small>
-                    </div>
-                </div>
-                
-                <div id="accordionIcon-2" class="accordion-collapse collapse" data-bs-parent="#accordionIcon">
-                    <hr>
-                    <div class="accordion-body">
-                        Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping. Sesame snaps icing marzipan gummi
-                        bears macaroon dragée danish caramels powder. Bear claw dragée pastry topping soufflé. Wafer gummi bears
-                        marshmallow pastry pie.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4 mb-4">
-        <div class="accordion mt-1 accordion-without-arrow" id="accordionWithIcon">
-            <div class="card accordion-item active p-3">
-                <div class="accordion-header d-flex align-items-center row">
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-info px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-3" aria-controls="accordionIcon-3"">CSH</button>
-                    </div>
-                    
-                    <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">98</strong> Pcs</h3>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-12">
-                        <small class="text-muted">{{ Carbon\Carbon::now()->toDayDateTimeString() }}</small>
-                    </div>
-                </div>
-                
-                <div id="accordionIcon-3" class="accordion-collapse collapse" data-bs-parent="#accordionIcon">
-                    <hr>
-                    <div class="accordion-body">
-                        Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping. Sesame snaps icing marzipan gummi
-                        bears macaroon dragée danish caramels powder. Bear claw dragée pastry topping soufflé. Wafer gummi bears
-                        marshmallow pastry pie.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row mt-3">
-    <div class="col-xl-12">
+    <div class="col-md-8 col-12">
         <div class="nav-align-top mb-4">
-            <ul class="nav nav-pills mb-3" role="tablist">
-                <li class="nav-item">
-                    <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-home" aria-controls="navs-pills-top-home" aria-selected="true">TCC</button>
-                </li>
-                <li class="nav-item">
-                    <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-profile" aria-controls="navs-pills-top-profile" aria-selected="false">OPN</button>
-                </li>
-                <li class="nav-item">
-                    <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-messages" aria-controls="navs-pills-top-messages" aria-selected="false">CSH</button>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="navs-pills-top-home" role="tabpanel">
-                    <div class="card-body">
-                        <div id="tccChart"></div>
-                    </div>
+            <div class="card">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title m-0 me-2">TCC Part</h5>
                 </div>
-                <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
-                    <div class="card-body">
-                        <div id="opnChart"></div>     
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="navs-pills-top-messages" role="tabpanel">
-                    <div class="card-body">
-                        <div id="cshChart"></div> 
-                    </div>
+                <div class="card-body">
+                    <div id="tccChart"></div> 
                 </div>
             </div>
         </div>
     </div>
+    <div class="col-md-4 col-12 mb-4">
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title m-0 me-2">Detail Part</h5>
+            </div>
+            <div class="card-body">
+                <div id="detailChart"></div>
+            </div>
+        </div>
+    </div>
 </div>
+
 @vite('resources/js/app.js')
 <script src="https://cdn.jsdelivr.net/npm/countup.js@1.9.3/dist/countUp.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script> 
@@ -158,9 +57,15 @@
             });
         });
 
-        getTcc();
-        getOpn();
-        getCsh();    
+        getTcc();    
+        setTimeout(() => {  
+            getTcc();    
+        }, 1000);
+
+        getDetail();    
+        setTimeout(() => {  
+            getDetail();    
+        }, 1000);
 
         var options = {
             chart: {
@@ -183,12 +88,12 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data'
             },
             legend: {
                 show: true,
                 showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
+                customLegendItems: ['Actual', 'Minimum Stock'],
                 markers: {
                     fillColors: ['#696CFF', '#00E396']
                 }
@@ -201,85 +106,26 @@
 
         var options2 = {
             chart: {
-                height: 300,
-                type: 'bar',
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                    from: 'bottom',
-                    animateGradually: {
-                        enabled: true,
-                        delay: 150
-                    },
-                    dynamicAnimation: {
-                        enabled: true,
-                        speed: 350
-                    }
-                }
+                type: 'donut'
             },
-            colors: '#696CFF',
-            noData: {
-                text: 'Loading...'
+            series: [],
+            labels: [],
+            dataLabels: {
+                enabled: true,
+                formatter: function (val, opts) {
+                    return opts.w.config.series[opts.seriesIndex];
+                }
             },
             legend: {
-                show: true,
-                showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
-                markers: {
-                    fillColors: ['#696CFF', '#00E396']
-                }
+                position: 'bottom'
             },
-            series: [{
-                name: 'Quantity',
-                data: []
-            }],
-        }
-
-        var options3 = {
-            chart: {
-                height: 300,
-                type: 'bar',
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                    from: 'bottom',
-                    animateGradually: {
-                        enabled: true,
-                        delay: 150
-                    },
-                    dynamicAnimation: {
-                        enabled: true,
-                        speed: 350
-                    }
-                }
-            },
-            colors: '#696CFF',
-            noData: {
-                text: 'Loading...'
-            },
-            legend: {
-                show: true,
-                showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
-                markers: {
-                    fillColors: ['#696CFF', '#00E396']
-                }
-            },
-            series: [{
-                name: 'Quantity',
-                data: []
-            }],
         }
 
         var chartTcc = new ApexCharts(document.querySelector("#tccChart"), options);
-        var chartOpn = new ApexCharts(document.querySelector("#opnChart"), options2);
-        var chartCsh = new ApexCharts(document.querySelector("#cshChart"), options3);
+        var chartDetail = new ApexCharts(document.querySelector("#detailChart"), options2);
 
         chartTcc.render(); 
-        chartOpn.render(); 
-        chartCsh.render(); 
+        chartDetail.render(); 
 
         function getTcc() {
             $.ajax({
@@ -287,15 +133,16 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
+                    console.log(data);
                     chartTcc.updateSeries([{
                         name: 'Total Part',
-                        data: data.dataTcc.map(function(item){
+                        data: data.map(function(item){
                             return {
-                                x: item.part_name,
-                                y: item.qty,
+                                x: `${item.part_name} - ${item.back_number}`,
+                                y: item.current_stock,
                                 goals: [
                                     {
-                                        name: 'Limit',
+                                        name: 'Minimum Stock',
                                         value: item.qty_limit,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
@@ -308,58 +155,28 @@
                 }
             });
         };
-
-        function getOpn() {
+        
+        function getDetail() {
             $.ajax({
                 url: '/dashboard/getFgPart/assy',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    chartOpn.updateSeries([{
-                        name: 'Total Part',
-                        data: data.dataOpn.map(function(item){
-                            return {
-                                x: item.part_name,
-                                y: item.qty,
-                                goals: [
-                                    {
-                                        name: 'Limit',
-                                        value: item.qty_limit,
-                                        strokeHeight: 5,
-                                        strokeColor: '#00E396'
-                                    }
-                                ]
-                            }
-                        })
-                    }]);
-                }
-            });
-        };
-
-        function getCsh() {
-            $.ajax({
-                url: '/dashboard/getFgPart/assy',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    chartCsh.updateSeries([{
-                        name: 'Total Part',
-                        data: data.dataCsh.map(function(item){
-                            return {
-                                x: item.part_name,
-                                y: item.qty,
-                                goals: [
-                                    {
-                                        name: 'Limit',
-                                        value: item.qty_limit,
-                                        strokeHeight: 5,
-                                        strokeColor: '#00E396'
-                                    }
-                                ]
-                            }
-                        })
-                    }]);
-
+                    console.log(data)
+                    var seriesData = data.map(function(item) {
+                        return item.current_stock;
+                    });
+                    var labelData = data.map(function(item) {
+                        return item.part_name;
+                    });
+                    chartDetail.updateSeries(seriesData);
+                    chartDetail.updateOptions({
+                        labels: labelData
+                    });
+                    
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
                 }
             });
         };

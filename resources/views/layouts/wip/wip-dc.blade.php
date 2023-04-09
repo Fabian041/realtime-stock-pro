@@ -14,7 +14,7 @@
     </nav>
 </div>        
 <div class="row">
-    <div class="col-lg-4 mb-4">
+    <div class="col-lg-6 mb-4">
         <div class="accordion mt-1 accordion-without-arrow" id="accordionWithIcon">
             <div class="card accordion-item active p-3">
                 <div class="accordion-header d-flex align-items-center row">
@@ -24,7 +24,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">87</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">{{ $tcc }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 mb-4">
+    <div class="col-lg-6 mb-4">
         <div class="accordion mt-1 accordion-without-arrow" id="accordionWithIcon">
             <div class="card accordion-item active p-3">
                 <div class="accordion-header d-flex align-items-center row">
@@ -54,7 +54,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">76</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">{{ $opn }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -64,36 +64,6 @@
                 </div>
                 
                 <div id="accordionIcon-2" class="accordion-collapse collapse" data-bs-parent="#accordionIcon">
-                    <hr>
-                    <div class="accordion-body">
-                        Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping. Sesame snaps icing marzipan gummi
-                        bears macaroon dragée danish caramels powder. Bear claw dragée pastry topping soufflé. Wafer gummi bears
-                        marshmallow pastry pie.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4 mb-4">
-        <div class="accordion mt-1 accordion-without-arrow" id="accordionWithIcon">
-            <div class="card accordion-item active p-3">
-                <div class="accordion-header d-flex align-items-center row">
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-lg btn-label-info px-5 py-4" data-bs-toggle="collapse" data-bs-target="#accordionIcon-3" aria-controls="accordionIcon-3"">CSH</button>
-                    </div>
-                    
-                    <div class="col-md-6 text-end mt-2">
-                        <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">98</strong> Pcs</h3>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-12">
-                        <small class="text-muted">{{ Carbon\Carbon::now()->toDayDateTimeString() }}</small>
-                    </div>
-                </div>
-                
-                <div id="accordionIcon-3" class="accordion-collapse collapse" data-bs-parent="#accordionIcon">
                     <hr>
                     <div class="accordion-body">
                         Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping. Sesame snaps icing marzipan gummi
@@ -115,9 +85,6 @@
                 <li class="nav-item">
                     <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-profile" aria-controls="navs-pills-top-profile" aria-selected="false">OPN</button>
                 </li>
-                <li class="nav-item">
-                    <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-messages" aria-controls="navs-pills-top-messages" aria-selected="false">CSH</button>
-                </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="navs-pills-top-home" role="tabpanel">
@@ -128,11 +95,6 @@
                 <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
                     <div class="card-body">
                         <div id="opnChart"></div>     
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="navs-pills-top-messages" role="tabpanel">
-                    <div class="card-body">
-                        <div id="cshChart"></div> 
                     </div>
                 </div>
             </div>
@@ -146,21 +108,20 @@
 <script>
     $( document ).ready(function() {
 
+        getTcc();
+        getOpn();
+
         $('.quantity').each(function () {
             var $this = $(this);
             console.log($this.text());
             jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
-                duration: 1500,
+                duration: 1000,
                 easing: 'swing',
                 step: function () {
                 $this.text(Math.ceil(this.Counter));
                 }
             });
         });
-
-        getTcc();
-        getOpn();
-        getCsh();    
 
         var options = {
             chart: {
@@ -188,7 +149,7 @@
             legend: {
                 show: true,
                 showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
+                customLegendItems: ['Actual', 'Minimum Stock'],
                 markers: {
                     fillColors: ['#696CFF', '#00E396']
                 }
@@ -225,44 +186,7 @@
             legend: {
                 show: true,
                 showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
-                markers: {
-                    fillColors: ['#696CFF', '#00E396']
-                }
-            },
-            series: [{
-                name: 'Quantity',
-                data: []
-            }],
-        }
-
-        var options3 = {
-            chart: {
-                height: 300,
-                type: 'bar',
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                    from: 'bottom',
-                    animateGradually: {
-                        enabled: true,
-                        delay: 150
-                    },
-                    dynamicAnimation: {
-                        enabled: true,
-                        speed: 350
-                    }
-                }
-            },
-            colors: '#696CFF',
-            noData: {
-                text: 'Loading...'
-            },
-            legend: {
-                show: true,
-                showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Limit'],
+                customLegendItems: ['Actual', 'Minimum Stock'],
                 markers: {
                     fillColors: ['#696CFF', '#00E396']
                 }
@@ -275,11 +199,9 @@
 
         var chartTcc = new ApexCharts(document.querySelector("#tccChart"), options);
         var chartOpn = new ApexCharts(document.querySelector("#opnChart"), options2);
-        var chartCsh = new ApexCharts(document.querySelector("#cshChart"), options3);
 
         chartTcc.render(); 
         chartOpn.render(); 
-        chartCsh.render(); 
 
         function getTcc() {
             $.ajax({
@@ -287,15 +209,16 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
+                    console.log(data.tccStock)
                     chartTcc.updateSeries([{
                         name: 'Total Part',
-                        data: data.dataTcc.map(function(item){
+                        data: data.tccStock.map(function(item){
                             return {
-                                x: item.part_name,
-                                y: item.qty,
+                                x: `${item.part_name} - ${item.back_number}`,
+                                y: item.current_stock,
                                 goals: [
                                     {
-                                        name: 'Limit',
+                                        name: 'Minimal Stock',
                                         value: item.qty_limit,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
@@ -317,13 +240,13 @@
                 success: function(data) {
                     chartOpn.updateSeries([{
                         name: 'Total Part',
-                        data: data.dataOpn.map(function(item){
+                        data: data.opnStock.map(function(item){
                             return {
-                                x: item.part_name,
-                                y: item.qty,
+                                x: `${item.part_name} - ${item.back_number}`,
+                                y: item.current_stock,
                                 goals: [
                                     {
-                                        name: 'Limit',
+                                        name: 'Minimal Stock',
                                         value: item.qty_limit,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'
@@ -332,34 +255,6 @@
                             }
                         })
                     }]);
-                }
-            });
-        };
-
-        function getCsh() {
-            $.ajax({
-                url: '/dashboard/getWipPart/dc',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    chartCsh.updateSeries([{
-                        name: 'Total Part',
-                        data: data.dataCsh.map(function(item){
-                            return {
-                                x: item.part_name,
-                                y: item.qty,
-                                goals: [
-                                    {
-                                        name: 'Limit',
-                                        value: item.qty_limit,
-                                        strokeHeight: 5,
-                                        strokeColor: '#00E396'
-                                    }
-                                ]
-                            }
-                        })
-                    }]);
-
                 }
             });
         };

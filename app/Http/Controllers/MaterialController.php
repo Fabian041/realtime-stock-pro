@@ -48,11 +48,11 @@ class MaterialController extends Controller
     public function queryCurrentMaterialStock($area,$source){
         
         $result = DB::table('material_stocks')
-        ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
-        ->select(DB::raw('SUM(current_stock) as current_stock'))
-        ->where('id_area', $area)
-        ->where('tm_materials.source', 'like', '%' . $source . '%')
-        ->first();
+                ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
+                ->select(DB::raw('SUM(current_stock) as current_stock'))
+                ->where('id_area', $area)
+                ->where('tm_materials.source', 'like', '%' . $source . '%')
+                ->first();
         
         return $result;
     }

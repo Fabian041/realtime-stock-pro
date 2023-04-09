@@ -31,7 +31,7 @@
                             <th>Part Name</th>
                             <th>Supplier</th>
                             <th>Source</th>
-                            <th>Limit Qty</th>
+                            <th>Minimum Stock</th>
                             <th></th>
                         </tr>
                     </thead>

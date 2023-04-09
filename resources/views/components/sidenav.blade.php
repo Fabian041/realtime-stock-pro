@@ -134,11 +134,11 @@
                     </a>
                     
                 </li>
-                <li class="menu-item {{ (request()->is('dashboard/wip/assy')) ? 'active' : '' }}">
+                {{-- <li class="menu-item {{ (request()->is('dashboard/wip/assy')) ? 'active' : '' }}">
                     <a href="{{ route('wip.assy') }}" class="menu-link " >
                         <div>ASSY Area</div>
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </li>
         <li class="menu-item {{ (request()->is('dashboard/material/wh')) ? 'active' : '' }}">

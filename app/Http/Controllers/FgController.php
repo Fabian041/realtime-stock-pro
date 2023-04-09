@@ -2,11 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use Pusher\Pusher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FgController extends Controller
 {
+
+    public function getFgDcStock(){
+        
+        $result = DB::table('dc_stocks')
+                ->join('tm_parts', 'tm_parts.id', '=', 'dc_stocks.id_part')
+                ->select('tm_parts.qty_limit','tm_parts.part_name', 'tm_parts.part_number', 'tm_parts.back_number',DB::raw('SUM(current_stock) as current_stock'))
+                ->where('tm_parts.status', 0)
+                ->groupBy('tm_parts.part_name')
+                ->get();
+        
+        return $result;
+    }
     
+    public function getFgMaStock(){
+        
+        $result = DB::table('ma_stocks')
+                ->join('tm_parts', 'tm_parts.id', '=', 'ma_stocks.id_part')
+                ->select('tm_parts.qty_limit','tm_parts.part_name', 'tm_parts.part_number', 'tm_parts.back_number',DB::raw('SUM(current_stock) as current_stock'))
+                ->where('tm_parts.status', 1)
+                ->groupBy('tm_parts.part_name')
+                ->get();
+        
+        return $result;
+    }
+    
+    public function getFgAssyStock(){
+        
+        $result = DB::table('assy_stocks')
+                ->join('tm_parts', 'tm_parts.id', '=', 'assy_stocks.id_part')
+                ->select('tm_parts.qty_limit','tm_parts.part_name', 'tm_parts.part_number', 'tm_parts.back_number',DB::raw('SUM(current_stock) as current_stock'))
+                ->where('tm_parts.status', 2)
+                ->groupBy('tm_parts.part_name')
+                ->get();
+        
+        return $result;
+    }
     /**
      * Display DC dashboard
      *

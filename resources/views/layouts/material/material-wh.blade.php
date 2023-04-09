@@ -154,7 +154,7 @@
         var pusher = new Pusher('31df202f78fc0dace852', {
                 cluster: 'ap1',
                 forceTLS: true
-            });
+        });
 
         pusher.subscribe('stock-wh').bind('StockDataUpdated', function(data) {
             
@@ -226,7 +226,7 @@
             legend: {
                 show: true,
                 showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Minimal Stock'],
+                customLegendItems: ['Actual', 'Minimum Stock'],
                 markers: {
                     fillColors: ['#696CFF', '#00E396']
                 }
@@ -263,7 +263,7 @@
             legend: {
                 show: true,
                 showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Minimal Stock'],
+                customLegendItems: ['Actual', 'Minimum Stock'],
                 markers: {
                     fillColors: ['#696CFF', '#00E396']
                 }
@@ -305,7 +305,7 @@
             legend: {
                 show: true,
                 showForSingleSeries: true,
-                customLegendItems: ['Actual', 'Minimal Stock'],
+                customLegendItems: ['Actual', 'Minimum Stock'],
                 markers: {
                     fillColors: ['#696CFF', '#00E396']
                 }
@@ -338,7 +338,7 @@
                                 y: item.current_stock,
                                 goals: [
                                     {
-                                        name: 'Minimal Stock',
+                                        name: 'Minimum Stock',
                                         value: item.limit_qty,
                                         strokeHeight: 5,
                                         strokeColor: '#00E396'

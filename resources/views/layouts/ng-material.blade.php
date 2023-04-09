@@ -8,7 +8,7 @@
                 <a href="javascript:void(0);">Transaction</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="javascript:void(0);" class="active">NG Material</a>
+                <a href="javascript:void(0);" class="active">NG Component</a>
             </li>
         </ol>
     </nav>
