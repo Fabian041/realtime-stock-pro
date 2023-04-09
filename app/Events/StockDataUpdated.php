@@ -45,6 +45,8 @@ class StockDataUpdated implements shouldBroadcast
             new Channel('stock-assy'),
 
             // part
+            new Channel('stock-wip'),
+
             new Channel('part-dc'),
             new Channel('part-ma'),
             new Channel('part-assy')

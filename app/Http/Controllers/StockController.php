@@ -188,69 +188,35 @@ class StockController extends Controller
                  // push to websocket
                 $this->pushData('ma',$result);
             }
-
-            function getMaterialArea($line,$source){
-                DB::table('material_stocks')
-                    ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
-                    ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
-                    ->where('tm_areas.name', $line)
-                    ->where('tm_materials.source', 'like', '%' . $source . '%')
-                    ->get();
+            
+            // get current dc stock
+            function getWipDc($model){
+                $result = DB::table('dc_stocks')
+                        ->join('tm_parts', 'tm_parts.id', '=', 'dc_stocks.id_part')
+                        ->select(DB::raw('SUM(current_stock) as current_stock'))
+                        ->where('tm_parts.status', '<>' ,0)
+                        ->where('tm_parts.part_name', 'LIKE', '%' . $model . '%')
+                        ->groupBy('tm_parts.part_name')
+                        ->first();
+    
+                return $result;
             }
 
-            // stock material DC area
-            $dcCkd = getMaterialArea($dc,$ckd);
-            $dcImport = getMaterialArea($dc, $import);
-            $dcLocal = getMaterialArea($dc, $local);
+            // get current dc stock
+            $tcc = getWipDc('TCC');
+            $opn = getWipDc('OPN');
 
-            // stock material MA
-            $maCkd = getMaterialArea($ma,$ckd);
-            $maImport = getMaterialArea($ma, $import);
-            $maLocal = getMaterialArea($ma, $local);
+            // wip data
+            $wipData = [$tcc,$opn];
 
-            // stock material Assy
-            $assyCkd = getMaterialArea($assy,$ckd);
-            $assyImport = getMaterialArea($assy, $import);
-            $assyLocal = getMaterialArea($assy, $local);
-
-            // stock material WH
-            $warehouseCkd = getMaterialArea($warehouse,$ckd);
-            $warehouseImport = getMaterialArea($warehouse, $import);
-            $warehouseLocal = getMaterialArea($warehouse, $local);
-
-            // stock material WH
-            $ohStoreCkd = getMaterialArea($ohStore,$ckd);
-            $ohStoreImport = getMaterialArea($ohStore, $import);
-            $ohStoreLocal = getMaterialArea($ohStore, $local);
-
-            $dcStock = [$dcCkd,$dcImport, $dcLocal];
-            $maStock = [$maCkd,$maImport, $maLocal];
-            $assyStock = [$assyCkd,$assyImport, $assyLocal];
-            $warehouseStock = [$warehouseCkd,$warehouseImport, $warehouseLocal];
-            $ohStoreStock = [$ohStoreCkd,$ohStoreImport, $ohStoreLocal];
-
-            // connection to pusher
-            $options = array(
-                'cluster' => 'ap1',
-                'encrypted' => true
-            );
-
-            $pusher = new Pusher(
-                '31df202f78fc0dace852',
-                'f1d1fd7c838cdd9f25d6',
-                '1567188',
-                $options
-            );
-
-            // sending stock data all items
-            $pusher->trigger('stock-data', 'StockDataUpdated', [$dcStock, $maStock, $assyStock, $warehouseStock, $ohStoreStock]);
+            // push to websocket
+            $this->pushData('wip', $wipData);
 
             return response()->json([
                 'message' => 'success'
             ],200);
 
         } catch (\Throwable $e) {
-
             return response()->json([
                 'message' => $e->getMessage(),
             ],$e->getCode());

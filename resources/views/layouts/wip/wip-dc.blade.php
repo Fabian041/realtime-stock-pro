@@ -24,7 +24,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">{{ $tcc }}</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="tcc" class="quantity">{{ $tcc }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -54,7 +54,7 @@
                     
                     <div class="col-md-6 text-end mt-2">
                         <span class="mb-1">Total Stock</span>
-                        <h3 class="card-title text-nowrap mt-2"><strong class="quantity">{{ $opn }}</strong> Pcs</h3>
+                        <h3 class="card-title text-nowrap mt-2"><strong id="opn" class="quantity">{{ $opn }}</strong> Pcs</h3>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -108,8 +108,36 @@
 <script>
     $( document ).ready(function() {
 
+        let tccCounter = new CountUp('tcc', 0);
+        let opnCounter = new CountUp('opn', 0);
+
+        var pusher = new Pusher('31df202f78fc0dace852', {
+                cluster: 'ap1',
+                forceTLS: true
+        });
+
+        pusher.subscribe('stock-wip').bind('StockDataUpdated', function(data) {
+            
+            let dataTcc = data[0] ? data[0] : document.querySelector('#tcc').innerText
+            let dataOpn = data[1] ? data[1] : document.querySelector('#opn').innerText
+
+            document.querySelector('#tcc').innerText = dataTcc;
+            document.querySelector('#opn').innerText = dataOpn;
+
+            tccCounter.update(dataTcc);
+            opnCounter.update(dataOpn);
+
+        });
+
         getTcc();
+        setTimeout(() => {
+            getTcc();
+        }, 1000);
+
         getOpn();
+        setTimeout(() => {
+            getOpn();
+        }, 1000);
 
         $('.quantity').each(function () {
             var $this = $(this);
