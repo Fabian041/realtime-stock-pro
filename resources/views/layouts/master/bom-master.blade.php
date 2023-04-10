@@ -254,17 +254,40 @@
 <script>
     
     $(document).ready(function () {
+
+        var errorMessage = "{!! session('error') !!}";
+        var successMessage = "{!! session('success')!!}";
+
+        if(errorMessage){
+            showToast('error', errorMessage);
+        }else if(successMessage){
+            showToast('success', successMessage);
+        }
+
         $('.material-datatable').DataTable({
             ajax: `{{ route('bom.master.getData') }}`,
             columns: [
                 { data: 'part_number' },
                 { data: 'part_name' },
-                { data: 'material_number' },
+                { data: 'material_name' },
                 { data: 'name' },
                 { data: 'qty_use' },
                 { data: 'edit', orderable: false, searchable: false},
             ],
         });
+
+        function showToast(type, message){
+            Toastify({
+                text: message,
+                duration: 5000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: type === 'success' ? "#2ecc71" : "#e74c3c",
+                stopOnFocus: true
+            }).showToast();
+        }
     });
 </script>
 

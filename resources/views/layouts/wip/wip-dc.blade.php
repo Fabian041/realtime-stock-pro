@@ -172,7 +172,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data'
             },
             legend: {
                 show: true,
@@ -209,7 +209,7 @@
             },
             colors: '#696CFF',
             noData: {
-                text: 'Loading...'
+                text: 'No Data'
             },
             legend: {
                 show: true,

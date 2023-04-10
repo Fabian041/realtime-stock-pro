@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Pusher\Pusher;
 use App\Models\TtDc;
 use App\Models\TtMa;
@@ -71,7 +72,7 @@ class StockController extends Controller
         return [$dataCkd,$dataImport,$dataLocal];
     }
     
-    public function stock_control($line , $code)
+    public function stock_control($line , $code, $qty)
     {
         //ex LINE = MA001
         //ex CODE will be generate as part number or back number in avicenna, so code will be part number or back 
@@ -79,10 +80,10 @@ class StockController extends Controller
         // (i think we need authenticated avicenna username / npk)
 
         // get id part based on part number or back number
-        $part = TmPart::select('id')->where('part_number', $code)->first();
+        $part = TmPart::select('id')->where('back_number', $code)->first();
 
         // get id area based on lihe
-        $area = TmArea::select('id')->where('name', 'like', '%' . $line . '%')->first();
+        $area = TmArea::select('id')->where('name', 'LIKE', '%' . $line . '%')->first();
 
         //search bom of the part number based on line in tm bom table
         $boms = TmBom::where('id_area', $area->id)
@@ -98,9 +99,9 @@ class StockController extends Controller
         $reversalTransaction= TmTransaction::select('id')->where('name', 'Traceability (R)')->first();
 
         // FG / WIP transaction
-        $dcModel = 'TtDC';
-        $maModel = 'TtMa';
-        $assyModel = 'TtAssy';
+        $dcModel = new TtDc();
+        $maModel = new TtMa();
+        $assyModel = new TtAssy();
 
         // area
         $dc = 'DC';
@@ -122,20 +123,29 @@ class StockController extends Controller
 
                 // it will decrease current material stock and 
                 //increase FG / WIP stock in spesific area
-                TtMaterial::create([
-                    'id_material' => $bom->id,
+                $cek = TtMaterial::create([
+                    'id_material' => $bom->id_material,
                     'qty' => $bom->qty_use,
-                    'id_area' => $area->id,
+                    'id_area' => $wh->id,
                     'id_transaction' => $reversalTransaction->id,
                     'pic' => 'avicenna user',
-                    'date' => date('Y-m-d H:i:s')
+                    'date' => Carbon::now()->format('Y-m-d H:i:s')
                 ]);
 
                 // insert to BOM table
                 TtOutput::create([
                     'id_bom' => $bom->id,
-                    'date' => date('Y-m-d H:i:s')
+                    'date' => Carbon::now()->format('Y-m-d H:i:s')
                 ]);
+
+                // get current stock after scan
+                $result = $this->getCurrentMaterialStock($wh->id);
+
+                // push to websocket
+                $this->pushData('wh',$result);
+
+            DB::commit();
+
             }
 
             function partTransaction($area, $part, $transaction, $qty){
@@ -152,41 +162,23 @@ class StockController extends Controller
 
             if($line == 'DC'){
 
-                partTransaction($dcModel, $part->id, $transaction->id, 1);
-
-                // get current stock after scan
-                $result = $this->getCurrentMaterialStock($area->id);
-
-                // push to websocket
-                $this->pushData('dc',$result);
+                partTransaction($dcModel, $part->id, $transaction->id, $qty);
 
             }elseif($line == 'MA'){
 
                 // increase ma stock
-                partTransaction($maModel, $part->id, $transaction->id, 1);
+                partTransaction($maModel, $part->id, $transaction->id, $qty);
 
                 // decrease dc stock
-                partTransaction($dcModel, $part->id, $reversalTransaction->id, 1);
-
-                // get current stock after scan
-                $result = $this->getCurrentMaterialStock($area->id);
-
-                 // push to websocket
-                $this->pushData('ma',$result);
+                partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty);
 
             }elseif($line == 'AS'){
 
                 // increase assy stock
-                partTransaction($assyModel, $part->id, $transaction->id, 1);
+                partTransaction($assyModel, $part->id, $transaction->id, $qty);
 
                 // decrease ma stock
-                partTransaction($maModel, $part->id, $reversalTransaction->id, 1);
-
-                // get current stock after scan
-                $result = $this->getCurrentMaterialStock($area->id);
-
-                 // push to websocket
-                $this->pushData('ma',$result);
+                partTransaction($maModel, $part->id, $reversalTransaction->id, $qty);
             }
             
             // get current dc stock
@@ -213,9 +205,13 @@ class StockController extends Controller
             $this->pushData('wip', $wipData);
 
             return response()->json([
-                'message' => 'success'
+                'message' => 'success',
+                'data' => [
+                    'bom' => $cek
+                ]
             ],200);
 
+            DB::commit();
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => $e->getMessage(),

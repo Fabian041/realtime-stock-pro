@@ -19,4 +19,4 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('/stock-control/{line}/{code}', [StockController::class,'stock_control'])->name('stock-control.main');
+Route::get('/stock-control/{line}/{code}/{qty}', [StockController::class,'stock_control'])->name('stock-control.main');

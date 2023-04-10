@@ -122,17 +122,17 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="navs-pills-top-home" role="tabpanel">
                     <div class="card-body">
-                        <div id="ckdChart"></div>
+                        <div id="ckdChart" style="width: 100%;"></div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
                     <div class="card-body">
-                        <div id="importChart"></div>     
+                        <div id="importChart" style="width: 100%;"></div>     
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-messages" role="tabpanel">
                     <div class="card-body">
-                        <div id="localChart"></div> 
+                        <div id="localChart" style="width: 100%;"></div> 
                     </div>
                 </div>
             </div>
@@ -202,7 +202,7 @@
 
         var options = {
             chart: {
-                height: 300,
+                height: 450,
                 type: 'bar',
                 animations: {
                     enabled: true,
@@ -239,7 +239,7 @@
 
         var options2 = {
             chart: {
-                height: 300,
+                height: 450,
                 type: 'bar',
                 animations: {
                     enabled: true,
@@ -276,7 +276,7 @@
 
         var options3 = {
             chart: {
-                height: 300,
+                height: 450,
                 type: 'bar',
                 animations: {
                     enabled: true,
@@ -291,6 +291,12 @@
                         enabled: true,
                         speed: 350
                     }
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    barWidth: '2%'
                 }
             },
             xaxis: {

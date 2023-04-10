@@ -37,17 +37,23 @@ class BomMasterController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'id_part' => 'required',
-            'id_area' => 'required',
-            'id_material' => 'required',
-            'qty_use' => 'required',
-            'uom' => 'required'
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'id_part' => 'required',
+                'id_area' => 'required',
+                'id_material' => 'required',
+                'qty_use' => 'required',
+                'uom' => 'required'
+            ]);
+    
+            TmBom::create($validatedData);
+            
+            return redirect()->back()->with('success', 'Part created successfully.');
 
-        TmBom::create($validatedData);
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage()); 
+        }
         
-        return redirect()->back()->with('success', 'Part created successfully.');
     }
 
     /**
@@ -118,7 +124,7 @@ class BomMasterController extends Controller
                 ->join('tm_materials', 'tm_boms.id_material', '=', 'tm_materials.id')
                 ->join('tm_areas', 'tm_boms.id_area', '=', 'tm_areas.id')
                 ->join('tm_parts', 'tm_boms.id_part', '=', 'tm_parts.id')
-                ->select('tm_boms.id','tm_parts.part_name','tm_areas.name','tm_parts.part_number', 'tm_materials.part_number as material_number' , 'tm_boms.qty_use')
+                ->select('tm_boms.id','tm_parts.part_name','tm_areas.name','tm_parts.part_number', 'tm_materials.part_number as material_number' , 'tm_boms.qty_use', 'tm_materials.part_name as material_name')
                 ->get();
 
         return DataTables::of($input)
