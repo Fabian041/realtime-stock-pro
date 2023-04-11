@@ -7,6 +7,7 @@ use App\Models\TmBom;
 use App\Models\TmArea;
 use App\Models\TmPart;
 use App\Models\TmMaterial;
+use App\Imports\TmBomImport;
 use Illuminate\Http\Request;
 use App\Imports\TmMaterialImport;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,7 @@ class BomMasterController extends Controller
             'parts' => TmPart::all(),
             'materials' => TmMaterial::all(),
             'areas' => TmArea::all(),
+            'boms'  => TmBom::all(),
         ]);
     }
 
@@ -74,9 +76,35 @@ class BomMasterController extends Controller
      * @param  \App\Models\TmBom  $tmBom
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TmBom $tmBom)
+    public function update(Request $request, TmBom $bom)
     {
-        //
+        $rules = [];
+
+        if($request->id_part !== $bom->id_part){
+            $rules['id_part'] = 'required';
+        }else if($request->id_material !== $bom->id_material){
+            $rules['id_material'] ='required';
+        }else if($request->id_area !== $bom->id_area){
+            $rules['id_area'] ='required';
+        }else if($request->qty_use !== $bom->qty_use){
+            $rules['qty_use'] ='required';
+        }else if($request->uom !== $bom->uom){
+            $rules['uom'] ='required';
+        }
+
+        try {
+            DB::beginTransaction();
+            $validatedData = $request->validate($rules);
+
+            TmBom::where('id', $bom->id)->update($validatedData);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to update' . '[' . $th->getMessage() . ']');
+
+        }
+
+        return redirect()->back()->with('success', 'BOM has been updated successfully');
     }
 
     /**
@@ -93,25 +121,14 @@ class BomMasterController extends Controller
     public function import(Request $request)
     {
 
-        Excel::import(new TmMaterialImport, $request->file('file')->store('files'));
+        try {
+            Excel::import(new TmBomImport, $request->file('file')->store('files'));
 
-        // connection to pusher
-        $options = array(
-            'cluster' => 'ap1',
-            'encrypted' => true
-        );
-
-        $pusher = new Pusher(
-            '31df202f78fc0dace852',
-            'f1d1fd7c838cdd9f25d6',
-            '1567188',
-            $options
-        );
-
-        // sending data
-        $pusher->trigger('stock-data', 'StockDataUpdated', []);
-
-        return redirect()->back();
+            return redirect()->back()->with('success', 'Berhasil menambah stock');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 
     /**

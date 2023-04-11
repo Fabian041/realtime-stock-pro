@@ -116,6 +116,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/part-number-master', [PartNumberMasterController::class, 'index'])->name('part-number.master');
         Route::post('/part-number-master/insertData', [PartNumberMasterController::class, 'store'])->name('part-number.master.insertData');
         Route::get('/part-number-master/getData', [PartNumberMasterController::class, 'getData'])->name('part-number.master.getData');
+        Route::post('/part-number-master/update/{part}', [PartNumberMasterController::class, 'update'])->name('part-number.master.update');
 
         // Material Master
         Route::get('/material-master', [MaterialMasterController::class, 'index'])->name('material.master');
@@ -131,8 +132,9 @@ Route::middleware(['auth'])->group(function () {
         // BOM Master
         Route::get('/bom-master', [BomMasterController::class, 'index'])->name('bom.master');
         Route::post('/bom-master/store', [BomMasterController::class, 'store'])->name('bom.master.insertData');
-        Route::post('/bom-master/import', [BomMasterController::class, 'store'])->name('bom.master.import');
+        Route::post('/bom-master/import', [BomMasterController::class, 'import'])->name('bom.master.import');
         Route::get('/bom-master/getData', [BomMasterController::class, 'getData'])->name('bom.master.getData');
+        Route::post('/bom-master/update/{bom}', [BomMasterController::class, 'update'])->name('bom.master.update');
     
     });
     

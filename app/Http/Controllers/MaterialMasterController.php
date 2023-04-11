@@ -101,7 +101,8 @@ class MaterialMasterController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            throw $th;
+            return redirect()->back()->with('error', 'Failed to update' . '[' . $th->getMessage() . ']');
+
         }
 
         return redirect()->back()->with('success', 'Part has been updated successfully');

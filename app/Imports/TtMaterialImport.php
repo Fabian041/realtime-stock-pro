@@ -100,13 +100,19 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                             'qty' => $row['qty'],
                             'id_transaction' => $transaction->id,
                             'id_area' => $area_id,
-                            'pic' => auth()->user()->username,
+                            'pic' => auth()->user()->npk,
                             'date' => Carbon::now()->format('Y-m-d H:i:s')
                         ]);
                         
                     }
                 }
-            }            
+            }     
+            
+            // get current stock after import tt material
+            $result = $this->getCurrentMaterialStock($wh->id);
+
+            // push to websocket
+            $this->pushData('wh',$result);
             
             DB::commit();
         } catch (\Throwable $th) {

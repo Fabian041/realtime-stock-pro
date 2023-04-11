@@ -161,8 +161,8 @@
 {{-- end modal --}}
 
 <!-- Modal -->
-@foreach ($parts as $part)   
-<div class="modal fade" id="edit-{{ $part->id }}" tabindex="-1" aria-hidden="true">
+@foreach ($boms as $bom)   
+<div class="modal fade" id="edit-{{ $bom->id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-simple modal-edit-user">
         <div class="modal-content p-2 p-md-5">
             <div class="modal-body">
@@ -171,7 +171,7 @@
                     <h3>Edit BOM Information</h3>
                     <p>Mastering Detail BOM Information</p>
                 </div>
-                <form method="POST" action="" id="editUserForm" class="row g-3">
+                <form method="POST" action="/master/bom-master/update/{{ $bom->id }}" id="editUserForm" class="row g-3">
                     @method('POST')
                     @csrf
                     <div class="col-12 col-md-6">
@@ -179,7 +179,9 @@
                         <select class="form-select" id="id_part" aria-label="Default select example" name="id_part">
                             <option value="null" selected>Pilih Part</option>
                             @foreach ($parts as $item)
-                                <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
+                                <option value="{{ $item->id }}" {{ $item->id == $bom->id ? 'selected' : ''}}>
+                                    {{ $item->part_name }} (BN: {{ $item->back_number }})
+                                </option>
                             @endforeach
                         </select>
 
@@ -194,7 +196,9 @@
                         <select class="form-select" id="id_material" aria-label="Default select example" name="id_material">
                             <option value="null" selected>Pilih Material</option>
                             @foreach ($materials as $item)
-                                <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
+                                <option value="{{ $item->id }}" {{ $item->id == $bom->id_material ? 'selected' : ''}}>
+                                    {{ $item->part_name }} (BN: {{ $item->back_number }})
+                                </option>
                             @endforeach
                         </select>
 
@@ -209,7 +213,9 @@
                         <select class="form-select" id="id_area" aria-label="Default select example" name="id_area">
                             <option value="null" selected>Pilih Area</option>
                             @foreach ($areas as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" {{ $item->id == $bom->id_area ? 'selected' : ''}}>
+                                    {{ $item->name }}
+                                </option>
                             @endforeach
                         </select>
 
@@ -221,7 +227,7 @@
                     </div>
                     <div class="col-3">
                         <label class="form-label" for="qty_use">Quantity</label>
-                        <input type="number" id="qty_use" name="qty_use" class="form-control @error('qty_use') is-invalid @enderror" placeholder="1920" min="1" value="{{ $part->qty_use }}" required/>
+                        <input type="number" id="qty_use" name="qty_use" class="form-control @error('qty_use') is-invalid @enderror" placeholder="1920" min="1" value="{{ $bom->qty_use }}" required/>
 
                         @error('qty_use')
                             <div class="invalid-feedback">

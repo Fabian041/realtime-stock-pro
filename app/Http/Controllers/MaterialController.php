@@ -125,7 +125,7 @@ class MaterialController extends Controller
                         'qty' => $qty,
                         'id_area' => $wh->id,
                         'id_transaction' => $transaction->id,
-                        'pic' => auth()->user()->username,
+                        'pic' => auth()->user()->npk,
                         'date' => date('Y-m-d H:i:s')
                     ]); 
                 }
@@ -245,7 +245,7 @@ class MaterialController extends Controller
                     'qty' => $request->qty,
                     'id_area' => $wh->id,
                     'id_transaction' => $reversalTransaction->id,
-                    'pic' => auth()->user()->username,
+                    'pic' => auth()->user()->npk,
                     'date' => Carbon::now()->format('Y-m-d H:i:s')
                 ]); 
             }
@@ -334,7 +334,7 @@ class MaterialController extends Controller
                         'qty' => $qty,
                         'id_area' => $oh->id,
                         'id_transaction' => $transaction->id,
-                        'pic' => auth()->user()->username,
+                        'pic' => auth()->user()->npk,
                         'date' => date('Y-m-d H:i:s')
                     ]); 
 
@@ -344,7 +344,7 @@ class MaterialController extends Controller
                         'qty' => $qty,
                         'id_area' => $wh->id,
                         'id_transaction' => $reversalTransaction->id,
-                        'pic' => auth()->user()->username,
+                        'pic' => auth()->user()->npk,
                         'date' => date('Y-m-d H:i:s')
                     ]); 
                 }
@@ -414,7 +414,7 @@ class MaterialController extends Controller
                     'qty' => $request->qty * $request->pcs,
                     'id_area' => $oh->id,
                     'id_transaction' => $transaction->id,
-                    'pic' => auth()->user()->username,
+                    'pic' => auth()->user()->npk,
                     'date' => date('Y-m-d H:i:s')
                 ]); 
                 
@@ -424,7 +424,7 @@ class MaterialController extends Controller
                     'qty' => $request->qty * $request->pcs,
                     'id_area' => $wh->id,
                     'id_transaction' => $reversalTransaction->id,
-                    'pic' => auth()->user()->username,
+                    'pic' => auth()->user()->npk,
                     'date' => date('Y-m-d H:i:s')
                 ]); 
             }
@@ -1005,7 +1005,7 @@ class MaterialController extends Controller
                         'qty' => $qty,
                         'id_area' => $prod->id,
                         'id_transaction' => $transaction->id,
-                        'pic' => auth()->user()->username,
+                        'pic' => auth()->user()->npk,
                         'date' => date('Y-m-d H:i:s')
                     ]); 
 
@@ -1015,7 +1015,7 @@ class MaterialController extends Controller
                         'qty' => $qty,
                         'id_area' => $oh->id,
                         'id_transaction' => $reversalTransaction->id,
-                        'pic' => auth()->user()->username,
+                        'pic' => auth()->user()->npk,
                         'date' => date('Y-m-d H:i:s')
                     ]); 
                 }

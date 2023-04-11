@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TmPart;
 use App\Models\TmPartNumber;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class PartNumberMasterController extends Controller
@@ -16,7 +17,9 @@ class PartNumberMasterController extends Controller
      */
     public function index()
     {
-        return view('layouts.master.partNumber-master');
+        return view('layouts.master.partNumber-master',[
+            'parts' => TmPart::all(),
+        ]);
         
     }
 
@@ -81,9 +84,35 @@ class PartNumberMasterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, TmPart $part)
     {
-        //
+        $rules = [];
+
+        if($request->part_name !== $part->part_name){
+            $rules['part_name'] = 'required';
+        }else if($request->back_number !== $part->back_number){
+            $rules['back_number'] ='required';
+        }else if($request->part_number !== $part->part_number){
+            $rules['part_number'] ='required';
+        }else if($request->qty_limit !== $part->qty_limit){
+            $rules['qty_limit'] ='required';
+        }else if($request->status !== $part->status){
+            $rules['status'] ='required';
+        }
+
+        try {
+            DB::beginTransaction();
+            $validatedData = $request->validate($rules);
+
+            TmPart::where('id', $part->id)->update($validatedData);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to update' . '[' . $th->getMessage() . ']');
+
+        }
+
+        return redirect()->back()->with('success', 'BOM has been updated successfully');
     }
 
     /**
@@ -101,6 +130,14 @@ class PartNumberMasterController extends Controller
     {
         $input = TmPart::all();
         return DataTables::of($input)
+                ->addColumn('edit', function($row) use ($input){
+
+                    $btn = '<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#edit-'. $row->id .'"><span class="d-none d-sm-inline-block">Edit</span></button>';
+
+                    return $btn;
+
+                })
+                ->rawColumns(['edit'])
                 ->toJson();
     }
 }
