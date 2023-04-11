@@ -239,8 +239,8 @@
                         <label class="form-label" for="uom">Unit</label>
                         <select class="form-select" id="uom" aria-label="Default select example" name="uom">
                             <option value="null" selected>Pilih Unit</option>
-                            <option value="pcs">Pcs</option>
-                            <option value="kg">Kg</option>
+                            <option value="pcs" {{ $bom->uom == 'pcs' ? 'selected' : '' }}>Pcs</option>
+                            <option value="kg" {{ $bom->uom == 'kg' ? 'selected' : '' }}>Kg</option>
                         </select>
                     </div>
                     <div class="col-12 text-end mt-5">
