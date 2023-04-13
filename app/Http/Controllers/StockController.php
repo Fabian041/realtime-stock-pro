@@ -206,9 +206,6 @@ class StockController extends Controller
 
             return response()->json([
                 'message' => 'success',
-                'data' => [
-                    'bom' => $cek
-                ]
             ],200);
 
             DB::commit();
