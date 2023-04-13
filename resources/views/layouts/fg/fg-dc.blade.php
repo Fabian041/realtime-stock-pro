@@ -60,12 +60,12 @@
         // getCsh();    
         setInterval(() => {  
             getCsh();    
-        }, 1000);
+        }, 5000);
 
         // getDetail();    
         setInterval(() => {  
             getDetail();    
-        }, 1000);
+        }, 5000);
 
         var options = {
             chart: {
