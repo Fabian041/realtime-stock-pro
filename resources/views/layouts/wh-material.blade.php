@@ -109,7 +109,7 @@
             e.preventDefault();
             let code = (e.keyCode ? e.keyCode : e.which);
             // key ente
-            console.log(barcode.length);
+            // console.log(barcode.length);
             if (code == 13) {
                 barcodecomplete = barcode;
                 barcode = "";
@@ -137,7 +137,7 @@
                 },
                 dataType: 'json',
                 success: function (data) {
-                    console.log(data);
+                    // console.log(data);
                     if (data.status == "success") {
                         table.draw();
                         showToast("success", `Part ${data.back_number} berhasil disimpan`);

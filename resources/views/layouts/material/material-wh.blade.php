@@ -189,7 +189,7 @@
         
         $('.quantity').each(function () {
             var $this = $(this);
-            console.log($this.text());
+            // console.log($this.text());
             jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
                 duration: 1000,
                 easing: 'swing',
@@ -202,7 +202,7 @@
 
         var options = {
             chart: {
-                height: 450,
+                height: 300,
                 type: 'bar',
                 animations: {
                     enabled: true,
@@ -239,7 +239,7 @@
 
         var options2 = {
             chart: {
-                height: 450,
+                height: 300,
                 type: 'bar',
                 animations: {
                     enabled: true,
@@ -276,7 +276,7 @@
 
         var options3 = {
             chart: {
-                height: 450,
+                height: 300,
                 type: 'bar',
                 animations: {
                     enabled: true,

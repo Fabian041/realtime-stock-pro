@@ -53,10 +53,10 @@
   <!-- Vendor Styles -->
   <link rel="stylesheet" href={{ asset("vendor/libs/datatables-bs5/datatables.bootstrap5.css") }}/>
   <link rel="stylesheet" href={{ asset("vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css") }}/>
-  <link rel="stylesheet" href={{ asset("vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css") }}/>
-  <link rel="stylesheet" href={{ asset("vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css") }}/>
-  <link rel="stylesheet" href={{ asset("vendor/libs/flatpickr/flatpickr.css") }} />
-  <link rel="stylesheet" href={{ asset("vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css") }}/>
+  {{-- <link rel="stylesheet" href={{ asset("vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css") }}/> --}}
+  {{-- <link rel="stylesheet" href={{ asset("vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css") }}/> --}}
+  {{-- <link rel="stylesheet" href={{ asset("vendor/libs/flatpickr/flatpickr.css") }} /> --}}
+  {{-- <link rel="stylesheet" href={{ asset("vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css") }}/> --}}
   <link rel="stylesheet" href={{ asset("vendor/libs/toastr/toastr.css") }} />
   <link rel="stylesheet" href={{ asset("vendor/libs/animate-css/animate.css") }} />
   
