@@ -51,8 +51,8 @@
   <script src={{ asset("vendor/js/helpers.js") }}></script>
   <script src={{ asset("vendor/js/template-customizer.js") }}></script>
   <!-- Vendor Styles -->
-  <link rel="stylesheet" href={{ asset("vendor/libs/datatables-bs5/datatables.bootstrap5.css") }}/>
-  <link rel="stylesheet" href={{ asset("vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css") }}/>
+  <link rel="stylesheet" href={{ asset("vendor/libs/datatables-bs5/datatables.bootstrap5.css") }}>
+  <link rel="stylesheet" href={{ asset("vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css") }}>
   {{-- <link rel="stylesheet" href={{ asset("vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css") }}/> --}}
   {{-- <link rel="stylesheet" href={{ asset("vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css") }}/> --}}
   {{-- <link rel="stylesheet" href={{ asset("vendor/libs/flatpickr/flatpickr.css") }} /> --}}
