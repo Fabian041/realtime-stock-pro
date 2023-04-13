@@ -58,12 +58,12 @@
         });
 
         getCsh();    
-        setTimeout(() => {  
+        setInterval(() => {  
             getCsh();    
         }, 1000);
 
         getDetail();    
-        setTimeout(() => {  
+        setInterval(() => {  
             getDetail();    
         }, 1000);
 
