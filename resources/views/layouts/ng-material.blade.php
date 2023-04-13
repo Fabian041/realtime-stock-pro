@@ -60,7 +60,7 @@
                 @csrf
                 @method('POST')
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel1">Quantity NG of Component <span class="ngPart"></span></h5>
+                    <h5 class="modal-title" id="exampleModalLabel1">Quantity of NG Component <span class="ngPart"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
