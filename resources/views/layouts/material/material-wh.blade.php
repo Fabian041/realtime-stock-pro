@@ -186,7 +186,7 @@
         setInterval(function(){
             getLocal();  
         }, 5000);       
-        
+        // ulang
         $('.quantity').each(function () {
             var $this = $(this);
             // console.log($this.text());
