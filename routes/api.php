@@ -19,4 +19,5 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::post('/stock-control/{line}/{code}/{qty}', [StockController::class,'stock_control'])->name('stock-control.main');
+Route::get('/stock-control/{line}/{code}/{qty}', [StockController::class,'stock_control'])->name('stock-control.main');
+Route::get('/ng-part/{line}/{code}', [StockController::class,'ng_part'])->name('ng-part.main');

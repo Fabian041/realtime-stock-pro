@@ -103,18 +103,6 @@ class StockController extends Controller
         $maModel = new TtMa();
         $assyModel = new TtAssy();
 
-        // area
-        $dc = 'DC';
-        $ma = 'MA';
-        $assy = 'ASSY';
-        $warehouse = 'Warehouse';
-        $ohStore = 'OH Store';
-
-        // source
-        $ckd = 'CKD';
-        $import = 'IMPORT';
-        $local = 'LOCAL';
-
         try {
 
             DB::beginTransaction();
@@ -153,7 +141,7 @@ class StockController extends Controller
                     'id_part' => $part,
                     'id_transaction' => $transaction,
                     'pic' => 'avicenna user',
-                    'date' => date('Y-m-d H:i:s'),
+                    'date' => Carbon::now()->format('Y-m-d H:i:s'),
                     'qty' => $qty
                 ]);
 
@@ -214,6 +202,104 @@ class StockController extends Controller
                 'message' => $e->getMessage(),
             ],$e->getCode());
 
+        }
+    }
+
+    public function ng_part($line, $code)
+    {
+        $part = TmPart::select('id')->where('back_number', $code)->first();
+
+        // get id area based on lihe
+        $area = TmArea::select('id')->where('name', 'LIKE', '%' . $line . '%')->first();
+
+        //search bom of the part number based on line in tm bom table
+        $boms = TmBom::where('id_area', $area->id)
+                ->where('id_part', $part->id)
+                ->get();
+
+        // get id area
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+        // get id transaction
+        $transaction= TmTransaction::select('id')->where('name', 'NG Judgement')->first();
+        $reversalTransaction= TmTransaction::select('id')->where('name', 'NG Judgement (R)')->first();
+
+        // FG / WIP transaction
+        $dcModel = new TtDc();
+        $maModel = new TtMa();
+        $assyModel = new TtAssy();
+
+        function ngPartTransaction($area, $part, $reversalTransaction){
+            $result = $area->create([
+                'id_part' => $part,
+                'id_transaction' => $reversalTransaction,
+                'pic' => 'avicenna user',
+                'date' => Carbon::now()->format('Y-m-d H:i:s'),
+                'qty' => 1
+            ]);
+
+            return $result;
+        }
+
+        function getIngot($part){
+            $result = DB::table('tm_boms')
+                        ->join('tm_materials', 'tm_material.id', '=', 'tm_boms.id_material')
+                        ->select('tm_boms.qty_use', 'tm_materials.id')
+                        ->where('tm_boms.id_part', $part)
+                        ->where('tm_material.source', 'LIKE', '%R/M%')
+                        ->first();
+
+            return $result;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            if($line == 'DC'){
+                // do nothing (component still same && stock dc stll same)
+            }else if($line == 'MA'){
+
+                // decrease dc stock
+                ngPartTransaction($dcModel, $part->id, $reversalTransaction->id);
+
+                // get ingot from spesific part bom
+                $ingot = getIngot($part->id);
+                
+                // increase ingot stock
+                TtMaterial::create([
+                    'id_material' => $ingot->id,
+                    'qty' => $ingot->qty_used,
+                    'id_area' => $area->id,
+                    'id_transaction' => $transaction->id,
+                    'pic' => 'avicenna user',
+                    'date' => Carbon::now()->format('Y-m-d H:i:s')
+                ]);
+
+            }else if($line == 'AS'){
+
+                // decrease MA stock
+                ngPartTransaction($maModel, $part->id, $reversalTransaction->id);
+
+                // get ingot from spesific part bom
+                $ingot = getIngot($part->id);
+
+                // increase ingot stock
+                TtMaterial::create([
+                    'id_material' => $ingot->id,
+                    'qty' => $ingot->qty_used,
+                    'id_area' => $area->id,
+                    'id_transaction' => $transaction->id,
+                    'pic' => 'avicenna user',
+                    'date' => Carbon::now()->format('Y-m-d H:i:s')
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage(),
+            ],$e->getCode());
         }
     }
 }
