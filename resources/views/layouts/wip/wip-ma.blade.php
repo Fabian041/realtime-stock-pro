@@ -58,14 +58,14 @@
         });
 
         getTcc();    
-        setTimeout(() => {  
+        setInterval(() => {  
             getCsh();    
-        }, 1000);
+        }, 5000);
 
         getDetail();    
-        setTimeout(() => {  
+        setInterval(() => {  
             getDetail();    
-        }, 1000);
+        }, 5000);
 
         var options = {
             chart: {

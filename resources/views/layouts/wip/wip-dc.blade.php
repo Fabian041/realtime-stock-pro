@@ -130,14 +130,14 @@
         });
 
         getTcc();
-        setTimeout(() => {
+        setInterval(() => {
             getTcc();
-        }, 1000);
+        }, 5000);
 
         getOpn();
-        setTimeout(() => {
+        setInterval(() => {
             getOpn();
-        }, 1000);
+        }, 5000);
 
         $('.quantity').each(function () {
             var $this = $(this);

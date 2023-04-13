@@ -60,12 +60,12 @@
         getOpn();    
         setTimeout(() => {  
             getOpn();    
-        }, 1000);
+        }, 5000);
 
         getDetail();    
         setTimeout(() => {  
             getDetail();    
-        }, 1000);
+        }, 5000);
 
         var options = {
             chart: {
