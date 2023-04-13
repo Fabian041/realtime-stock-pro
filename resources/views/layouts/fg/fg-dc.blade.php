@@ -57,12 +57,12 @@
             });
         });
 
-        getCsh();    
+        // getCsh();    
         setInterval(() => {  
             getCsh();    
         }, 1000);
 
-        getDetail();    
+        // getDetail();    
         setInterval(() => {  
             getDetail();    
         }, 1000);
