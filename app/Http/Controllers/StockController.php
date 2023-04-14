@@ -187,7 +187,7 @@ class StockController extends Controller
             $opn = getWipDc('OPN');
 
             // wip data
-            $wipData = [$tcc->current_stock,$opn->current_stock];
+            $wipData = [$tcc,$opn];
 
             // push to websocket
             $this->pushData('wip', $wipData);
