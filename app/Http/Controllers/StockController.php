@@ -183,8 +183,8 @@ class StockController extends Controller
             }
 
             // get current dc stock
-            $tcc = getWipDc('TCC');
-            $opn = getWipDc('OPN');
+            $tcc = getWipDc('TCC')->current_stock;
+            $opn = getWipDc('OPN')->current_stock;
 
             // wip data
             $wipData = [$tcc,$opn];
