@@ -118,10 +118,8 @@
 
         pusher.subscribe('stock-wip').bind('StockDataUpdated', function(data) {
             
-            let dataTcc = data[0] ? data[0] : document.querySelector('#tcc').innerText
-            let dataOpn = data[1] ? data[1] : document.querySelector('#opn').innerText
-
-            console.log(data[0].current_stock);
+            let dataTcc = data[0].current_stock ? data[0].current_stock : document.querySelector('#tcc').innerText
+            let dataOpn = data[1].current_stock ? data[1].current_stock : document.querySelector('#opn').innerText
 
             document.querySelector('#tcc').innerText = dataTcc;
             document.querySelector('#opn').innerText = dataOpn;
