@@ -179,12 +179,12 @@ class StockController extends Controller
                         ->groupBy('tm_parts.part_name')
                         ->first();
     
-                return $result;
+                return $result->current_stock;
             }
 
             // get current dc stock
-            $tcc = getWipDc('TCC')->current_stock;
-            $opn = getWipDc('OPN')->current_stock;
+            $tcc = getWipDc('TCC');
+            $opn = getWipDc('OPN');
 
             // wip data
             $wipData = [$tcc,$opn];
