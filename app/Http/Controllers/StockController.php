@@ -179,7 +179,7 @@ class StockController extends Controller
                         ->groupBy('tm_parts.part_name')
                         ->first();
     
-                return $result->current_stock;
+                return $result;
             }
 
             // get current dc stock
