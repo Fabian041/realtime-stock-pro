@@ -80,119 +80,122 @@ class StockController extends Controller
         // (i think we need authenticated avicenna username / npk)
 
         // get id part based on part number or back number
-        // $part = TmPart::select('id')->where('back_number', $code)->first();
+        $part = TmPart::select('id')->where('back_number', $code)->first();
 
-        // // get id area based on lihe
-        // $area = TmArea::select('id')->where('name', 'LIKE', '%' . $line . '%')->first();
+        // get id area based on lihe
+        $area = TmArea::select('id')->where('name', 'LIKE', '%' . $line . '%')->first();
 
-        // //search bom of the part number based on line in tm bom table
-        // $boms = TmBom::where('id_area', $area->id)
-        //         ->where('id_part', $part->id)
-        //         ->get();
+        //search bom of the part number based on line in tm bom table
+        $boms = TmBom::where('id_area', $area->id)
+                ->where('id_part', $part->id)
+                ->get();
 
-        // // get id area
-        // $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+        // get id area
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
 
-        // // get id transaction
-        // $transaction = TmTransaction::select('id')->where('name', 'Traceability')->first();
-        // $reversalTransaction= TmTransaction::select('id')->where('name', 'Traceability (R)')->first();
+        // get id transaction
+        $transaction = TmTransaction::select('id')->where('name', 'Traceability')->first();
+        $reversalTransaction= TmTransaction::select('id')->where('name', 'Traceability (R)')->first();
 
-        // // FG / WIP transaction
-        // $dcModel = new TtDc();
-        // $maModel = new TtMa();
-        // $assyModel = new TtAssy();
+        // FG / WIP transaction
+        $dcModel = new TtDc();
+        $maModel = new TtMa();
+        $assyModel = new TtAssy();
 
         try {
 
-        //     DB::beginTransaction();
-        //     // material transaction
-        //     foreach($boms as $bom){
+            DB::beginTransaction();
+            // material transaction
+            foreach($boms as $bom){
 
-        //         // it will decrease current material stock and 
-        //         //increase FG / WIP stock in spesific area
-        //         TtMaterial::create([
-        //             'id_material' => $bom->id_material,
-        //             'qty' => $bom->qty_use,
-        //             'id_area' => $wh->id,
-        //             'id_transaction' => $reversalTransaction->id,
-        //             'pic' => 'avicenna user',
-        //             'date' => Carbon::now()->format('Y-m-d H:i:s')
-        //         ]);
+                // it will decrease current material stock and 
+                //increase FG / WIP stock in spesific area
+                TtMaterial::create([
+                    'id_material' => $bom->id_material,
+                    'qty' => $bom->qty_use,
+                    'id_area' => $wh->id,
+                    'id_transaction' => $reversalTransaction->id,
+                    'pic' => 'avicenna user',
+                    'date' => Carbon::now()->format('Y-m-d H:i:s')
+                ]);
 
-        //         // insert to BOM table
-        //         TtOutput::create([
-        //             'id_bom' => $bom->id,
-        //             'date' => Carbon::now()->format('Y-m-d H:i:s')
-        //         ]);
+                // insert to BOM table
+                TtOutput::create([
+                    'id_bom' => $bom->id,
+                    'date' => Carbon::now()->format('Y-m-d H:i:s')
+                ]);
 
-        //         // get current stock after scan
-        //         $result = $this->getCurrentMaterialStock($wh->id);
+                // get current stock after scan
+                $result = $this->getCurrentMaterialStock($wh->id);
 
-        //         // push to websocket
-        //         $this->pushData('wh',$result);
+                // push to websocket
+                $this->pushData('wh',$result);
 
-        //     DB::commit();
+            DB::commit();
 
-        //     }
+            }
 
-        //     function partTransaction($area, $part, $transaction, $qty){
-        //         $result = $area->create([
-        //             'id_part' => $part,
-        //             'id_transaction' => $transaction,
-        //             'pic' => 'avicenna user',
-        //             'date' => Carbon::now()->format('Y-m-d H:i:s'),
-        //             'qty' => $qty
-        //         ]);
+            function partTransaction($area, $part, $transaction, $qty){
+                $result = $area->create([
+                    'id_part' => $part,
+                    'id_transaction' => $transaction,
+                    'pic' => 'avicenna user',
+                    'date' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'qty' => $qty
+                ]);
 
-        //         return $result;
-        //     }
+                return $result;
+            }
 
-        //     if($line == 'DC'){
+            if($line == 'DC'){
 
-        //         partTransaction($dcModel, $part->id, $transaction->id, $qty);
+                partTransaction($dcModel, $part->id, $transaction->id, $qty);
 
-        //     }elseif($line == 'MA'){
+            }elseif($line == 'MA'){
 
-        //         // increase ma stock
-        //         partTransaction($maModel, $part->id, $transaction->id, $qty);
+                // increase ma stock
+                partTransaction($maModel, $part->id, $transaction->id, $qty);
 
-        //         // decrease dc stock
-        //         partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty);
+                // decrease dc stock
+                partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty);
 
-        //     }elseif($line == 'AS'){
+            }elseif($line == 'AS'){
 
-        //         // increase assy stock
-        //         partTransaction($assyModel, $part->id, $transaction->id, $qty);
+                // increase assy stock
+                partTransaction($assyModel, $part->id, $transaction->id, $qty);
 
-        //         // decrease ma stock
-        //         partTransaction($maModel, $part->id, $reversalTransaction->id, $qty);
-        //     }
+                // decrease ma stock
+                partTransaction($maModel, $part->id, $reversalTransaction->id, $qty);
+            }
             
-        //     // get current dc stock
-        //     function getWipDc($model){
-        //         $result = DB::table('dc_stocks')
-        //                 ->join('tm_parts', 'tm_parts.id', '=', 'dc_stocks.id_part')
-        //                 ->select(DB::raw('SUM(current_stock) as current_stock'))
-        //                 ->where('tm_parts.status', '<>' ,0)
-        //                 ->where('tm_parts.part_name', 'LIKE', '%' . $model . '%')
-        //                 ->groupBy('tm_parts.part_name')
-        //                 ->first();
+            // get current dc stock
+            function getWipDc($model){
+                $result = DB::table('dc_stocks')
+                        ->join('tm_parts', 'tm_parts.id', '=', 'dc_stocks.id_part')
+                        ->select(DB::raw('SUM(current_stock) as current_stock'))
+                        ->where('tm_parts.status', '<>' ,0)
+                        ->where('tm_parts.part_name', 'LIKE', '%' . $model . '%')
+                        ->groupBy('tm_parts.part_name')
+                        ->first();
     
-        //         return $result;
-        //     }
+                return $result;
+            }
 
-        //     // get current dc stock
-        //     $tcc = (getWipDc('TCC')) ? getWipDc('TCC')->current_stock : 0;
-        //     $opn = (getWipDc('OPN')) ? getWipDc('OPN')->current_stock : 0;
+            // get current dc stock
+            $tcc = (getWipDc('TCC')) ? getWipDc('TCC')->current_stock : 0;
+            $opn = (getWipDc('OPN')) ? getWipDc('OPN')->current_stock : 0;
 
-        //     // wip data
-        //     $wipData = [$tcc,$opn];
+            // wip data
+            $wipData = [$tcc,$opn];
 
-        //     // push to websocket
-        //     $this->pushData('wip', $wipData);
+            // push to websocket
+            $this->pushData('wip', $wipData);
 
-            return ['bismilla'];
+            return response()->json([
+                'message' => 'success',
+            ],200);
 
+            DB::commit();
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => $e->getMessage(),
