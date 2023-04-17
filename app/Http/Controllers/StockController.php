@@ -191,11 +191,8 @@ class StockController extends Controller
         //     // push to websocket
         //     $this->pushData('wip', $wipData);
 
-            return response()->json([
-                'message' => 'cek',
-            ],200);
+            return ['bismilla'];
 
-            DB::commit();
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => $e->getMessage(),
