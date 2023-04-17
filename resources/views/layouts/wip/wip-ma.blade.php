@@ -27,12 +27,40 @@
         </div>
     </div>
     <div class="col-md-4 col-12 mb-4">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h5 class="card-title m-0 me-2">Detail Part</h5>
             </div>
             <div class="card-body">
                 <div id="detailChart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-lg-12">
+        <div class="card" style="padding: 2rem;">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>
+                        Detail Transactions
+                    </h5>
+                </div>
+            </div>
+            <div class="card-datatable table-responsive">
+                <table class="datatables-basics table border-top material-datatable">
+                    <thead>
+                        <tr>
+                            <th>Part Number</th>
+                            <th>Part Name</th>
+                            <th>Supplier</th>
+                            <th>Source</th>
+                            <th>PIC</th>
+                            <th>Date</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
@@ -44,6 +72,21 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     $( document ).ready(function() {
+
+        var table = $('.material-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: `{{ route('wipMa.getTransaction') }}`,
+            columns: [
+                { data: 'part_number' },
+                { data: 'part_name' },
+                { data: 'supplier' },
+                { data: 'source' },
+                { data: 'pic' },
+                { data: 'date' },
+                { data: 'qty' },
+            ],
+        });
 
         $('.quantity').each(function () {
             var $this = $(this);

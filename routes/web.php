@@ -45,12 +45,20 @@ Route::middleware(['auth'])->group(function () {
     
         // finsih good dashboard
         Route::get('/fg/dc', [FgController::class, 'fgDc'])->name('fg.dc');
+        Route::get('/fg/dc/getTransaction', [FgController::class, 'fgDcGetTransaction'])->name('dc.getTransaction');
+
         Route::get('/fg/ma', [FgController::class, 'fgMa'])->name('fg.ma');
+        Route::get('/fg/ma/getTransaction', [FgController::class, 'fgMaGetTransaction'])->name('ma.getTransaction');
+
         Route::get('/fg/assy', [FgController::class, 'fgAssy'])->name('fg.assy');
+        Route::get('/fg/assy/getTransaction', [FgController::class, 'fgAssyGetTransaction'])->name('assy.getTransaction');
+
 
         // wip dashboard
         Route::get('/wip/dc', [WipController::class, 'wipDc'])->name('wip.dc');
         Route::get('/wip/ma', [WipController::class, 'wipMa'])->name('wip.ma');
+        Route::get('/wip/ma/getTransaction', [WipController::class, 'wipMaGetTransaction'])->name('wipMa.getTransaction');
+
         Route::get('/wip/assy', [WipController::class, 'wipAssy'])->name('wip.assy');
 
         // material dashboard

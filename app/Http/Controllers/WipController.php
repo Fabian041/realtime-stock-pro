@@ -73,6 +73,11 @@ class WipController extends Controller
         
         return $result;
     }
+
+    public function wipMaGetTransaction()
+    {
+        // 
+    }
     /**
      * Display MA dashboard
      *
