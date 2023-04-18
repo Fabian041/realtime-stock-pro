@@ -21,17 +21,17 @@ return new class extends Migration
                 JOIN tt_dcs ON tm_transactions.id = NEW.id_transaction LIMIT 1;
             
                 IF type = "supply" THEN
-                    IF EXISTS (SELECT 1 FROM dc_stocks WHERE id_part = NEW.id_part) THEN
+                    IF EXISTS (SELECT 1 FROM dc_stocks WHERE id_part = NEW.id_part AND DAY(DATE) = DAY(NEW.date)) THEN
                         UPDATE dc_stocks SET current_stock = current_stock + NEW.qty 
-                        WHERE id_part = NEW.id_part;
+                        WHERE id_part = NEW.id_part AND DAY(DATE) = DAY(NEW.date);
                     ELSE
                         INSERT INTO dc_stocks (id_part, DATE, current_stock) 
                         VALUES (NEW.id_part, NEW.date ,NEW.qty);
                     END IF;
                 ELSE
-                    IF EXISTS (SELECT 1 FROM dc_stocks WHERE id_part = NEW.id_part) THEN
+                    IF EXISTS (SELECT 1 FROM dc_stocks WHERE id_part = NEW.id_part AND DAY(DATE) = DAY(NEW.date)) THEN
                         UPDATE dc_stocks SET current_stock = current_stock - NEW.qty 
-                        WHERE id_part = NEW.id_part;
+                        WHERE id_part = NEW.id_part AND DAY(DATE) = DAY(NEW.date);
                     ELSE
                         INSERT INTO dc_stocks (id_part, DATE, current_stock) 
                         VALUES (NEW.id_part, NEW.date , - NEW.qty);

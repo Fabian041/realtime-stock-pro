@@ -21,17 +21,17 @@ return new class extends Migration
                 JOIN tt_assy ON tm_transactions.id = NEW.id_transaction LIMIT 1;
             
                 IF type = "supply" THEN
-                    IF EXISTS (SELECT 1 FROM assy_stocks WHERE id_part = NEW.id_part) THEN
+                    IF EXISTS (SELECT 1 FROM assy_stocks WHERE id_part = NEW.id_part AND DAY(DATE) = DAY(NEW.date)) THEN
                         UPDATE assy_stocks SET current_stock = current_stock + NEW.qty 
-                        WHERE id_part = NEW.id_part;
+                        WHERE id_part = NEW.id_part AND DAY(DATE) = DAY(NEW.date);
                     ELSE
                         INSERT INTO assy_stocks (id_part, DATE, current_stock) 
                         VALUES (NEW.id_part, NEW.date ,NEW.qty);
                     END IF;
                 ELSE
-                    IF EXISTS (SELECT 1 FROM assy_stocks WHERE id_part = NEW.id_part) THEN
+                    IF EXISTS (SELECT 1 FROM assy_stocks WHERE id_part = NEW.id_part AND DAY(DATE) = DAY(NEW.date)) THEN
                         UPDATE assy_stocks SET current_stock = current_stock - NEW.qty 
-                        WHERE id_part = NEW.id_part;
+                        WHERE id_part = NEW.id_part AND DAY(DATE) = DAY(NEW.date);
                     ELSE
                         INSERT INTO assy_stocks (id_part, DATE, current_stock) 
                         VALUES (NEW.id_part, NEW.date , - NEW.qty);

@@ -193,6 +193,11 @@ class StockController extends Controller
 
             return response()->json([
                 'message' => 'success',
+                'data' =>  [
+                    'line' => $line,
+                    'back_number' => $code,
+                    'quantity' => $qty
+                ]
             ],200);
 
             DB::commit();
@@ -292,6 +297,14 @@ class StockController extends Controller
                     'date' => Carbon::now()->format('Y-m-d H:i:s')
                 ]);
             }
+
+            return response()->json([
+                'message' => 'success',
+                'data' =>  [
+                    'line' => $line,
+                    'back_number' => $code,
+                ]
+            ],200);
 
             DB::commit();
         } catch (\Throwable $e) {

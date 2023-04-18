@@ -21,17 +21,17 @@ return new class extends Migration
                 JOIN tt_materials ON tm_transactions.id = NEW.id_transaction LIMIT 1;
             
                 IF type = "supply" THEN
-                    IF EXISTS (SELECT 1 FROM material_stocks WHERE id_material = NEW.id_material AND id_area = NEW.id_area) THEN
+                    IF EXISTS (SELECT 1 FROM material_stocks WHERE id_material = NEW.id_material AND id_area = NEW.id_area AND DAY(DATE) = DAY(NEW.date)) THEN
                         UPDATE material_stocks SET current_stock = current_stock + NEW.qty 
-                        WHERE id_material = NEW.id_material AND id_area = NEW.id_area;
+                        WHERE id_material = NEW.id_material AND id_area = NEW.id_area AND DAY(DATE) = DAY(NEW.date);
                     ELSE
                         INSERT INTO material_stocks (id_material, id_area, DATE, current_stock) 
                         VALUES (NEW.id_material, NEW.id_area, NEW.date ,NEW.qty);
                     END IF;
                 ELSE
-                    IF EXISTS (SELECT 1 FROM material_stocks WHERE id_material = NEW.id_material AND id_area = NEW.id_area) THEN
+                    IF EXISTS (SELECT 1 FROM material_stocks WHERE id_material = NEW.id_material AND id_area = NEW.id_area AND DAY(DATE) = DAY(NEW.date)) THEN
                         UPDATE material_stocks SET current_stock = current_stock - NEW.qty 
-                        WHERE id_material = NEW.id_material AND id_area = NEW.id_area;
+                        WHERE id_material = NEW.id_material AND id_area = NEW.id_area AND DAY(DATE) = DAY(NEW.date);
                     ELSE
                         INSERT INTO material_stocks (id_material, id_area, DATE, current_stock) 
                         VALUES (NEW.id_material, NEW.id_area, NEW.date ,-NEW.qty);
