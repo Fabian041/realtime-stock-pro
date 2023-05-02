@@ -153,6 +153,9 @@
             },
             series: [],
             labels: [],
+            noData: {
+                text: 'No Data'
+            },
             dataLabels: {
                 enabled: true,
                 formatter: function (val, opts) {

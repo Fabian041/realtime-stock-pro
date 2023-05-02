@@ -217,7 +217,7 @@
                 showForSingleSeries: true,
                 customLegendItems: ['Actual', 'Limit'],
                 markers: {
-                    fillColors: ['#696CFF', '#00E396']
+                    fillColors: ['#696CFF', '#F35555']
                 }
             },
             series: [{
@@ -254,7 +254,7 @@
                 showForSingleSeries: true,
                 customLegendItems: ['Actual', 'Limit'],
                 markers: {
-                    fillColors: ['#696CFF', '#00E396']
+                    fillColors: ['#696CFF', '#F35555']
                 }
             },
             series: [{
@@ -291,7 +291,7 @@
                 showForSingleSeries: true,
                 customLegendItems: ['Actual', 'Limit'],
                 markers: {
-                    fillColors: ['#696CFF', '#00E396']
+                    fillColors: ['#696CFF', '#F35555']
                 }
             },
             series: [{
@@ -325,7 +325,7 @@
                                         name: 'Limit',
                                         value: item.limit_qty,
                                         strokeHeight: 5,
-                                        strokeColor: '#00E396'
+                                        strokeColor: '#F35555'
                                     }
                                 ]
                             }
@@ -353,7 +353,7 @@
                                         name: 'Limit',
                                         value: item.limit_qty,
                                         strokeHeight: 5,
-                                        strokeColor: '#00E396'
+                                        strokeColor: '#F35555'
                                     }
                                 ]
                             }
@@ -380,7 +380,7 @@
                                         name: 'Limit',
                                         value: item.limit_qty,
                                         strokeHeight: 5,
-                                        strokeColor: '#00E396'
+                                        strokeColor: '#F35555'
                                     }
                                 ]
                             }

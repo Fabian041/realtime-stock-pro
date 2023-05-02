@@ -140,7 +140,7 @@
                 showForSingleSeries: true,
                 customLegendItems: ['Actual', 'Minimum Stock'],
                 markers: {
-                    fillColors: ['#696CFF', '#00E396']
+                    fillColors: ['#696CFF', '#F35555']
                 }
             },
             series: [{
@@ -155,6 +155,9 @@
             },
             series: [],
             labels: [],
+            noData: {
+                text: 'No Data'
+            },
             dataLabels: {
                 enabled: true,
                 formatter: function (val, opts) {
@@ -190,7 +193,7 @@
                                         name: 'Minimum Stock',
                                         value: item.qty_limit,
                                         strokeHeight: 5,
-                                        strokeColor: '#00E396'
+                                        strokeColor: '#F35555'
                                     }
                                 ]
                             }

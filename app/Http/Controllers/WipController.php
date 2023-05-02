@@ -6,6 +6,7 @@ use App\Models\TtDc;
 use App\Models\TtMa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class WipController extends Controller
 {
@@ -76,7 +77,15 @@ class WipController extends Controller
 
     public function wipMaGetTransaction()
     {
-        // 
+        $input = DB::table('tt_mas')
+                ->join('tm_parts', 'tm_parts.id', '=', 'tt_mas.id_part')
+                ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_mas.id_transaction')
+                ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name','tm_transactions.type' , 'tt_mas.pic', 'tt_mas.date', 'tt_mas.qty')
+                ->where('tm_parts.status', '<>' ,1)
+                ->get();
+
+        return DataTables::of($input)
+                ->toJson(); 
     }
     /**
      * Display MA dashboard
