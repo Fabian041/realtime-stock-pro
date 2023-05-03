@@ -83,6 +83,8 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
             // get id area
             $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
 
+            $quantities = [];
+
             foreach($rows as $row)
             {
                 // check each row in tm material based on tm material id
@@ -93,11 +95,17 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
 
                     // this condition will check imported data with master material data, if the imported data is exist in master material it will insert it into tt material table
                     if ($row['part_no'] == $material->part_number && $row['part_name'] == $material->part_name && $row['supplier'] == $material->supplier && $row['source'] == $material->source){
+
+                        if (!isset($quantities[$material->part_number])) {
+                            $quantities[$material->part_number] = $row['qty'];
+                        } else {
+                            $quantities[$material->part_number] += $row['qty'];
+                        }
                         
                         // insert in tt material
                         TtMaterial::create([
                             'id_material' => $material->id,
-                            'qty' => $row['qty'],
+                            'qty' => $quantities,
                             'id_transaction' => $transaction->id,
                             'id_area' => $area_id,
                             'pic' => auth()->user()->npk,
