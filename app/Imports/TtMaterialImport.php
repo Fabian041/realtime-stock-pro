@@ -94,7 +94,7 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                 foreach( $materials as $material){
 
                     // this condition will check imported data with master material data, if the imported data is exist in master material it will insert it into tt material table
-                    if ($row['part_no'] == $material->part_number && $row['back_number'] == $material->back_number && $row['part_name'] == $material->part_name && $row['supplier'] == $material->supplier && $row['source'] == $material->source){
+                    if ($row['part_no'] == $material->part_number && $row['back_no'] == $material->back_number && $row['part_name'] == $material->part_name && $row['supplier'] == $material->supplier && $row['source'] == $material->source){
 
                         // if same part number it will sum the quantity
                         // if (!isset($quantities[$material->part_number])) {
