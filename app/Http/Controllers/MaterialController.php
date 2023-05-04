@@ -1209,19 +1209,14 @@ class MaterialController extends Controller
     {
         $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
         
-        try {            
-            Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
+        Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
 
-            // get current stock after scan
-            $result = $this->getCurrentMaterialStock($wh->id);
+        // get current stock after scan
+        $result = $this->getCurrentMaterialStock($wh->id);
 
-            // push to websocket
-            $this->pushData('wh',$result);
-            
-            return redirect()->back()->with('success', 'Berhasil menambah stock');
-        } catch (\Throwable $th) {
-            return redirect()->back()->with('error', $th->getMessage());
-        }
-
+        // push to websocket
+        $this->pushData('wh',$result);
+        
+        return redirect()->back()->with('success', 'Berhasil menambah stock');
     }
 }
