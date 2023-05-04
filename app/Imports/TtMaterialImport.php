@@ -97,16 +97,16 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                     if ($row['part_no'] == $material->part_number && $row['back_no'] == $material->back_number && $row['part_name'] == $material->part_name && $row['supplier'] == $material->supplier && $row['source'] == $material->source){
 
                         // if same part number it will sum the quantity
-                        // if (!isset($quantities[$material->part_number])) {
-                        //     $quantities[$material->part_number] = $row['qty'];
-                        // } else {
-                        //     $quantities[$material->part_number] += $row['qty'];
-                        // }
+                        if (!isset($quantities[$material->part_number])) {
+                            $quantities[$material->part_number] = $row['qty'];
+                        } else {
+                            $quantities[$material->part_number] += $row['qty'];
+                        }
                         
                         // insert in tt material
                         TtMaterial::create([
                             'id_material' => $material->id,
-                            'qty' => $row['qty'],
+                            'qty' => $quantities,
                             'id_area' => $area_id,
                             'id_transaction' => $transaction->id,
                             'pic' => auth()->user()->npk,

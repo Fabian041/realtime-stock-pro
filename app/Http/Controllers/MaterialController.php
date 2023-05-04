@@ -1209,9 +1209,7 @@ class MaterialController extends Controller
     {
         $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
         
-        try {
-            DB::beginTransaction();
-            
+        try {            
             Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
 
             // get current stock after scan
@@ -1220,11 +1218,8 @@ class MaterialController extends Controller
             // push to websocket
             $this->pushData('wh',$result);
             
-            DB::commit();
-
             return redirect()->back()->with('success', 'Berhasil menambah stock');
         } catch (\Throwable $th) {
-            DB::rollback();
             return redirect()->back()->with('error', $th->getMessage());
         }
 
