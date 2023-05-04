@@ -1208,15 +1208,16 @@ class MaterialController extends Controller
     public function import(Request $request)
     {
         $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
-
+        
         try {
             DB::beginTransaction();
+            
             Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
 
             // get current stock after scan
             $result = $this->getCurrentMaterialStock($wh->id);
 
-            // // push to websocket
+            // push to websocket
             $this->pushData('wh',$result);
             
             DB::commit();

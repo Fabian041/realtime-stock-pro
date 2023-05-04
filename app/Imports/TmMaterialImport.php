@@ -23,6 +23,7 @@ class TmMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                         'supplier' => $row['supplier'],
                     ],
                     [
+                        'back_number' => $row['back_no'],
                         'part_name' => $row['part_name'],
                         'date' => date('Y-m-d'),
                         'time' => date('H:i:s'),

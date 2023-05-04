@@ -106,7 +106,7 @@
                         <select class="form-select" id="id_material" aria-label="Default select example" name="id_material">
                             <option value="null" selected>Pilih Material</option>
                             @foreach ($materials as $item)
-                                <option value="{{ $item->id }}">{{ $item->part_name }} (PN: {{ $item->part_number }})</option>
+                                <option value="{{ $item->id }}">{{ $item->part_name }} (BN: {{ $item->back_number }})</option>
                             @endforeach
                         </select>
 
@@ -133,7 +133,7 @@
                     </div>
                     <div class="col-3">
                         <label class="form-label" for="qty_use">Quantity</label>
-                        <input type="number" id="qty_use" name="qty_use" class="form-control @error('qty_use') is-invalid @enderror" placeholder="1920" min="1" required/>
+                        <input type="number" step="any" id="qty_use" name="qty_use" class="form-control @error('qty_use') is-invalid @enderror" placeholder="1920" min="1" required/>
 
                         @error('qty_use')
                             <div class="invalid-feedback">

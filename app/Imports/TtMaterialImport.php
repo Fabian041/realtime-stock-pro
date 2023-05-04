@@ -94,20 +94,21 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                 foreach( $materials as $material){
 
                     // this condition will check imported data with master material data, if the imported data is exist in master material it will insert it into tt material table
-                    if ($row['part_no'] == $material->part_number && $row['part_name'] == $material->part_name && $row['supplier'] == $material->supplier && $row['source'] == $material->source){
+                    if ($row['part_no'] == $material->part_number && $row['back_number'] == $material->back_number && $row['part_name'] == $material->part_name && $row['supplier'] == $material->supplier && $row['source'] == $material->source){
 
-                        if (!isset($quantities[$material->part_number])) {
-                            $quantities[$material->part_number] = $row['qty'];
-                        } else {
-                            $quantities[$material->part_number] += $row['qty'];
-                        }
+                        // if same part number it will sum the quantity
+                        // if (!isset($quantities[$material->part_number])) {
+                        //     $quantities[$material->part_number] = $row['qty'];
+                        // } else {
+                        //     $quantities[$material->part_number] += $row['qty'];
+                        // }
                         
                         // insert in tt material
                         TtMaterial::create([
                             'id_material' => $material->id,
-                            'qty' => $quantities,
-                            'id_transaction' => $transaction->id,
+                            'qty' => $row['qty'],
                             'id_area' => $area_id,
+                            'id_transaction' => $transaction->id,
                             'pic' => auth()->user()->npk,
                             'date' => Carbon::now()->format('Y-m-d H:i:s')
                         ]);

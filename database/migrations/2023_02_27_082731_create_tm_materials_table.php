@@ -22,7 +22,7 @@ return new class extends Migration
             $table->time('time');
             $table->string('supplier');
             $table->string('source');
-            $table->integer('limit_qty');
+            $table->float('limit_qty',8,3);
             $table->timestamps();
         });
     }
