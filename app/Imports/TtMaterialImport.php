@@ -88,7 +88,7 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
             foreach($rows as $row)
             {
                 // check each row in tm material based on tm material id
-                $materials = TmMaterial::select('id','part_number', 'part_name', 'supplier', 'source')->get();
+                $materials = TmMaterial::select('id','part_number', 'part_name', 'supplier', 'source', 'back_number')->get();
                 
                 // get id of the same row
                 foreach( $materials as $material){
