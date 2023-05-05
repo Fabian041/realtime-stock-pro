@@ -227,7 +227,7 @@
                     </div>
                     <div class="col-3">
                         <label class="form-label" for="qty_use">Quantity</label>
-                        <input type="number" id="qty_use" name="qty_use" class="form-control @error('qty_use') is-invalid @enderror" placeholder="1920" min="1" value="{{ $bom->qty_use }}" required/>
+                        <input type="number" step="any" id="qty_use" name="qty_use" class="form-control @error('qty_use') is-invalid @enderror" placeholder="1920" min="1" value="{{ $bom->qty_use }}" required/>
 
                         @error('qty_use')
                             <div class="invalid-feedback">

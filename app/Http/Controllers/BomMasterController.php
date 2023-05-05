@@ -82,13 +82,17 @@ class BomMasterController extends Controller
 
         if($request->id_part !== $bom->id_part){
             $rules['id_part'] = 'required';
-        }else if($request->id_material !== $bom->id_material){
+        }
+        if($request->id_material !== $bom->id_material){
             $rules['id_material'] ='required';
-        }else if($request->id_area !== $bom->id_area){
+        }
+        if($request->id_area !== $bom->id_area){
             $rules['id_area'] ='required';
-        }else if($request->qty_use !== $bom->qty_use){
+        }
+        if($request->qty_use != $bom->qty_use){
             $rules['qty_use'] ='required';
-        }else if($request->uom !== $bom->uom){
+        }
+        if($request->uom !== $bom->uom){
             $rules['uom'] ='required';
         }
 
@@ -97,14 +101,14 @@ class BomMasterController extends Controller
             $validatedData = $request->validate($rules);
 
             TmBom::where('id', $bom->id)->update($validatedData);
+            
             DB::commit();
+            return redirect()->back()->with('success', 'BOM has been updated successfully');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Failed to update' . '[' . $th->getMessage() . ']');
 
         }
-
-        return redirect()->back()->with('success', 'BOM has been updated successfully');
     }
 
     /**

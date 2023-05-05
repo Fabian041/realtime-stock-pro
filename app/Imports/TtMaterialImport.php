@@ -107,12 +107,11 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                         TtMaterial::create([
                             'id_material' => $material->id,
                             'qty' => $quantities,
-                            'id_transaction' => $transaction->id,
                             'id_area' => $area_id,
+                            'id_transaction' => $transaction->id,
                             'pic' => auth()->user()->npk,
                             'date' => Carbon::now()->format('Y-m-d H:i:s')
-                        ]);
-                        
+                        ]);        
                     }
                 }
             }     

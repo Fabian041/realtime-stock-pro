@@ -11,5 +11,5 @@ class TtMaterial extends Model
     
     protected $table = 'tt_materials';
 
-    protected $guarded = ['updated_at']; 
+    protected $guarded = ['id']; 
 }

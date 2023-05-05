@@ -1206,9 +1206,25 @@ class MaterialController extends Controller
     }
 
     public function import(Request $request)
-    {        
-        Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
-        
-        return redirect()->back()->with('success', 'Berhasil menambah stock');
+    {
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
+
+        try {
+            DB::beginTransaction();
+            $test = Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
+            
+            // get current stock after scan
+            $result = $this->getCurrentMaterialStock($wh->id);
+
+            // // push to websocket
+            $this->pushData('wh',$result);
+            
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Berhasil menambah stock');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 }

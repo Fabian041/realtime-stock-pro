@@ -112,7 +112,7 @@ class PartNumberMasterController extends Controller
 
         }
 
-        return redirect()->back()->with('success', 'BOM has been updated successfully');
+        return redirect()->back()->with('success', 'Part Information has been updated successfully');
     }
 
     /**
