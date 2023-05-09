@@ -80,11 +80,11 @@
             columns: [
                 { data: 'part_number' },
                 { data: 'part_name' },
-                { data: 'supplier' },
-                { data: 'source' },
                 { data: 'pic' },
                 { data: 'date' },
                 { data: 'qty' },
+                { data: 'name' },
+                { data: 'type' },
             ],
         });
 

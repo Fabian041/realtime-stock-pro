@@ -24,20 +24,20 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
             'cluster' => 'ap1',
             'encrypted' => true
         );
-
+        
         $pusher = new Pusher(
             '31df202f78fc0dace852',
             'f1d1fd7c838cdd9f25d6',
             '1567188',
             $options
         );
-
+        
         // sending data
         $result = $pusher->trigger('stock-' . $area , 'StockDataUpdated', $dataMaterial);
-
+        
         return $result;
     }
-
+    
     public function queryCurrentMaterialStock($area,$source){
         
         $result = DB::table('material_stocks')
@@ -49,22 +49,22 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
         
         return $result;
     }
-
+    
     public function getCurrentMaterialStock($area){
-
+        
         // source
         $ckd = 'CKD';
         $import = 'IMPORT';
         $local = 'LOCAL';
-
+        
         $dataCkd = $this->queryCurrentMaterialStock($area,$ckd);
         $dataImport = $this->queryCurrentMaterialStock($area, $import);
         $dataLocal = $this->queryCurrentMaterialStock($area, $local);
-
+        
         $dataCkd = ($dataCkd) ? $dataCkd->current_stock : 0;
         $dataImport = ($dataImport) ? $dataImport->current_stock : 0;
         $dataLocal = ($dataLocal) ? $dataLocal->current_stock : 0;
-
+        
         return [$dataCkd,$dataImport,$dataLocal];
     }
     
@@ -72,30 +72,30 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
     {
         // transaction id
         $transaction = TmTransaction::select('id')->where('name', 'STO')->first();
-
+        
         // area id
         $area = \App\Models\TmArea::select('id')->where('name', 'Warehouse')->first();
         $area_id = $area->id;
-
+        
         try {
             DB::beginTransaction();
-
+            
             // get id area
             $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
-
+            
             $quantities = [];
+            
+            // check each row in tm material based on tm material id
+            $materials = TmMaterial::select('id','part_number', 'part_name', 'supplier', 'source')->get();
 
             foreach($rows as $row)
             {
-                // check each row in tm material based on tm material id
-                $materials = TmMaterial::select('id','part_number', 'part_name', 'supplier', 'source')->get();
-                
                 // get id of the same row
                 foreach( $materials as $material){
-
+                    
                     // this condition will check imported data with master material data, if the imported data is exist in master material it will insert it into tt material table
                     if ($row['part_no'] == $material->part_number && $row['part_name'] == $material->part_name && $row['supplier'] == $material->supplier && $row['source'] == $material->source){
-
+                        
                         // if same part number it will sum the quantity
                         if (!isset($quantities[$material->part_number])) {
                             $quantities[$material->part_number] = $row['qty'];
@@ -118,7 +118,7 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
             
             // get current stock after import tt material
             $result = $this->getCurrentMaterialStock($wh->id);
-
+            
             // push to websocket
             $this->pushData('wh',$result);
             
@@ -131,18 +131,18 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
             ];
         }
     }
-
+    
     public function onFailure(Failure ...$failures)
     {
         // 
     }
-
-
+    
+    
     public function startRow(): int
     {
         return 4; // skip the first three rows
     }
-
+    
     public function rules(): array
     {
         return [
