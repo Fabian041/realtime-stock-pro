@@ -145,7 +145,7 @@ class BomMasterController extends Controller
                 ->join('tm_materials', 'tm_boms.id_material', '=', 'tm_materials.id')
                 ->join('tm_areas', 'tm_boms.id_area', '=', 'tm_areas.id')
                 ->join('tm_parts', 'tm_boms.id_part', '=', 'tm_parts.id')
-                ->select('tm_boms.id','tm_parts.part_name','tm_areas.name','tm_parts.part_number', 'tm_materials.part_number as material_number' , 'tm_boms.qty_use', 'tm_materials.part_name as material_name')
+                ->select('tm_boms.id','tm_parts.part_name','tm_areas.name','tm_parts.part_number', 'tm_materials.part_number as material_number' , 'tm_boms.qty_use', 'tm_materials.part_name as material_name', 'tm_parts.back_number')
                 ->get();
 
         return DataTables::of($input)

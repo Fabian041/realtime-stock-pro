@@ -273,7 +273,7 @@
         $('.material-datatable').DataTable({
             ajax: `{{ route('bom.master.getData') }}`,
             columns: [
-                { data: 'part_number' },
+                { data: 'back_number' },
                 { data: 'part_name' },
                 { data: 'material_name' },
                 { data: 'name' },
