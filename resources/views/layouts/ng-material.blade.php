@@ -39,7 +39,6 @@
                         <tr>
                             <th>Part Number</th>
                             <th>Part Name</th>
-                            <th>Supplier</th>
                             <th>Source</th>
                             <th>PIC</th>
                             <th>Date</th>
@@ -139,7 +138,6 @@
             columns: [
                 { data: 'part_number' },
                 { data: 'part_name' },
-                { data: 'supplier' },
                 { data: 'source' },
                 { data: 'pic' },
                 { data: 'date' },

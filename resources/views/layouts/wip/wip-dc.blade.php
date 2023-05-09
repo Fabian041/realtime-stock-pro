@@ -141,7 +141,6 @@
 
         $('.quantity').each(function () {
             var $this = $(this);
-            console.log($this.text());
             jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
                 duration: 1000,
                 easing: 'swing',
@@ -237,7 +236,6 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log(data.tccStock)
                     chartTcc.updateSeries([{
                         name: 'Total Part',
                         data: data.tccStock.map(function(item){

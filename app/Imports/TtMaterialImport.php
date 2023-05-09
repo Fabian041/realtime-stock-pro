@@ -79,7 +79,6 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
         
         try {
             DB::beginTransaction();
-            
             // get id area
             $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
             
@@ -87,6 +86,7 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
             
             // check each row in tm material based on tm material id
             $materials = TmMaterial::select('id','part_number', 'part_name', 'supplier', 'source')->get();
+            
 
             foreach($rows as $row)
             {
@@ -102,19 +102,22 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                         } else {
                             $quantities[$material->part_number] += $row['qty'];
                         }
-                        
-                        // insert in tt material
-                        TtMaterial::create([
-                            'id_material' => $material->id,
-                            'qty' => $quantities,
-                            'id_area' => $area_id,
-                            'id_transaction' => $transaction->id,
-                            'pic' => auth()->user()->npk,
-                            'date' => Carbon::now()->format('Y-m-d H:i:s')
-                        ]);        
                     }
                 }
-            }     
+            } 
+            
+            foreach($quantities as $part_number => $qty){
+                $id_material = TmMaterial::where('part_number', $part_number)->value('id');
+                 // insert in tt material
+                TtMaterial::create([
+                    'id_material' => $id_material,
+                    'qty' => $qty,
+                    'id_area' => $area_id,
+                    'id_transaction' => $transaction->id,
+                    'pic' => auth()->user()->npk,
+                    'date' => Carbon::now()->format('Y-m-d H:i:s')
+                ]);
+            }
             
             // get current stock after import tt material
             $result = $this->getCurrentMaterialStock($wh->id);
@@ -124,11 +127,10 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
             
             DB::commit();
         } catch (\Throwable $th) {
+            
             DB::rollback();
-            return [
-                'status' => 'error',
-                'message' => $th->getMessage(),
-            ];
+            dd($th);
+
         }
     }
     
