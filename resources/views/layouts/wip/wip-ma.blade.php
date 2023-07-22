@@ -67,7 +67,10 @@
             var table = $('.material-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: `{{ route('wipMa.getTransaction') }}`,
+                ajax: {
+                    url: `{{ route('wipMa.getTransaction') }}`,
+                    dataType: 'json',
+                },
                 columns: [{
                         data: 'part_number'
                     },
@@ -90,6 +93,7 @@
                         data: 'type'
                     },
                 ],
+                pageLength: 25
             });
 
             $('.quantity').each(function() {

@@ -77,15 +77,32 @@ class WipController extends Controller
 
     public function wipMaGetTransaction()
     {
-        $input = DB::table('tt_mas')
-                ->join('tm_parts', 'tm_parts.id', '=', 'tt_mas.id_part')
-                ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_mas.id_transaction')
-                ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name','tm_transactions.type' , 'tt_mas.pic', 'tt_mas.date', 'tt_mas.qty')
-                ->where('tm_parts.status', '<>' ,1)
-                ->get();
+        try {
+            $query = DB::table('tt_assy')
+                ->join('tm_parts', 'tm_parts.id', '=', 'tt_assy.id_part')
+                ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_assy.id_transaction')
+                ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name', 'tm_transactions.type' ,'tt_assy.pic', 'tt_assy.date', 'tt_assy.qty')
+                ->where('tm_parts.status', 2);
 
-        return DataTables::of($input)
-                ->toJson(); 
+            // Get the total number of records before applying pagination or any filters
+            $recordsTotal = $query->count();
+
+            // Use DataTables' "of" method to handle pagination and filtering
+            $input = DataTables::of($query)
+                ->toJson();
+
+            // Extract the total number of records after applying any filters
+            $recordsFiltered = $input->original['recordsFiltered'] ?? $recordsTotal;
+
+            // Add the 'recordsTotal' and 'recordsFiltered' properties to the JSON response
+            $input->original['recordsTotal'] = $recordsTotal;
+            $input->original['recordsFiltered'] = $recordsFiltered;
+
+            return $input;
+        } catch (\Exception $e) {
+            // Return a JSON response indicating an error (optional)
+            return response()->json(['error' => 'An error occurred.']);
+        }
     }
     /**
      * Display MA dashboard
