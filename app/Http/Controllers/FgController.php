@@ -97,8 +97,6 @@ class FgController extends Controller
             $input->original['recordsTotal'] = $recordsTotal;
             $input->original['recordsFiltered'] = $recordsFiltered;
 
-            dd($input);
-
             return $input;
         } catch (\Exception $e) {
             // Return a JSON response indicating an error (optional)
