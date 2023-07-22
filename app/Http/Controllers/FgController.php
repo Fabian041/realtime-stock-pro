@@ -93,6 +93,8 @@ class FgController extends Controller
             // Extract the total number of records after applying any filters
             $recordsFiltered = $input->original['recordsFiltered'] ?? $recordsTotal;
 
+            dd($recordsFiltered);
+
             // Add the 'recordsTotal' and 'recordsFiltered' properties to the JSON response
             $input->original['recordsTotal'] = $recordsTotal;
             $input->original['recordsFiltered'] = $recordsFiltered;
