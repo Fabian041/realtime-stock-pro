@@ -93,7 +93,7 @@
                         data: 'type'
                     },
                 ],
-                pageLength: 10
+                pageLength: 100
             });
 
             // Add a console log to inspect the response data from the server
