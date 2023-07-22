@@ -30,7 +30,6 @@ class FgController extends Controller
                 ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_dcs.id_transaction')
                 ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name', 'tm_transactions.type' ,'tt_dcs.pic', 'tt_dcs.date', 'tt_dcs.qty')
                 ->where('tm_parts.status', 0)
-                ->latest()
                 ->get();
 
         return DataTables::of($input)
@@ -57,7 +56,6 @@ class FgController extends Controller
                 ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_mas.id_transaction')
                 ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name','tm_transactions.type' , 'tt_mas.pic', 'tt_mas.date', 'tt_mas.qty')
                 ->where('tm_parts.status', 1)
-                ->latest()
                 ->get();
 
         return DataTables::of($input)
@@ -84,7 +82,6 @@ class FgController extends Controller
                 ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_assy.id_transaction')
                 ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name','tm_transactions.type' , 'tt_assy.pic', 'tt_assy.date', 'tt_assy.qty')
                 ->where('tm_parts.status', 2)
-                ->latest()
                 ->get();
 
             dd($input);
