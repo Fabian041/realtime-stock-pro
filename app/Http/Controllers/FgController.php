@@ -84,8 +84,6 @@ class FgController extends Controller
                 ->where('tm_parts.status', 2)
                 ->get();
 
-            dd($input);
-
         return DataTables::of($input)
                 ->toJson();
     }
