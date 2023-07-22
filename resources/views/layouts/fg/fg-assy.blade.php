@@ -147,6 +147,15 @@
                         }
                     }
                 },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        barHeight: '50%',
+                        borderRadius: 5,
+                        borderRadiusOnAllStackedSeries: false,
+                        columnWidth: '60%'
+                    },
+                },
                 colors: '#696CFF',
                 noData: {
                     text: 'No Data'
