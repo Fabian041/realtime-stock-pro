@@ -67,7 +67,16 @@
             var table = $('.material-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: `{{ route('assy.getTransaction') }}`,
+                ajax: {
+                    url: '{{ route('assy.getTransaction') }}',
+                    dataType: 'json',
+                    data: function(data) {
+                        // Add pagination parameters to the request
+                        data.start = data.start || 0;
+                        data.length = data.length || 10; // Matches the pagination value on the server
+                    },
+                    dataSrc: 'data', // This points to the 'data' array in the JSON response
+                },
                 columns: [{
                         data: 'part_number'
                     },
@@ -90,7 +99,6 @@
                         data: 'type'
                     },
                 ],
-                pageLength: 25
             });
 
             // Add a console log to inspect the response data from the server
