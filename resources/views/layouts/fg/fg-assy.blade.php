@@ -75,12 +75,7 @@
                         data.start = data.start || 0;
                         data.length = data.length || 10; // Matches the pagination value on the server
                     },
-                    dataSrc: function(response) {
-                        // Update the recordsTotal and recordsFiltered values from the server response
-                        response.recordsTotal = response.data.length;
-                        response.recordsFiltered = response.data.length;
-                        return response.data;
-                    },
+                    dataSrc: 'data', // This points to the 'data' array in the JSON response
                 },
                 columns: [{
                         data: 'part_number'
@@ -104,7 +99,11 @@
                         data: 'type'
                     },
                 ],
-                pageLength: 10, // Number of records to show per page
+            });
+
+            // Add a console log to inspect the response data from the server
+            table.on('xhr', function(event, settings, json) {
+                console.log('Server Response Data:', json);
             });
 
             table.draw();
