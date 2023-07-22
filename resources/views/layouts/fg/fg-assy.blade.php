@@ -92,6 +92,11 @@
                 ],
             });
 
+            // Add a console log to inspect the response data from the server
+            table.on('xhr', function(event, settings, json) {
+                console.log('Server Response Data:', json);
+            });
+
             table.draw();
 
             $('.quantity').each(function() {
