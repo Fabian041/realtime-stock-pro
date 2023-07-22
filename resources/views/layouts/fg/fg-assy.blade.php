@@ -74,6 +74,7 @@
                         // Add pagination parameters to the request
                         data.start = data.start || 0;
                         data.length = data.length || 10; // Matches the pagination value on the server
+                        console.log(data);
                     },
                     dataSrc: 'data', // This points to the 'data' array in the JSON response
                 },
@@ -99,11 +100,6 @@
                         data: 'type'
                     },
                 ],
-            });
-
-            // Add a console log to inspect the response data from the server
-            table.on('xhr', function(event, settings, json) {
-                console.log('Server Response Data:', json);
             });
 
             table.draw();
