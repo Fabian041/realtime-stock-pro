@@ -71,9 +71,9 @@
                     url: '{{ route('assy.getTransaction') }}',
                     dataType: 'json',
                     data: function(data) {
-                        // Add pagination parameters to the request
-                        data.start = data.start || 0;
-                        data.length = data.length || 10; // Matches the pagination value on the server
+                        // // Add pagination parameters to the request
+                        // data.start = data.start || 0;
+                        // data.length = data.length || 10; // Matches the pagination value on the server
                         console.log(data);
                     },
                     dataSrc: 'data', // This points to the 'data' array in the JSON response
