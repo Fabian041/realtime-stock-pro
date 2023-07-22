@@ -82,7 +82,7 @@ class FgController extends Controller
                 ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_assy.id_transaction')
                 ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name','tm_transactions.type' , 'tt_assy.pic', 'tt_assy.date', 'tt_assy.qty')
                 ->where('tm_parts.status', 2)
-                ->get();
+                ->first();
 
         return DataTables::of($input)
                 ->toJson();
