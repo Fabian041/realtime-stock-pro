@@ -87,7 +87,7 @@ class FgController extends Controller
                 ->where('tm_parts.status', 2)
                 ->paginate(10);
 
-            return DataTables::of($input)->toJson();
+            return response()->json($input);
         } catch (\Exception $e) {
             // Return a JSON response indicating an error (optional)
             return response()->json(['error' => 'An error occurred.']);
