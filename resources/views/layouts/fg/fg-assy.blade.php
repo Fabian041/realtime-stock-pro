@@ -74,9 +74,13 @@
                         // Add pagination parameters to the request
                         data.start = data.start || 0;
                         data.length = data.length || 10; // Matches the pagination value on the server
-                        console.log(data);
                     },
-                    dataSrc: 'data', // This points to the 'data' array in the JSON response
+                    dataSrc: function(response) {
+                        // Update the recordsTotal and recordsFiltered values from the server response
+                        response.recordsTotal = response.data.length;
+                        response.recordsFiltered = response.data.length;
+                        return response.data;
+                    },
                 },
                 columns: [{
                         data: 'part_number'
@@ -100,6 +104,7 @@
                         data: 'type'
                     },
                 ],
+                pageLength: 10, // Number of records to show per page
             });
 
             table.draw();
