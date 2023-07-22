@@ -107,7 +107,7 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <label class="form-label" for="id_material">Build Of Material</label>
-                            <select class="form-select js-example-basic-single" id="id_material" name="id_material">
+                            <select class="form-select" id="id_material" name="id_material">
                                 <option value="null" selected>Pilih Material</option>
                                 @foreach ($materials as $item)
                                     <option value="{{ $item->id }}">{{ $item->part_name }} (BN:
