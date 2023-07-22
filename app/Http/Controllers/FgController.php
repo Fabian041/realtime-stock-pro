@@ -76,23 +76,32 @@ class FgController extends Controller
         return $result;
     }
 
-    public function fgAssyGetTransaction()
+    public function fgAssyGetTransaction(Request $request)
     {
-        // get from ttassy
-        try {
-            $input = DB::table('tt_assy')
-                ->join('tm_parts', 'tm_parts.id', '=', 'tt_assy.id_part')
-                ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_assy.id_transaction')
-                ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name','tm_transactions.type' , 'tt_assy.pic', 'tt_assy.date', 'tt_assy.qty')
-                ->where('tm_parts.status', 2)
-                ->paginate(10);
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10); // The number of records per page, adjust as needed
 
-            return response()->json($input);
-        } catch (\Exception $e) {
-            // Return a JSON response indicating an error (optional)
-            return response()->json(['error' => 'An error occurred.']);
-        }
+        // Your query with joins and conditions
+        $query = DB::table('tt_assy')
+            ->join('tm_parts', 'tm_parts.id', '=', 'tt_assy.id_part')
+            ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_assy.id_transaction')
+            ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name', 'tm_transactions.type', 'tt_assy.pic', 'tt_assy.date', 'tt_assy.qty')
+            ->where('tm_parts.status', 2);
+
+        // Count total records without pagination
+        $totalRecords = $query->count();
+
+        // Apply pagination
+        $input = $query->offset($start)->limit($length)->get();
+
+        return DataTables::of($input)
+            ->add([
+                'recordsTotal' => $totalRecords, // Total records without pagination
+                'recordsFiltered' => $totalRecords, // Total records after applying filters (if any)
+            ])
+            ->toJson();
     }
+
     /**
      * Display DC dashboard
      *
