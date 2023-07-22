@@ -52,11 +52,9 @@
   <script src={{ asset("vendor/js/template-customizer.js") }}></script>
   <!-- Vendor Styles -->
   <link rel="stylesheet" href={{ asset("vendor/libs/datatables-bs5/datatables.bootstrap5.css") }}>
+  <link rel="stylesheet" href={{ asset("vendor/libs/select2/select2.css") }}>
   <link rel="stylesheet" href={{ asset("vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css") }}>
-  {{-- <link rel="stylesheet" href={{ asset("vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css") }}/> --}}
-  {{-- <link rel="stylesheet" href={{ asset("vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css") }}/> --}}
-  {{-- <link rel="stylesheet" href={{ asset("vendor/libs/flatpickr/flatpickr.css") }} /> --}}
-  {{-- <link rel="stylesheet" href={{ asset("vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css") }}/> --}}
+
   <link rel="stylesheet" href={{ asset("vendor/libs/toastr/toastr.css") }} />
   <link rel="stylesheet" href={{ asset("vendor/libs/animate-css/animate.css") }} />
   
@@ -134,6 +132,8 @@
 <script src={{ asset("vendor/js/menuf635.js?id=03d9787739b295480194ce0a121ae550") }}></script>
 <script src={{ asset("vendor/libs/apex-charts/apexcharts.js") }}></script>
 <script src={{ asset("vendor/libs/datatables-bs5/datatables-bootstrap5.js") }}></script>
+<script src={{ asset("vendor/libs/select2/select2.js") }}></script>
+
 
 <script src={{ asset("vendor/libs/formvalidation/dist/js/FormValidation.min.js") }}></script>
 <script src={{ asset("vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js") }}></script>

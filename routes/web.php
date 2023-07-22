@@ -34,15 +34,14 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/login-auth', [LoginController::class, 'authenticate'])->name('login.auth');
     Route::get('/register', [RegisterController::class, 'index'])->name('register.index');
     Route::post('/register-store', [RegisterController::class, 'store'])->name('register.store');
-    
 });
 
 Route::middleware(['auth'])->group(function () {
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout.auth');
-    
+
     Route::prefix('/dashboard')->group(function () {
-    
+
         // finsih good dashboard
         Route::get('/fg/dc', [FgController::class, 'fgDc'])->name('fg.dc');
         Route::get('/fg/dc/getTransaction', [FgController::class, 'fgDcGetTransaction'])->name('dc.getTransaction');
@@ -69,7 +68,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/material/assy', [MaterialController::class, 'materialAssy'])->name('material.assy');
 
         Route::prefix('/material-transaction')->group(function () {
-            
+
             // Material transaction
             Route::get('/wh', [MaterialController::class, 'indexWh'])->name('wh.index');
             Route::post('/wh/import', [MaterialController::class, 'import'])->name('wh.import');
@@ -94,7 +93,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/checkout/scan', [MaterialController::class, 'scanProd'])->name('checkout.scan');
             Route::post('/checkout/store', [MaterialController::class, 'checkoutStore'])->name('checkout.store');
             Route::get('/checkout/getData', [MaterialController::class, 'getDataCheckout'])->name('checkout.getData');
-
         });
 
         // Material Dashboard
@@ -113,13 +111,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/getWipPart/ma', [WipController::class, 'getWipMaStock'])->name('wipMa.get');
         Route::get('/getWipPart/dc', [WipController::class, 'getWipDcStock'])->name('wipDc.get');
         Route::get('/getWipPart/assy', [WipController::class, 'getPartAssy'])->name('wipAssy.get');
-        
+
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
         Route::post('/profile-update', [ProfileController::class, 'update'])->name('profile.update');
     });
-    
+
     Route::prefix('/master')->group(function () {
-    
+
         // Part Number Master
         Route::get('/part-number-master', [PartNumberMasterController::class, 'index'])->name('part-number.master');
         Route::post('/part-number-master/insertData', [PartNumberMasterController::class, 'store'])->name('part-number.master.insertData');
@@ -143,7 +141,5 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/bom-master/import', [BomMasterController::class, 'import'])->name('bom.master.import');
         Route::get('/bom-master/getData', [BomMasterController::class, 'getData'])->name('bom.master.getData');
         Route::post('/bom-master/update/{bom}', [BomMasterController::class, 'update'])->name('bom.master.update');
-    
     });
-    
 });
