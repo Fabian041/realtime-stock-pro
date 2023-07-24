@@ -45,7 +45,6 @@ class WipController extends Controller
                     ->select(DB::raw('SUM(current_stock) as current_stock'))
                     ->where('tm_parts.status', '<>' ,0)
                     ->where('tm_parts.part_name', 'LIKE', '%' . $model . '%')
-                    ->groupBy('tm_parts.part_name')
                     ->first();
 
             return $result;
