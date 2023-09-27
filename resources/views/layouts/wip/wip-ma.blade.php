@@ -43,11 +43,11 @@
                             <tr>
                                 <th>Part Number</th>
                                 <th>Part Name</th>
-                                <th>Supplier</th>
-                                <th>Source</th>
                                 <th>PIC</th>
                                 <th>Date</th>
                                 <th>Quantity</th>
+                                <th>Transaction</th>
+                                <th>Detail</th>
                             </tr>
                         </thead>
                     </table>

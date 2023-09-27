@@ -205,7 +205,7 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="id_material">Build Of Material</label>
-                                <select class="form-control" id="id_material" aria-label="Default select example"
+                                <select class="form-select" id="id_material" aria-label="Default select example"
                                     name="id_material">
                                     <option value="null" selected>Pilih Material</option>
                                     @foreach ($materials as $item)
@@ -289,7 +289,7 @@
                 showToast('success', successMessage);
             }
 
-            $('.js-example-basic-single').select2();
+            // $('.js-example-basic-single').select2();
 
             $('.material-datatable').DataTable({
                 ajax: `{{ route('bom.master.getData') }}`,

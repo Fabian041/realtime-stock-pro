@@ -75,20 +75,39 @@ class StockController extends Controller
     public function stock_control($line , $code, $qty)
     {
         //ex LINE = MA001
-        //ex CODE will be generate as part number or back number in avicenna, so code will be part number or back 
+        //ex CODE will be generate as back number in avicenna, so code will be part number or back 
         
         // (i think we need authenticated avicenna username / npk)
 
         // get id part based on part number or back number
         $part = TmPart::select('id')->where('back_number', $code)->first();
+        if(!$part){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Back number does not exist!'
+            ], 404);
+        }
 
         // get id area based on lihe
         $area = TmArea::select('id')->where('name', 'LIKE', '%' . $line . '%')->first();
+        if(!$area){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Area does not exist!'
+            ], 404);
+        }
 
         //search bom of the part number based on line in tm bom table
         $boms = TmBom::where('id_area', $area->id)
                 ->where('id_part', $part->id)
                 ->get();
+                
+                if(!$boms){
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'BOM does not exist!'
+                    ], 404);
+                }
 
         // get id area
         $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
@@ -126,10 +145,10 @@ class StockController extends Controller
                 ]);
 
                 // get current stock after scan
-                $result = $this->getCurrentMaterialStock($wh->id);
+                // $result = $this->getCurrentMaterialStock($wh->id);
 
                 // push to websocket
-                $this->pushData('wh',$result);
+                // $this->pushData('wh',$result);
 
             DB::commit();
 
@@ -166,6 +185,19 @@ class StockController extends Controller
 
                 // decrease ma stock
                 partTransaction($maModel, $part->id, $reversalTransaction->id, $qty);
+
+            }elseif($line == 'PULL'){
+
+                if($code == 'DI01' || $code == 'DI02') {
+                    // decrease dc stock
+                    partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty);
+                }else if($code == 'EI11' || $code == 'EI12' || $code == 'EI13' || $code == 'EI14' ){
+                    // decrease ma stock
+                    partTransaction($maModel, $part->id, $reversalTransaction->id, $qty);
+                }else{
+                    // decrease assy stock
+                    partTransaction($assyModel, $part->id, $reversalTransaction->id, $qty);
+                }
             }
             
             // get current dc stock
