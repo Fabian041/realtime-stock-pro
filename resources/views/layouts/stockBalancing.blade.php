@@ -35,7 +35,7 @@
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-email">Current Stock</label>
                         <div class="input-group input-group-merge">
-                            <input type="number" id="current_stock" class="form-control" placeholder="13"
+                            <input type="number" id="current_stock" class="form-control" placeholder="0"
                                 aria-label="john.doe" aria-describedby="basic-default-email2" name="current_stock">
                         </div>
                         <div class="form-text"> Your current stock </div>
