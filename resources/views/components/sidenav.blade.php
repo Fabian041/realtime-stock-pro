@@ -126,9 +126,10 @@
                     <div>Checkout Material</div>
                 </a>
               </li> --}}
-                <li class="menu-item {{ request()->is('') ? 'active' : '' }}">
-                    <a href="{{ route('material.wh') }}" class="menu-link ">
-                        <div>Stock Balancing</div>
+                <li
+                    class="menu-item {{ request()->is('dashboard/material-transaction/stockBalancing') ? 'active' : '' }}">
+                    <a href="{{ route('stockBalancing.index') }}" class="menu-link ">
+                        <div>Stock Adjustment</div>
                     </a>
                 </li>
                 <li class="menu-item {{ request()->is('dashboard/material-transaction/wh') ? 'active' : '' }}">

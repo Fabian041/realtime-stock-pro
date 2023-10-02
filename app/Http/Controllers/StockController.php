@@ -11,12 +11,16 @@ use App\Models\TmBom;
 use App\Models\TmArea;
 use App\Models\TmPart;
 use App\Models\TtAssy;
+use App\Models\DcStock;
+use App\Models\MaStock;
 use App\Models\TtStock;
 use App\Models\TtOutput;
+use App\Models\AssyStock;
 use App\Models\TtMaterial;
 use Illuminate\Http\Request;
 use App\Models\MaterialStock;
 use App\Models\TmTransaction;
+use App\Jobs\WebSocketPushJob;
 use App\Events\StockDataUpdated;
 use Illuminate\Support\Facades\DB;
 
@@ -97,17 +101,19 @@ class StockController extends Controller
             ], 404);
         }
 
-        //search bom of the part number based on line in tm bom table
-        $boms = TmBom::where('id_area', $area->id)
-                ->where('id_part', $part->id)
-                ->get();
-                
-                if(!$boms){
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'BOM does not exist!'
-                    ], 404);
-                }
+        if($line !== 'PULL'){
+            //search bom of the part number based on line in tm bom table
+            $boms = TmBom::where('id_area', $area->id)
+                    ->where('id_part', $part->id)
+                    ->get();
+                    
+                    if($boms->first() == null){
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'BOM does not exist!'
+                        ], 404);
+                    }
+        }
 
         // get id area
         $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
@@ -125,33 +131,36 @@ class StockController extends Controller
 
             DB::beginTransaction();
             // material transaction
-            foreach($boms as $bom){
 
-                // it will decrease current material stock and 
-                //increase FG / WIP stock in spesific area
-                TtMaterial::create([
-                    'id_material' => $bom->id_material,
-                    'qty' => $bom->qty_use,
-                    'id_area' => $wh->id,
-                    'id_transaction' => $reversalTransaction->id,
-                    'pic' => 'avicenna user',
-                    'date' => Carbon::now()->format('Y-m-d H:i:s')
-                ]);
-
-                // insert to BOM table
-                TtOutput::create([
-                    'id_bom' => $bom->id,
-                    'date' => Carbon::now()->format('Y-m-d H:i:s')
-                ]);
-
-                // get current stock after scan
-                // $result = $this->getCurrentMaterialStock($wh->id);
-
-                // push to websocket
-                // $this->pushData('wh',$result);
-
-            DB::commit();
-
+            if($line !== 'PULL'){
+                foreach($boms as $bom){
+    
+                    // it will decrease current material stock and 
+                    //increase FG / WIP stock in spesific area
+                    TtMaterial::create([
+                        'id_material' => $bom->id_material,
+                        'qty' => $bom->qty_use,
+                        'id_area' => $wh->id,
+                        'id_transaction' => $reversalTransaction->id,
+                        'pic' => 'avicenna user',
+                        'date' => Carbon::now()->format('Y-m-d H:i:s')
+                    ]);
+    
+                    // insert to BOM table
+                    TtOutput::create([
+                        'id_bom' => $bom->id,
+                        'date' => Carbon::now()->format('Y-m-d H:i:s')
+                    ]);
+    
+                    // get current stock after scan
+                    $result = $this->getCurrentMaterialStock($wh->id);
+    
+                    // push to websocket
+                    // $this->pushData('wh',$result);
+                    WebSocketPushJob::dispatch('wh', $result);
+    
+                DB::commit();
+                }
             }
 
             function partTransaction($area, $part, $transaction, $qty){
@@ -188,9 +197,12 @@ class StockController extends Controller
 
             }elseif($line == 'PULL'){
 
+                $reversalTransaction= TmTransaction::select('id')->where('name', 'Pulling Delivery (R)')->first();
+                
                 if($code == 'DI01' || $code == 'DI02') {
                     // decrease dc stock
                     partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty);
+                    
                 }else if($code == 'EI11' || $code == 'EI12' || $code == 'EI13' || $code == 'EI14' ){
                     // decrease ma stock
                     partTransaction($maModel, $part->id, $reversalTransaction->id, $qty);
@@ -198,6 +210,8 @@ class StockController extends Controller
                     // decrease assy stock
                     partTransaction($assyModel, $part->id, $reversalTransaction->id, $qty);
                 }
+
+                DB::commit();
             }
             
             // get current dc stock
@@ -220,7 +234,8 @@ class StockController extends Controller
             $wipData = [$tcc,$opn];
 
             // push to websocket
-            $this->pushData('wip', $wipData);
+            // Dispatch the WebSocket push job to the queue 
+            WebSocketPushJob::dispatch('wip', $wipData);
 
             return response()->json([
                 'message' => 'success',
@@ -235,7 +250,7 @@ class StockController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => $e->getMessage(),
-            ],$e->getCode());
+            ],500);
 
         }
     }
@@ -342,7 +357,89 @@ class StockController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => $e->getMessage(),
-            ],$e->getCode());
+            ],500);
         }
+    }
+
+    public function stockBalancing()
+    {
+        return view('layouts.stockBalancing',[
+            'areas' => TmArea::all(),
+        ]);
+    }
+
+    public function getBackNumber(Request $request)
+    {
+        $area = $request->area;
+
+        if($area == 'DC'){
+            $part = TmPart::select('id','back_number')->where('status', 0)->get();
+        }else if($area == 'MA'){
+            $part = TmPart::select('id','back_number')->where('status', 1)->get();
+        }else{
+            $part = TmPart::select('id','back_number')->where('status', 2)->get();
+        }
+
+        return $part;
+    }
+    
+    public function getCurrentStock(Request $request)
+    {
+        $area = $request->area;
+        $back_number = $request->backNumber;
+
+        // initialize model 
+        $dcModel = new DcStock();
+        $maModel = new MaStock();
+        $assyModel = new AssyStock();
+        
+        if($area == 'DC'){
+            $currentStock = $dcModel->select('current_stock')->where('id_part', $back_number)->first();
+        }else if($area == 'MA'){
+            $currentStock = $maModel->select('current_stock')->where('id_part', $back_number)->first();
+        }else{
+            $currentStock = $assyModel->select('current_stock')->where('id_part', $back_number)->first();
+        }
+
+        return $currentStock;
+    }
+
+    public function adjustStock(Request $request)
+    {
+        $actual = $request->actual_stock;
+        $area = $request->area;
+        $back_number = $request->back_number;
+
+        // initialize model 
+        $dcModel = new DcStock();
+        $maModel = new MaStock();
+        $assyModel = new AssyStock();
+        
+        
+        if($area == 'DC'){
+            try {
+                DB::beginTransaction();
+                $currentStock = $dcModel->where('id_part', $back_number)->update([
+                    'current_stock' => $actual
+                ]);
+                DB::commit();
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                return [
+                    'error' => $th->getMessage(),
+                ];
+            }
+            
+        }else if($area == 'MA'){
+            $currentStock = $maModel->where('id_part', $back_number)->update([
+                'current_stock' => $actual
+            ]);
+        }else{
+            $currentStock = $assyModel->where('id_part', $back_number)->update([
+                'current_stock' => $actual
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Stock updated successfully');
     }
 }

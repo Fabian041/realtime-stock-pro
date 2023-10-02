@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FgController;
 use App\Http\Controllers\WipController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\RegisterController;
@@ -40,6 +41,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout.auth');
 
+    Route::get('/getBackNumber', [StockController::class,'getBackNumber'])->name('getBackNumber');
+    Route::get('/getCurrentStock', [StockController::class,'getCurrentStock'])->name('getCurrentStock');
+
     Route::prefix('/dashboard')->group(function () {
 
         // finsih good dashboard
@@ -51,8 +55,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/fg/assy', [FgController::class, 'fgAssy'])->name('fg.assy');
         Route::get('/fg/assy/getTransaction', [FgController::class, 'fgAssyGetTransaction'])->name('assy.getTransaction');
-
-
+        
         // wip dashboard
         Route::get('/wip/dc', [WipController::class, 'wipDc'])->name('wip.dc');
         Route::get('/wip/ma', [WipController::class, 'wipMa'])->name('wip.ma');
@@ -68,6 +71,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/material/assy', [MaterialController::class, 'materialAssy'])->name('material.assy');
 
         Route::prefix('/material-transaction')->group(function () {
+
+            // stock balancings
+            Route::get('/stockBalancing', [StockController::class, 'stockBalancing'])->name('stockBalancing.index');
+            Route::post('/stockBalancing/adjust', [StockController::class, 'adjustStock'])->name('stockBalancing.adjust');
 
             // Material transaction
             Route::get('/wh', [MaterialController::class, 'indexWh'])->name('wh.index');
