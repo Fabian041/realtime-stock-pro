@@ -119,12 +119,12 @@
             });
 
             getTcc();
-            setTimeout(() => {
+            setInterval(() => {
                 getTcc();
             }, 5000);
 
             getDetail();
-            setTimeout(() => {
+            setInterval(() => {
                 getDetail();
             }, 5000);
 

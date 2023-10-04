@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\StockController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StockController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,5 +19,5 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('/stock-control/{line}/{code}/{qty}', [StockController::class,'stock_control'])->name('stock-control.main');
+Route::get('/stock-control/{line}/{code}/{qty}/{codepart}', [StockController::class,'stock_control'])->name('stock-control.main');
 Route::get('/ng-part/{line}/{code}', [StockController::class,'ng_part'])->name('ng-part.main');

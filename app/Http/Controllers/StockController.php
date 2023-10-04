@@ -76,7 +76,7 @@ class StockController extends Controller
         return [$dataCkd,$dataImport,$dataLocal];
     }
     
-    public function stock_control($line , $code, $qty)
+    public function stock_control($line , $code, $qty, $codepart = null)
     {
         //ex LINE = MA001
         //ex CODE will be generate as back number in avicenna, so code will be part number or back 
@@ -163,8 +163,9 @@ class StockController extends Controller
                 }
             }
 
-            function partTransaction($area, $part, $transaction, $qty){
+            function partTransaction($area, $part, $transaction, $qty, $codepart = null){
                 $result = $area->create([
+                    'code' => $codepart,
                     'id_part' => $part,
                     'id_transaction' => $transaction,
                     'pic' => 'avicenna user',
@@ -177,23 +178,23 @@ class StockController extends Controller
 
             if($line == 'DC'){
 
-                partTransaction($dcModel, $part->id, $transaction->id, $qty);
+                partTransaction($dcModel, $part->id, $transaction->id, $qty, $codepart);
 
             }elseif($line == 'MA'){
 
                 // increase ma stock
-                partTransaction($maModel, $part->id, $transaction->id, $qty);
+                partTransaction($maModel, $part->id, $transaction->id, $qty, $codepart);
 
                 // decrease dc stock
-                partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty);
+                partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty, $codepart);
 
             }elseif($line == 'AS'){
 
                 // increase assy stock
-                partTransaction($assyModel, $part->id, $transaction->id, $qty);
+                partTransaction($assyModel, $part->id, $transaction->id, $qty, $codepart);
 
                 // decrease ma stock
-                partTransaction($maModel, $part->id, $reversalTransaction->id, $qty);
+                partTransaction($maModel, $part->id, $reversalTransaction->id, $qty, $codepart);
 
             }elseif($line == 'PULL'){
 
@@ -201,16 +202,15 @@ class StockController extends Controller
                 
                 if($code == 'DI01' || $code == 'DI02') {
                     // decrease dc stock
-                    partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty);
+                    partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty, $codepart);
                     
                 }else if($code == 'EI11' || $code == 'EI12' || $code == 'EI13' || $code == 'EI14' ){
                     // decrease ma stock
-                    partTransaction($maModel, $part->id, $reversalTransaction->id, $qty);
+                    partTransaction($maModel, $part->id, $reversalTransaction->id, $qty, $codepart);
                 }else{
                     // decrease assy stock
-                    partTransaction($assyModel, $part->id, $reversalTransaction->id, $qty);
+                    partTransaction($assyModel, $part->id, $reversalTransaction->id, $qty, $codepart);
                 }
-
                 DB::commit();
             }
             
