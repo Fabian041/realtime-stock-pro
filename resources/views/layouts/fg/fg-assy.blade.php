@@ -118,12 +118,10 @@
                 });
             });
 
-            getTcc();
             setInterval(() => {
                 getTcc();
             }, 5000);
 
-            getDetail();
             setInterval(() => {
                 getDetail();
             }, 5000);
