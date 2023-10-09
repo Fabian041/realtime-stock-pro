@@ -19,5 +19,5 @@ use App\Http\Controllers\StockController;
 //     return $request->user();
 // });
 
-Route::get('/stock-control/{line}/{code}/{qty}/{codepart}', [StockController::class,'stock_control'])->name('stock-control.main');
+Route::get('/stock-control/{line}/{code}/{qty}/{codepart?}', [StockController::class,'stock_control'])->name('stock-control.main');
 Route::get('/ng-part/{line}/{code}', [StockController::class,'ng_part'])->name('ng-part.main');
