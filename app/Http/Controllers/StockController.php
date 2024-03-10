@@ -84,12 +84,14 @@ class StockController extends Controller
             $part = $this->getPart($code);
             $area = $this->getArea($line);
 
-            $wh = TmArea::where('name', 'Warehouse')->firstOrFail();
             $transaction = TmTransaction::where('name', 'Traceability')->firstOrFail();
             $reversalTransaction = $this->getReversalTransaction($line);
 
             if ($line !== 'PULL') {
+                $wh = TmArea::where('name', 'Warehouse')->firstOrFail();
                 $this->processBomMaterials($area->id, $part->id, $wh->id, $reversalTransaction->id);
+            } else {
+                $this->processPullLineTransaction($code, $part->id, $reversalTransaction->id, $qty, $codepart);
             }
 
             $this->processLineTransaction($line, $part->id, $transaction->id, $reversalTransaction->id, $qty, $codepart);
@@ -154,6 +156,33 @@ class StockController extends Controller
         if ($line !== 'PULL' && $line !== 'DC') {
             $this->createPartTransaction($this->getPreviousLineModel($line), $partId, $reversalTransactionId, -$qty, $codepart);
         }
+    }
+
+    private function processPullLineTransaction($code, $partId, $reversalTransactionId, $qty, $codepart)
+    {
+        $modelMapping = [
+            'DI01' => new TtDc(),
+            'DI02' => new TtDc(),
+            'EI11' => new TtMa(),
+            'EI12' => new TtMa(),
+            'EI13' => new TtMa(),
+            'EI14' => new TtMa(),
+        ];
+
+        $model = null;
+        foreach ($modelMapping as $codePrefix => $modelCandidate) {
+            if (strpos($code, $codePrefix) === 0) {
+                $model = $modelCandidate;
+                break;
+            }
+        }
+
+        // If no specific model has been identified by the code, default to ASSY stock
+        if (!$model) {
+            $model = new TtAssy();
+        }
+
+        $this->createPartTransaction($model, $partId, $reversalTransactionId, -$qty, $codepart);
     }
 
     private function getModelByLine($line)
