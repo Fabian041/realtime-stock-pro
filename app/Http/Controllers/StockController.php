@@ -154,7 +154,7 @@ class StockController extends Controller
         $this->createPartTransaction($model, $partId, $transactionId, $qty, $codepart);
 
         if ($line !== 'PULL' && $line !== 'DC') {
-            $this->createPartTransaction($this->getPreviousLineModel($line), $partId, $reversalTransactionId, -$qty, $codepart);
+            $this->createPartTransaction($this->getPreviousLineModel($line), $partId, $reversalTransactionId, $qty, $codepart);
         }
     }
 
@@ -182,7 +182,7 @@ class StockController extends Controller
             $model = new TtAssy();
         }
 
-        $this->createPartTransaction($model, $partId, $reversalTransactionId, -$qty, $codepart);
+        $this->createPartTransaction($model, $partId, $reversalTransactionId, $qty, $codepart);
     }
 
     private function getModelByLine($line)
