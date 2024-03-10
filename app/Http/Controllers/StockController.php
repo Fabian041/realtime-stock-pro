@@ -76,183 +76,141 @@ class StockController extends Controller
         return [$dataCkd,$dataImport,$dataLocal];
     }
     
-    public function stock_control($line , $code, $qty, $codepart = null)
+    public function stock_control($line, $code, $qty, $codepart = null)
     {
-        //ex LINE = MA001
-        //ex CODE will be generate as back number in avicenna, so code will be part number or back 
-        
-        // (i think we need authenticated avicenna username / npk)
-
-        // get id part based on part number or back number
-        $part = TmPart::select('id')->where('back_number', $code)->first();
-        if(!$part){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Back number does not exist!'
-            ], 404);
-        }
-
-        // get id area based on lihe
-        $area = TmArea::select('id')->where('name', 'LIKE', '%' . $line . '%')->first();
-        if(!$area){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Area does not exist!'
-            ], 404);
-        }
-
-        if($line !== 'PULL'){
-            //search bom of the part number based on line in tm bom table
-            $boms = TmBom::where('id_area', $area->id)
-                    ->where('id_part', $part->id)
-                    ->get();
-                    
-                    if($boms->first() == null){
-                        return response()->json([
-                            'status' => 'error',
-                            'message' => 'BOM does not exist!'
-                        ], 404);
-                    }
-        }
-
-        // get id area
-        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
-
-        // get id transaction
-        $transaction = TmTransaction::select('id')->where('name', 'Traceability')->first();
-        $reversalTransaction= TmTransaction::select('id')->where('name', 'Traceability (R)')->first();
-
-        // FG / WIP transaction
-        $dcModel = new TtDc();
-        $maModel = new TtMa();
-        $assyModel = new TtAssy();
-
+        DB::beginTransaction();
         try {
+            $part = $this->getPart($code);
+            $area = $this->getArea($line);
 
-            DB::beginTransaction();
-            // material transaction
+            $wh = TmArea::where('name', 'Warehouse')->firstOrFail();
+            $transaction = TmTransaction::where('name', 'Traceability')->firstOrFail();
+            $reversalTransaction = $this->getReversalTransaction($line);
 
-            if($line !== 'PULL'){
-                foreach($boms as $bom){
-    
-                    // it will decrease current material stock and 
-                    //increase FG / WIP stock in spesific area
-                    TtMaterial::create([
-                        'id_material' => $bom->id_material,
-                        'qty' => $bom->qty_use,
-                        'id_area' => $wh->id,
-                        'id_transaction' => $reversalTransaction->id,
-                        'pic' => 'avicenna user',
-                        'date' => Carbon::now()->format('Y-m-d H:i:s')
-                    ]);
-    
-                    // insert to BOM table
-                    TtOutput::create([
-                        'id_bom' => $bom->id,
-                        'date' => Carbon::now()->format('Y-m-d H:i:s')
-                    ]);
-    
-                    // get current stock after scan
-                    $result = $this->getCurrentMaterialStock($wh->id);
-    
-                    // push to websocket
-                    // $this->pushData('wh',$result);
-                    WebSocketPushJob::dispatch('wh', $result);
-    
-                DB::commit();
-                }
+            if ($line !== 'PULL') {
+                $this->processBomMaterials($area->id, $part->id, $wh->id, $reversalTransaction->id);
             }
 
-            function partTransaction($area, $part, $transaction, $qty, $codepart = null){
-                $result = $area->create([
-                    'code' => $codepart,
-                    'id_part' => $part,
-                    'id_transaction' => $transaction,
-                    'pic' => 'avicenna user',
-                    'date' => Carbon::now()->format('Y-m-d H:i:s'),
-                    'qty' => $qty
-                ]);
-
-                return $result;
-            }
-
-            if($line == 'DC'){
-
-                partTransaction($dcModel, $part->id, $transaction->id, $qty, $codepart);
-
-            }elseif($line == 'MA'){
-
-                // increase ma stock
-                partTransaction($maModel, $part->id, $transaction->id, $qty, $codepart);
-
-                // decrease dc stock
-                partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty, $codepart);
-
-            }elseif($line == 'AS'){
-
-                // increase assy stock
-                partTransaction($assyModel, $part->id, $transaction->id, $qty, $codepart);
-
-                // decrease ma stock
-                partTransaction($maModel, $part->id, $reversalTransaction->id, $qty, $codepart);
-
-            }elseif($line == 'PULL'){
-
-                $reversalTransaction= TmTransaction::select('id')->where('name', 'Pulling Delivery (R)')->first();
-                
-                if($code == 'DI01' || $code == 'DI02') {
-                    // decrease dc stock
-                    partTransaction($dcModel, $part->id, $reversalTransaction->id, $qty, $codepart);
-                    
-                }else if($code == 'EI11' || $code == 'EI12' || $code == 'EI13' || $code == 'EI14' ){
-                    // decrease ma stock
-                    partTransaction($maModel, $part->id, $reversalTransaction->id, $qty, $codepart);
-                }else{
-                    // decrease assy stock
-                    partTransaction($assyModel, $part->id, $reversalTransaction->id, $qty, $codepart);
-                }
-                DB::commit();
-            }
-            
-            // get current dc stock
-            function getWipDc($model){
-                $result = DB::table('dc_stocks')
-                        ->join('tm_parts', 'tm_parts.id', '=', 'dc_stocks.id_part')
-                        ->select(DB::raw('SUM(current_stock) as current_stock'))
-                        ->where('tm_parts.status', '<>' ,0)
-                        ->where('tm_parts.part_name', 'LIKE', '%' . $model . '%')
-                        ->first();
-    
-                return $result;
-            }
-
-            // get current dc stock
-            $tcc = (getWipDc('TCC')) ? getWipDc('TCC')->current_stock : 0;
-            $opn = (getWipDc('OPN')) ? getWipDc('OPN')->current_stock : 0;
-
-            // wip data
-            $wipData = [$tcc,$opn];
-
-            // push to websocket
-            // Dispatch the WebSocket push job to the queue 
+            $this->processLineTransaction($line, $part->id, $transaction->id, $reversalTransaction->id, $qty, $codepart);
+            $wipData = $this->getWipData();
             WebSocketPushJob::dispatch('wip', $wipData);
+
+            DB::commit();
 
             return response()->json([
                 'message' => 'success',
-                'data' =>  [
+                'data' => [
                     'line' => $line,
                     'back_number' => $code,
                     'quantity' => $qty
                 ]
-            ],200);
-
-            DB::commit();
-        } catch (\Throwable $e) {
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'message' => $e->getMessage(),
-            ],500);
-
+            ], 500);
         }
+    }
+
+    private function getPart($code)
+    {
+        return TmPart::select('id')->where('back_number', $code)->firstOrFail();
+    }
+
+    private function getArea($line)
+    {
+        return TmArea::select('id')->where('name', 'LIKE', "%{$line}%")->firstOrFail();
+    }
+
+    private function getReversalTransaction($line)
+    {
+        $transactionName = $line === 'PULL' ? 'Pulling Delivery (R)' : 'Traceability (R)';
+        return TmTransaction::select('id')->where('name', $transactionName)->firstOrFail();
+    }
+
+    private function processBomMaterials($areaId, $partId, $warehouseId, $transactionId)
+    {
+        $boms = TmBom::where('id_area', $areaId)->where('id_part', $partId)->get();
+        
+        foreach ($boms as $bom) {
+            TtMaterial::create([
+                'id_material' => $bom->id_material,
+                'qty' => $bom->qty_use * -1,
+                'id_area' => $warehouseId,
+                'id_transaction' => $transactionId,
+                'pic' => 'avicenna user',
+                'date' => now(),
+            ]);
+
+            TtOutput::create([
+                'id_bom' => $bom->id,
+                'date' => now(),
+            ]);
+        }
+    }
+
+    private function processLineTransaction($line, $partId, $transactionId, $reversalTransactionId, $qty, $codepart)
+    {
+        $model = $this->getModelByLine($line);
+        if (!$model) {
+            return;
+        }
+
+        $this->createPartTransaction($model, $partId, $transactionId, $qty, $codepart);
+
+        if ($line !== 'PULL' && $line !== 'DC') {
+            $this->createPartTransaction($this->getPreviousLineModel($line), $partId, $reversalTransactionId, -$qty, $codepart);
+        }
+    }
+
+    private function getModelByLine($line)
+    {
+        switch ($line) {
+            case 'DC': return new TtDc();
+            case 'MA': return new TtMa();
+            case 'AS': return new TtAssy();
+            default: return null;
+        }
+    }
+
+    private function getPreviousLineModel($line)
+    {
+        switch ($line) {
+            case 'MA': return new TtDc();
+            case 'AS': return new TtMa();
+            default: return null;
+        }
+    }
+
+    private function createPartTransaction($model, $partId, $transactionId, $qty, $codepart)
+    {
+        $model->create([
+            'code' => $codepart,
+            'id_part' => $partId,
+            'id_transaction' => $transactionId,
+            'pic' => 'avicenna user',
+            'date' => Carbon::now()->format('Y-m-d H:i:s'),
+            'qty' => $qty,
+        ]);
+    }
+
+    private function getWipData()
+    {
+        $tcc = $this->getWipDc('TCC')->current_stock ?? 0;
+        $opn = $this->getWipDc('OPN')->current_stock ?? 0;
+
+        return ['TCC' => $tcc, 'OPN' => $opn];
+    }
+
+    private function getWipDc($model)
+    {
+        return DB::table('dc_stocks')
+                ->join('tm_parts', 'tm_parts.id', '=', 'dc_stocks.id_part')
+                ->select(DB::raw('SUM(current_stock) as current_stock'))
+                ->where('tm_parts.status', '<>', 0)
+                ->where('tm_parts.part_name', 'LIKE', "%{$model}%")
+                ->first();
     }
 
     public function ng_part($line, $code)
