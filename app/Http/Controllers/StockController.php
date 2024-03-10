@@ -78,8 +78,9 @@ class StockController extends Controller
     
     public function stock_control($line, $code, $qty, $codepart = null)
     {
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
+            
             $part = $this->getPart($code);
             $area = $this->getArea($line);
 
@@ -97,14 +98,14 @@ class StockController extends Controller
 
             DB::commit();
 
-            return response()->json([
+            return [
                 'message' => 'success',
                 'data' => [
                     'line' => $line,
                     'back_number' => $code,
                     'quantity' => $qty
                 ]
-            ], 200);
+            ];
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
