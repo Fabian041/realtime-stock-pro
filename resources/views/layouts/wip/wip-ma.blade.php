@@ -111,12 +111,12 @@
                 });
             });
 
-            getTcc();
+            // getTcc();
             setInterval(() => {
-                getCsh();
+                getTcc();
             }, 5000);
 
-            getDetail();
+            // getDetail();
             setInterval(() => {
                 getDetail();
             }, 5000);
