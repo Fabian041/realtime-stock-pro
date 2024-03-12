@@ -67,6 +67,9 @@
             var table = $('.material-datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                order: [
+                    [3, 'desc']
+                ],
                 ajax: `{{ route('ma.getTransaction') }}`,
                 columns: [{
                         data: 'part_number'
@@ -112,6 +115,7 @@
             // getOpn();
             setInterval(() => {
                 getOpn();
+                table.draw();
             }, 5000);
 
             // getDetail();

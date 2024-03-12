@@ -67,6 +67,9 @@
             var table = $('.material-datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                order: [
+                    [3, 'desc']
+                ],
                 ajax: {
                     url: `{{ route('wipMa.getTransaction') }}`,
                     dataType: 'json',
@@ -114,6 +117,7 @@
             // getTcc();
             setInterval(() => {
                 getTcc();
+                table.draw();
             }, 5000);
 
             // getDetail();
