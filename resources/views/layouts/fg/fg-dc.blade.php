@@ -66,7 +66,7 @@
 
             var table = $('.material-datatable').DataTable({
                 processing: true,
-                serverSide: false,
+                serverSide: true,
                 ajax: `{{ route('dc.getTransaction') }}`,
                 columns: [{
                         data: 'part_number'
