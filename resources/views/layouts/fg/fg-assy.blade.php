@@ -66,7 +66,7 @@
 
             var table = $('.material-datatable').DataTable({
                 processing: true,
-                serverSide: true,
+                serverSide: false,
                 ajax: {
                     url: '{{ route('assy.getTransaction') }}',
                     dataType: 'json',
