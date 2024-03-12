@@ -115,7 +115,6 @@
             // getOpn();
             setInterval(() => {
                 getOpn();
-                table.draw();
             }, 5000);
 
             // getDetail();

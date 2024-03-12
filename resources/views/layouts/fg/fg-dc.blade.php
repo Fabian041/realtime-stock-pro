@@ -120,7 +120,6 @@
             // getCsh();    
             setInterval(() => {
                 getCsh();
-                table.draw();
             }, 5000);
 
             // getDetail();    
