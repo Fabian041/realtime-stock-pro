@@ -152,7 +152,7 @@
                     showForSingleSeries: true,
                     customLegendItems: ['Actual', 'Minimum Stock'],
                     markers: {
-                        fillColors: ['#696CFF', '#00E396']
+                        fillColors: ['#696CFF', '#F35555']
                     }
                 },
                 series: [{
