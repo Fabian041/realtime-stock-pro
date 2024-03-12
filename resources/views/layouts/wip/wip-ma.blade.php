@@ -203,7 +203,7 @@
                                         name: 'Minimum Stock',
                                         value: item.qty_limit,
                                         strokeHeight: 5,
-                                        strokeColor: '#00E396'
+                                        strokeColor: '#F35555'
                                     }]
                                 }
                             })
