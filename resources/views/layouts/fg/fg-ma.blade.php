@@ -109,13 +109,13 @@
                 });
             });
 
-            getOpn();
-            setTimeout(() => {
+            // getOpn();
+            setInterval(() => {
                 getOpn();
             }, 5000);
 
-            getDetail();
-            setTimeout(() => {
+            // getDetail();
+            setInterval(() => {
                 getDetail();
             }, 5000);
 
@@ -231,7 +231,6 @@
                     }
                 });
             };
-
         });
     </script>
 @endsection
