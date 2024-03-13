@@ -85,7 +85,10 @@
                     $('#back_number').empty();
                     $.each(data, function(key, value) {
                         $('#back_number').append(
-                            `<option value='${value.id}'> ${value.back_number}</option>`
+                            `
+                            <option value="null" selected disabled>-- Pilih Back Number --</option>
+                            <option value='${value.id}'> ${value.back_number}</option>
+                            `
                         );
                     });
                 }
