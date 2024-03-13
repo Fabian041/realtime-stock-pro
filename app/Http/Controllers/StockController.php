@@ -352,11 +352,17 @@ class StockController extends Controller
         $area = $request->area;
 
         if($area == 'DC'){
-            $part = DcStock::with('part')->select('id','back_number')->get();
+            $part = DcStock::with(['part' => function($query) {
+                        $query->select('id', 'back_number');
+                    }])->get();
         }else if($area == 'MA'){
-            $part = MaStock::with('part')->select('id','back_number')->get();
+            $part = MaStock::with(['part' => function($query) {
+                $query->select('id', 'back_number');
+            }])->get();
         }else{
-            $part = AssyStock::with('part')->select('id','back_number')->get();
+            $part = AssyStock::with(['part' => function($query) {
+                $query->select('id', 'back_number');
+            }])->get();
         }
 
         return $part;
