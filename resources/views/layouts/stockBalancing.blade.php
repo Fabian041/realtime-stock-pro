@@ -42,7 +42,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-phone">Actual Stock</label>
-                        <input type="number" id="actual_stock" class="form-control phone-mask" placeholder="14"
+                        <input type="number" id="actual_stock" class="form-control phone-mask" placeholder="-"
                             name="actual_stock">
                     </div>
                     <button type="submit" class="btn btn-primary">Update</button>
