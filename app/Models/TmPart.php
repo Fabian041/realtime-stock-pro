@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TmPart extends Model
 {
@@ -16,5 +16,20 @@ class TmPart extends Model
     public function checkout()
     {
         return $this->hasMany(TtCheckout::class);
+    }
+
+    public function dc()
+    {
+        return $this->hasMany(DcStock::class);
+    }
+    
+    public function ma()
+    {
+        return $this->hasMany(MaStock::class);
+    }
+    
+    public function assy()
+    {
+        return $this->hasMany(AssyStock::class);
     }
 }

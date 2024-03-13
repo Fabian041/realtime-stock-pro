@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AssyStock extends Model
 {
@@ -12,4 +12,9 @@ class AssyStock extends Model
     protected $table = 'assy_stocks';
 
     protected $guarded = ['id'];
+
+    public function part()
+    {
+        return $this->belongsTo(TmPart::class);
+    }
 }

@@ -352,11 +352,11 @@ class StockController extends Controller
         $area = $request->area;
 
         if($area == 'DC'){
-            $part = TmPart::select('id','back_number')->where('status', 0)->get();
+            $part = DcStock::with('part')->select('id','back_number')->get();
         }else if($area == 'MA'){
-            $part = TmPart::select('id','back_number')->where('status', 1)->get();
+            $part = MaStock::with('part')->select('id','back_number')->get();
         }else{
-            $part = TmPart::select('id','back_number')->where('status', 2)->get();
+            $part = AssyStock::with('part')->select('id','back_number')->get();
         }
 
         return $part;
