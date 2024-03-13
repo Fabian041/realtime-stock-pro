@@ -29,7 +29,6 @@
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-fullname">Pilih Back Number</label>
                         <select class="form-select" id="back_number" aria-label="Default select example" name="back_number">
-                            <option value="null" selected disabled>-- Pilih Back Number --</option>
                         </select>
                     </div>
                     <div class="mb-3">
