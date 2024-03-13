@@ -29,6 +29,7 @@
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-fullname">Pilih Back Number</label>
                         <select class="form-select" id="back_number" aria-label="Default select example" name="back_number">
+                            <option value="null" selected disabled>-- Pilih Back Number --</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -82,10 +83,14 @@
                 success: function(data) {
                     console.log(data);
                     $('#back_number').empty();
+                    $('#back_number').append(
+                        `
+                        <option value="null" selected disabled>-- Pilih Back Number --</option>
+                        `
+                    );
                     $.each(data, function(key, value) {
                         $('#back_number').append(
                             `
-                            <option value="null" selected disabled>-- Pilih Back Number --</option>
                             <option value='${value.id}'> ${value.back_number}</option>
                             `
                         );
