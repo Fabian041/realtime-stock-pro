@@ -353,17 +353,17 @@ class StockController extends Controller
 
         if($area == 'DC'){
             $part = DB::table('dc_stocks')
-                        ->join('dc_stocks', 'dc_stocks.id_part', '=', 'tm_parts.id')
+                        ->join('tm_parts', 'dc_stocks.id_part', '=', 'tm_parts.id')
                         ->select('tm_parts.back_number', 'tm_parts.id')
                         ->get();
         }else if($area == 'MA'){
             $part = DB::table('ma_stocks')
-                        ->join('ma_stocks', 'ma_stocks.id_part', '=', 'tm_parts.id')
+                        ->join('tm_parts', 'ma_stocks.id_part', '=', 'tm_parts.id')
                         ->select('tm_parts.back_number', 'tm_parts.id')
                         ->get();
         }else{
             $part = DB::table('assy_stocks')
-                        ->join('assy_stocks', 'assy_stocks.id_part', '=', 'tm_parts.id')
+                        ->join('tm_parts', 'assy_stocks.id_part', '=', 'tm_parts.id')
                         ->select('tm_parts.back_number', 'tm_parts.id')
                         ->get();
         }
