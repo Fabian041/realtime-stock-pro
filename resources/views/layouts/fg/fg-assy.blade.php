@@ -70,10 +70,7 @@
                 order: [
                     [3, 'desc']
                 ],
-                ajax: {
-                    url: '{{ route('assy.getTransaction') }}',
-                    dataType: 'json',
-                },
+                ajax: `{{ route('assy.getTransaction') }}`,
                 columns: [{
                         data: 'part_number'
                     },
