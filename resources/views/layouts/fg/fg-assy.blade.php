@@ -119,6 +119,7 @@
 
             setInterval(() => {
                 getTcc();
+                table.draw();
             }, 5000);
 
             setInterval(() => {
