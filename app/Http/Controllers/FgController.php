@@ -85,18 +85,18 @@ class FgController extends Controller
                 ->get();
 
             // Get the total number of records before applying pagination or any filters
-            // $recordsTotal = $query->count();
+            $recordsTotal = $query->count();
 
             // Use DataTables' "of" method to handle pagination and filtering
             $input = DataTables::of($query)
                 ->toJson();
 
             // Extract the total number of records after applying any filters
-            // $recordsFiltered = $input->original['recordsFiltered'] ?? $recordsTotal;
+            $recordsFiltered = $input->original['recordsFiltered'] ?? $recordsTotal;
             
-            // // Add the 'recordsTotal' and 'recordsFiltered' properties to the JSON response
-            // $input->original['recordsTotal'] = $recordsTotal;
-            // $input->original['recordsFiltered'] = $recordsFiltered;
+            // Add the 'recordsTotal' and 'recordsFiltered' properties to the JSON response
+            $input->original['recordsTotal'] = $recordsTotal;
+            $input->original['recordsFiltered'] = $recordsFiltered;
 
             return $input;
         } catch (\Exception $e) {
