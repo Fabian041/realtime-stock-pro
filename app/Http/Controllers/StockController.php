@@ -126,6 +126,7 @@ class StockController extends Controller
     private function processBomMaterials($areaId, $partId, $warehouseId, $transactionId)
     {
         $boms = TmBom::where('id_area', $areaId)->where('id_part', $partId)->get();
+        $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
         
         foreach ($boms as $bom) {
             TtMaterial::create([
@@ -141,6 +142,11 @@ class StockController extends Controller
                 'id_bom' => $bom->id,
                 'date' => now(),
             ]);
+
+            $result = $this->getCurrentMaterialStock($wh->id);
+    
+            // $this->pushData('wh',$result);
+            WebSocketPushJob::dispatch('wh', $result);
         }
     }
 
