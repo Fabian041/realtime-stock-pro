@@ -130,7 +130,7 @@ class StockController extends Controller
         foreach ($boms as $bom) {
             TtMaterial::create([
                 'id_material' => $bom->id_material,
-                'qty' => $bom->qty_use * -1,
+                'qty' => $bom->qty_use * 1,
                 'id_area' => $warehouseId,
                 'id_transaction' => $transactionId,
                 'pic' => 'avicenna user',
@@ -286,6 +286,7 @@ class StockController extends Controller
 
             if($line == 'DC'){
                 // do nothing (component still same && stock dc stll same)
+                
             }else if($line == 'MA'){
 
                 // decrease dc stock
