@@ -103,7 +103,9 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                     }
                 }
             } 
-            
+
+            dd('test');
+                        
             foreach($quantities as $part_number => $qty){
                 $id_material = TmMaterial::where('part_number', $part_number)->value('id');
                  // insert in tt material
@@ -125,9 +127,8 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
             // push to websocket
             $this->pushData('wh',$result);
         } catch (\Throwable $th) {
-            
-            DB::rollback();
             dd($th);
+            DB::rollback();
         }
     }
     
