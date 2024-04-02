@@ -1212,7 +1212,6 @@ class MaterialController extends Controller
         try {
             DB::beginTransaction();
             $test = Excel::import(new TtMaterialImport, $request->file('file')->store('files'));
-            dd($test);
             
             // get current stock after scan
             $result = $this->getCurrentMaterialStock($wh->id);

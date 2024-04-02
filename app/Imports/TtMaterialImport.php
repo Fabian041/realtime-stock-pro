@@ -116,14 +116,14 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                     'date' => Carbon::now()->format('Y-m-d H:i:s')
                 ]);
             }
+
+            DB::commit();
             
             // get current stock after import tt material
             $result = $this->getCurrentMaterialStock($wh->id);
             
             // push to websocket
             $this->pushData('wh',$result);
-            
-            DB::commit();
         } catch (\Throwable $th) {
             
             DB::rollback();
