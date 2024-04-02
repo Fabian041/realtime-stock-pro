@@ -109,7 +109,7 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                 $id_material = TmMaterial::where('part_number', $part_number)->first();
                  // insert in tt material
                 TtMaterial::create([
-                    'id_material' => $id_material,
+                    'id_material' => $id_material->id,
                     'qty' => $qty,
                     'id_area' => $area_id,
                     'id_transaction' => $transaction->id,
