@@ -1224,6 +1224,7 @@ class MaterialController extends Controller
             return redirect()->back()->with('success', 'Berhasil menambah stock');
         } catch (\Throwable $th) {
             DB::rollback();
+            dd($th);
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
