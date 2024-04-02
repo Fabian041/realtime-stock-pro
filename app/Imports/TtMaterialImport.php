@@ -103,8 +103,6 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                     }
                 }
             } 
-
-            dd('test');
                         
             foreach($quantities as $part_number => $qty){
                 $id_material = TmMaterial::where('part_number', $part_number)->value('id');
@@ -118,6 +116,8 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                     'date' => Carbon::now()->format('Y-m-d H:i:s')
                 ]);
             }
+
+            dd('test');
 
             DB::commit();
             
