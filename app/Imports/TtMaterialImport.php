@@ -104,10 +104,10 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                 }
             } 
                         
+            dd($quantities);
             foreach($quantities as $part_number => $qty){
                 $id_material = TmMaterial::where('part_number', $part_number)->first();
                  // insert in tt material
-                 dd('test');
                 TtMaterial::create([
                     'id_material' => $id_material,
                     'qty' => $qty,
