@@ -17,6 +17,7 @@ use App\Models\TtStock;
 use App\Models\TtOutput;
 use App\Models\AssyStock;
 use App\Models\TtMaterial;
+use App\Models\PeriodStock;
 use Illuminate\Http\Request;
 use App\Models\MaterialStock;
 use App\Models\TmTransaction;
@@ -436,5 +437,42 @@ class StockController extends Controller
         }
 
         return redirect()->back()->with('success', 'Stock updated successfully');
+    }
+
+    public function periodStock($area)
+    {   
+        $area = (int) $area;
+            
+        // Get the current time
+        $currentTime = now();
+
+        // Calculate the start and end times for the data
+        $startTime = $currentTime->copy()->subHours(6);
+
+        // If the start time is before today, adjust it to yesterday
+        if ($startTime->isBefore(now()->startOfDay())) {
+            $startTime->subDay();
+        }
+
+        // Retrieve data from your database based on the time range
+        $data = PeriodStock::join('tm_parts', 'period_stocks.id_part', '=', 'tm_parts.id')
+                        ->whereBetween('captured_at', [$startTime, $currentTime]);
+
+        if ($area === 4) {
+            $data->where('id_area', $area);
+        } elseif ($area === 3) {
+            $data->where('id_area', $area)->where('tm_parts.status', 1);
+        }   elseif ($area === 2) {
+            $data->where('id_area', $area)->where('tm_parts.status', 0);
+        }
+
+        $data = $data->orderBy('captured_at')
+            ->get();
+
+        // Pass the data to your view
+        return response()->json([
+            'status' => 'success',
+            'data' => $data 
+        ]);
     }
 }

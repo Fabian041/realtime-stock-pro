@@ -149,7 +149,6 @@
     <script src={{ asset('vendor/libs/toastr/toastr.js') }}></script>
     <script src={{ asset('js/ui-toasts.js') }}></script>
 
-
     <!-- END: Page JS-->
 
 </body>

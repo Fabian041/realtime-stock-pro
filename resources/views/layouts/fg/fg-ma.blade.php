@@ -14,7 +14,7 @@
         </nav>
     </div>
     <div class="row">
-        <div class="col-md-12 col-12">
+        <div class="col-md-12 col-lg-6">
             <div class="nav-align-top mb-4">
                 <div class="card">
                     <div class="card-header d-flex align-items-center justify-content-between">
@@ -24,6 +24,11 @@
                         <div id="opnChart"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-6">
+            <div class="card" style="padding: 2rem;">
+                <div id="opnPeriodChart"></div>
             </div>
         </div>
     </div>
@@ -234,6 +239,104 @@
                     }
                 });
             };
+
+            function fetchData() {
+                // Make AJAX request to fetch hourly data
+                $.ajax({
+                    url: '/periodStock/' + 3,
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        area: 3
+                    },
+                    success: function(response) {
+                        // Process the response data and update the chart
+                        updateChart(response.data);
+                    },
+                    error: function(error) {
+                        console.error("Error fetching hourly data:", error);
+                    }
+                });
+            }
+
+            // Function to update the chart with fetched data
+            function updateChart(data) {
+                if (!Array.isArray(data)) {
+                    console.error("Data is not an array:", data);
+                    return;
+                }
+
+                var series = [];
+
+                // Group data by id_part
+                var groups = {};
+                var categories = [];
+                data.forEach(function(item) {
+                    if (!groups[item.back_number]) {
+                        groups[item.back_number] = [];
+                    }
+                    if (!categories[item.id_part]) {
+                        categories[item.id_part] = [];
+                    }
+
+                    groups[item.back_number].push(item.current_stock);
+                    var utcDate = new Date(item.captured_at + ' UTC');
+                    var isoCapturedAt = utcDate.toISOString();
+
+                    console.log(groups);
+
+                    categories[item.id_part].push(isoCapturedAt);
+                });
+
+                var index = 0;
+                for (var i = 0; i < categories.length; i++) {
+                    if (categories[i] !== undefined) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                // Prepare series data
+                for (var id_part in groups) {
+                    series.push({
+                        name: id_part,
+                        data: groups[id_part]
+                    });
+                }
+
+                var options = {
+                    series: series,
+                    chart: {
+                        height: 350,
+                        type: 'area'
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        curve: 'smooth'
+                    },
+                    xaxis: {
+                        type: 'datetime',
+                        categories: categories[index]
+                    },
+                    tooltip: {
+                        x: {
+                            format: 'dd/MM/yy HH:mm'
+                        }
+                    },
+                };
+
+                var chart = new ApexCharts(document.querySelector("#opnPeriodChart"), options);
+
+                chart.render();
+            }
+
+            // Fetch data initially when the page loads
+            fetchData();
+
+            // Schedule periodic fetching of data every hour
+            setInterval(fetchData, 3600000); // 1 hour in milliseconds
         });
     </script>
 @endsection

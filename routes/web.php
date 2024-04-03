@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/getBackNumber', [StockController::class,'getBackNumber'])->name('getBackNumber');
     Route::get('/getCurrentStock', [StockController::class,'getCurrentStock'])->name('getCurrentStock');
 
+    Route::get('/periodStock/{area}', [StockController::class,'periodStock'])->name('period.stock');
+
     Route::prefix('/dashboard')->group(function () {
 
         // finsih good dashboard
