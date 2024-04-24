@@ -193,6 +193,13 @@
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
+
+                        // Filter out specific item.part_name
+                        var filteredData = data.filter(function(item) {
+                            // Replace 'YOUR_PART_NAME' with the part_name you want to hide
+                            return item.back_number !== 'CI17';
+                        });
+
                         chartTcc.updateSeries([{
                             name: 'Total Part',
                             data: data.map(function(item) {
