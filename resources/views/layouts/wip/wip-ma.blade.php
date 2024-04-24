@@ -197,12 +197,12 @@
                         // Filter out specific item.part_name
                         var filteredData = data.filter(function(item) {
                             // Replace 'YOUR_PART_NAME' with the part_name you want to hide
-                            return item.back_number !== 'CI17';
+                            return item.part_name !== 'TCC D41A';
                         });
 
                         chartTcc.updateSeries([{
                             name: 'Total Part',
-                            data: data.map(function(item) {
+                            data: filteredData.map(function(item) {
                                 return {
                                     x: `${item.part_name} - ${item.back_number}`,
                                     y: item.current_stock,
@@ -212,10 +212,9 @@
                                         strokeHeight: 5,
                                         strokeColor: '#F35555'
                                     }]
-                                }
+                                };
                             })
                         }]);
-
                     }
                 });
             };
