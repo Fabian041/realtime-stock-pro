@@ -161,6 +161,12 @@ class StockController extends Controller
         $this->createPartTransaction($model, $partId, $transactionId, $qty, $codepart);
 
         if ($line !== 'PULL' && $line !== 'DC') {
+            
+            // if part id (back number) is CI17 and it scan at ASSY it will reduce qty of CI18 at MA
+            if($partId == '16'){
+                $partId = '10';    
+            }
+            
             $this->createPartTransaction($this->getPreviousLineModel($line), $partId, $reversalTransactionId, $qty, $codepart);
         }
     }
