@@ -30,7 +30,8 @@ class FgController extends Controller
                 ->join('tm_transactions', 'tm_transactions.id', '=', 'tt_dcs.id_transaction')
                 ->select('tm_parts.part_name', 'tm_parts.part_number', 'tm_transactions.name', 'tm_transactions.type' ,'tt_dcs.pic', 'tt_dcs.date', 'tt_dcs.qty')
                 ->where('tm_parts.status', 0)
-                ->get(5000);
+                ->take(5000)
+                ->get();
 
         return DataTables::of($input)
                 ->toJson();
