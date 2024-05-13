@@ -69,16 +69,14 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
     }
     
     public function collection(Collection $rows)
-    {
-        // transaction id
-        $transaction = TmTransaction::select('id')->where('name', 'STO')->first();
-        
+    {   
         // area id
         $area = \App\Models\TmArea::select('id')->where('name', 'Warehouse')->first();
         $area_id = $area->id;
         
         try {
             DB::beginTransaction();
+            
             // get id area
             $wh = TmArea::select('id')->where('name', 'Warehouse')->first();
             
@@ -86,33 +84,47 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
             
             // check each row in tm material based on tm material id
             $materials = TmMaterial::select('id','part_number', 'part_name', 'supplier', 'source')->get();
-            
 
             foreach($rows as $row)
             {
                 // get id of the same row
                 foreach( $materials as $material){
                     // this condition will check imported data with master material data, if the imported data is exist in master material it will insert it into tt material table
-                    if ($row['part_no'] == $material->part_number ){
+                    if ($row['aisin_part_number'] == $material->part_number ){
+                        
+                        // Convert to hours and minutes
+                        $hours = intdiv($row['delivery_time'], 100);
+                        $minutes = $row['delivery_time'] % 100;
+
+                        // Create a Carbon instance with today's date and set the time
+                        $carbon = Carbon::today()->setTime($hours, $minutes);
+
+                        // Format the time as HH:mm
+                        $formattedTime = $carbon->format('H:i');
+                        
                         // if same part number it will sum the quantity
                         if (!isset($quantities[$material->part_number])) {
-                            $quantities[$material->part_number] = $row['qty'];
+                            $quantities[$material->part_number] = [
+                                'total_qty' => $row['order_qtymodified'],
+                                'delivery_time' => $formattedTime
+                            ];
                         } else {
-                            $quantities[$material->part_number] += $row['qty'];
+                            $quantities[$material->part_number]['total_qty'] += $row['order_qtymodified'];
+                            $quantities[$material->part_number]['delivery_time'] = $formattedTime;
                         }
                     }
                 }
             } 
-                        
-            // dd($quantities);
-            foreach($quantities as $part_number => $qty){
+            
+            foreach($quantities as $part_number => $details){
                 $id_material = TmMaterial::where('part_number', $part_number)->first();
                  // insert in tt material
                 TtMaterial::create([
                     'id_material' => $id_material->id,
-                    'qty' => $qty,
+                    'qty' => $details['total_qty'],
                     'id_area' => $area_id,
-                    'id_transaction' => $transaction->id,
+                    'id_transaction' => null,
+                    'delivery_time' => $details['delivery_time'],
                     'pic' => auth()->user()->npk,
                     'date' => Carbon::now()->format('Y-m-d H:i:s')
                 ]);
@@ -120,7 +132,6 @@ class TtMaterialImport implements ToCollection, WithHeadingRow, WithStartRow
                 DB::commit();
             }
 
-            // dd('test');            
             // get current stock after import tt material
             $result = $this->getCurrentMaterialStock($wh->id);
             

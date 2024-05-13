@@ -135,7 +135,7 @@
                 <li class="menu-item {{ request()->is('dashboard/material-transaction/wh') ? 'active' : '' }}">
                     <a href="{{ route('wh.index') }}" class="menu-link ">
                         {{-- <div>Entry Stock WH</div> --}}
-                        <div>STO</div>
+                        <div>Stock Receive</div>
                     </a>
                 </li>
                 {{-- <li class="menu-item {{ (request()->is('dashboard/material-transaction/oh')) ? 'active' : '' }}">

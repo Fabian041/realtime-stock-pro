@@ -8,7 +8,7 @@
                     <a href="javascript:void(0);">Transaction</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="javascript:void(0);" class="active">STO</a>
+                    <a href="javascript:void(0);" class="active">Stock Receive</a>
                 </li>
             </ol>
         </nav>
@@ -44,8 +44,9 @@
                                 <th>Part Name</th>
                                 <th>Source</th>
                                 <th>PIC</th>
-                                <th>Date</th>
+                                <th>Delivery Time</th>
                                 <th>Quantity</th>
+                                <th>Executed</th>
                             </tr>
                         </thead>
                     </table>
@@ -103,10 +104,17 @@
                         data: 'pic'
                     },
                     {
-                        data: 'date'
+                        data: 'delivery_time',
+                        className: 'text-center'
                     },
                     {
-                        data: 'qty'
+                        data: 'qty',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'edit',
+                        orderable: false,
+                        searchable: false
                     },
                 ],
             });

@@ -1161,17 +1161,28 @@ class MaterialController extends Controller
     // initial stock from supplier
     public function getDataWh()
     {
-        // get id transaction
+        // Get the transaction ID for 'STO'
         $transaction_id = TmTransaction::select('id')->where('name', 'STO')->first();
 
         $input = DB::table('tt_materials')
-                    ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
-                    ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier','tm_materials.source' ,'tt_materials.pic','tm_materials.date','tt_materials.qty')
-                    ->where('id_transaction', $transaction_id->id)
-                    ->get();
+            ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
+            ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier', 'tm_materials.source', 'tt_materials.pic', 'tm_materials.date', 'tt_materials.qty', 'tt_materials.id_transaction', 'tt_materials.delivery_time')
+            ->where('id_transaction', $transaction_id->id)
+            ->orWhereNull('id_transaction')
+            ->get();
 
         return DataTables::of($input)
-                ->toJson();
+            ->addColumn('edit', function ($row) use ($input) {
+                if ($row->id_transaction === null) {
+                    $btn = '<button class="btn btn-danger"><i class="bx bx-x"></i></button>';
+                } elseif ($row->id_transaction == 1) {
+                    $btn = '<button class="btn btn-success"><i class="bx bx-check"></i></button>';
+                }
+
+                return $btn;
+            })
+            ->rawColumns(['edit'])
+            ->toJson();
     }
 
     // stock in planning unboxing today
