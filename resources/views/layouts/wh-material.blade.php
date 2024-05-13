@@ -89,7 +89,7 @@
 
             var table = $('.material-datatable').DataTable({
                 processing: true,
-                serverSide: true,
+                // serverSide: true,
                 ajax: `{{ route('wh.getData') }}`,
                 columns: [{
                         data: 'part_number'
