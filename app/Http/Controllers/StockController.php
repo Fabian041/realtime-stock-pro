@@ -163,6 +163,7 @@ class StockController extends Controller
         if ($line !== 'PULL' && $line !== 'DC') {
             
             // if part id (back number) is CI17 and it scan at ASSY it will reduce qty of CI18 at MA
+            // disable if error
             if($partId == '16'){
                 $partId = '10';    
             }
