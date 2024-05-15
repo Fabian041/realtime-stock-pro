@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use App\Models\TtMaterial;
+use App\Models\MaterialStock;
 use App\Models\TmTransaction;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class ReceiveStock extends Command
 {
@@ -51,10 +53,30 @@ class ReceiveStock extends Command
                 // Your logic here
                 $transaction = TmTransaction::select('id')->where('name', 'STO')->first();
 
-                // Update the current TtMaterial record
-                $executed->update([
-                    'id_transaction' =>  $transaction->id,
-                ]);
+                // get current stock
+                $material = MaterialStock::where('id_material', $executed->id_material)->first();
+
+                try {
+                    DB::beginTransaction();
+
+                    // Update the current TtMaterial record
+                    $executed->update([
+                        'id_transaction' =>  $transaction->id,
+                    ]);
+
+                    // update stock
+                    MaterialStock::where('id_material', $executed->id_material)->update([
+                        'current_stock' => $material->current_stock + $executed->qty
+                    ]);
+
+                    DB::commit();
+                    
+                    $this->info('Whatsapp sent successfully!');
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    DB::rollBack();
+                    $this->info($th->getMessage());
+                }
             }
         }
     }
