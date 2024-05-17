@@ -147,7 +147,7 @@ class StockController extends Controller
             $result = $this->getCurrentMaterialStock($wh->id);
     
             // $this->pushData('wh',$result);
-            // WebSocketPushJob::dispatch('wh', $result);
+            WebSocketPushJob::dispatch('wh', $result);
         }
     }
 
