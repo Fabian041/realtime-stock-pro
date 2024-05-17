@@ -164,9 +164,9 @@ class StockController extends Controller
             
             // if part id (back number) is CI17 and it scan at ASSY it will reduce qty of CI18 at MA
             // disable if error
-            if($partId == '16'){
-                $partId = '10';    
-            }
+            // if($partId == '16'){
+            //     $partId = '10';    
+            // }
             
             $this->createPartTransaction($this->getPreviousLineModel($line), $partId, $reversalTransactionId, $qty, $codepart);
         }
