@@ -90,7 +90,7 @@ class StockController extends Controller
 
             if ($line !== 'PULL') {
                 $wh = TmArea::where('name', 'Warehouse')->firstOrFail();
-                // $this->processBomMaterials($area->id, $part->id, $wh->id, $reversalTransaction->id);
+                $this->processBomMaterials($area->id, $part->id, $wh->id, $reversalTransaction->id);
             } else {
                 $this->processPullLineTransaction($code, $part->id, $reversalTransaction->id, $qty, $codepart);
             }
@@ -100,6 +100,7 @@ class StockController extends Controller
             WebSocketPushJob::dispatch('wip', $wipData);
 
             DB::commit();
+            return 'OK';
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
