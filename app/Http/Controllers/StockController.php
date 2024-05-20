@@ -139,10 +139,10 @@ class StockController extends Controller
                 'date' => now(),
             ]);
 
-            TtOutput::create([
-                'id_bom' => $bom->id,
-                'date' => now(),
-            ]);
+            // TtOutput::create([
+            //     'id_bom' => $bom->id,
+            //     'date' => now(),
+            // ]);
 
             $result = $this->getCurrentMaterialStock($wh->id);
     
