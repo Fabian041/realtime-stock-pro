@@ -100,7 +100,6 @@ class StockController extends Controller
             WebSocketPushJob::dispatch('wip', $wipData);
 
             DB::commit();
-            return 'OK';
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
