@@ -1166,7 +1166,7 @@ class MaterialController extends Controller
 
         $input = DB::table('tt_materials')
             ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
-            ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier', 'tm_materials.source', 'tt_materials.pic', 'tm_materials.date', 'tt_materials.qty', 'tt_materials.id_transaction', 'tt_materials.delivery_time')
+            ->select('tm_materials.part_name', 'tm_materials.back_number', 'tm_materials.supplier', 'tm_materials.source', 'tt_materials.pic', 'tm_materials.date', 'tt_materials.qty', 'tt_materials.id_transaction', 'tt_materials.delivery_time')
             ->where('id_transaction', $transaction_id->id)
             ->orWhereNull('id_transaction')
             ->get();
