@@ -732,7 +732,7 @@ class MaterialController extends Controller
             $result = DB::table('material_stocks')
                 ->join('tm_materials', 'tm_materials.id', '=', 'material_stocks.id_material')
                 ->join('tm_areas', 'tm_areas.id', '=', 'material_stocks.id_area')
-                ->select('material_stocks.current_stock', 'tm_materials.limit_qty','tm_materials.part_number' ,'tm_materials.part_name' ,'tm_materials.source')
+                ->select('material_stocks.current_stock', 'tm_materials.limit_qty','tm_materials.back_number' ,'tm_materials.part_name' ,'tm_materials.source')
                 ->where('tm_areas.id', $area)
                 ->where('tm_materials.source', 'like', '%' . $source . '%')
                 ->groupBy('tm_materials.part_number')
@@ -1166,7 +1166,7 @@ class MaterialController extends Controller
 
         $input = DB::table('tt_materials')
             ->join('tm_materials', 'tt_materials.id_material', '=', 'tm_materials.id')
-            ->select('tm_materials.part_name', 'tm_materials.back_number', 'tm_materials.supplier', 'tm_materials.source', 'tt_materials.pic', 'tm_materials.date', 'tt_materials.qty', 'tt_materials.id_transaction', 'tt_materials.delivery_time')
+            ->select('tm_materials.part_name', 'tm_materials.part_number', 'tm_materials.supplier', 'tm_materials.source', 'tt_materials.pic', 'tm_materials.date', 'tt_materials.qty', 'tt_materials.id_transaction', 'tt_materials.delivery_time')
             ->where('id_transaction', $transaction_id->id)
             ->orWhereNull('id_transaction')
             ->get();
