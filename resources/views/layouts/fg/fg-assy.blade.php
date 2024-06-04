@@ -339,7 +339,7 @@
             fetchData();
 
             // Schedule periodic fetching of data every hour
-            setInterval(fetchData, 1000); // 1 hour in milliseconds
+            setInterval(updateChart, 1000); // 1 hour in milliseconds
         });
     </script>
 @endsection
