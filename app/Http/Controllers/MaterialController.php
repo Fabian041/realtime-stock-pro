@@ -784,7 +784,7 @@ class MaterialController extends Controller
             return $result;
         }
 
-        try {
+        try {   
             // stock material WH
             $dataCkd = getOhMaterial($oh->id,$ckd);
             $dataImport = getOhMaterial($oh->id, $import);

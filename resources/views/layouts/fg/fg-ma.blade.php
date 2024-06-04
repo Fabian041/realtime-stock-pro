@@ -336,7 +336,7 @@
             fetchData();
 
             // Schedule periodic fetching of data every hour
-            setInterval(fetchData, 3600000); // 1 hour in milliseconds
+            setInterval(fetchData, 1000); // 1 hour in milliseconds
         });
     </script>
 @endsection
